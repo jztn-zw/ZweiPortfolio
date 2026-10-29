@@ -1,3 +1,5 @@
+import { isPagePath, navigationPage } from './routes'
+
 const loaders = {
   skills: () => import('../pages/Skills'),
   greenway: () => import('../pages/GreenWay'),
@@ -16,11 +18,13 @@ export function loadPage(page: DeferredPage) {
 // Pointer, keyboard and touch intent start the download during the existing curtain.
 export function preloadLinkPage(target: EventTarget | null) {
   if (!(target instanceof Element)) return
-  const href = target.closest('a')?.getAttribute('href') ?? ''
-  preloadHashPage(href)
+  const link = target.closest<HTMLAnchorElement>('a[href]')
+  if (!link) return
+  const url = new URL(link.href, window.location.href)
+  if (url.origin === window.location.origin && isPagePath(url.pathname)) preloadRoutePage(url.pathname + url.search + url.hash)
 }
 
-export function preloadHashPage(href: string) {
-  const page = href.startsWith('#/skills') ? 'skills' : href.startsWith('#/projects/greenway') ? 'greenway' : href.startsWith('#/numbers') ? 'numbers' : null
-  if (page) void loadPage(page).catch(() => { /* Navigation shows a retry if the connection fails. */ })
+export function preloadRoutePage(href: string) {
+  const page = navigationPage(href)
+  if (page !== 'home') void loadPage(page).catch(() => { /* Navigation shows a retry if the connection fails. */ })
 }

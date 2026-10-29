@@ -21,7 +21,6 @@ function renderCounter(count, unavailable = false, development = false) {
       if (name === '../lib/visitorCount') return { getVisitorCount: () => { throw new Error('Render checks must not call the visitor API') } }
       if (name === 'react') return {
         useState: () => [states.shift(), () => {}],
-        useId: () => 'visitor-counter-test',
         useEffect: () => {},
       }
       throw new Error(`Unexpected dependency: ${name}`)
@@ -34,6 +33,7 @@ test('visitor avatars grow with the real count, stop at three, and never cap the
   for (const count of [0, 1, 2, 3, 4, 1000]) {
     const markup = renderCounter(count)
     const images = [...markup.matchAll(/<img\b[^>]*>/g)].map(match => match[0])
+    assert.doesNotMatch(markup, /role="tooltip"|aria-describedby|footer-visitors-tooltip|Decorative anime avatars/)
     assert.equal(images.length, Math.min(count, 3), `avatar count at ${count} visitors`)
     assert.match(markup, new RegExp(`<strong[^>]*>${count.toLocaleString('en-US')}</strong>`))
     if (count > 0) assert.match(markup, /class="footer-visitor-avatars" aria-hidden="true"/)

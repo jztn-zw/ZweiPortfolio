@@ -7,9 +7,14 @@ import ts from 'typescript'
 // Exercise the routing/animation handoff without a browser or real animation timers.
 const source = readFileSync(new URL('../src/hooks/pageNavigation.ts', import.meta.url), 'utf8')
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2023 } }).outputText
+const routeSource = readFileSync(new URL('../src/lib/routes.ts', import.meta.url), 'utf8')
+const routes = {}
+vm.runInNewContext(ts.transpileModule(routeSource, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: routes, URL })
 
-function harness({ reduced = false, supported = true } = {}) {
-  const animations = [], frames = [], listeners = new Map(), nodes = []
+function harness({ reduced = false, supported = true, initial = '/' } = {}) {
+  const animations = [], frames = [], listeners = new Map(), nodes = [], scrolls = [], anchors = new Map()
+  const entries = [new URL(initial, 'https://portfolio.test').href]
+  let currentUrl = new URL(entries[0]), historyIndex = 0
   const motion = { matches: reduced, addEventListener: (_, callback) => listeners.set('motion', callback), removeEventListener: () => listeners.delete('motion') }
   class Element {
     children = []
@@ -17,6 +22,13 @@ function harness({ reduced = false, supported = true } = {}) {
     dataset = {}
     attributes = {}
     setAttribute(name, value) { this.attributes[name] = value }
+    getAttribute(name) { return this.attributes[name] ?? null }
+    hasAttribute(name) { return name in this.attributes }
+    removeAttribute(name) { delete this.attributes[name] }
+    addEventListener() {}
+    closest() { return this }
+    focus() { document.activeElement = this }
+    scrollIntoView(options) { scrolls.push(options) }
     append(...children) { this.children.push(...children) }
     remove() { const index = nodes.indexOf(this); if (index >= 0) nodes.splice(index, 1) }
     animate() {
@@ -33,16 +45,41 @@ function harness({ reduced = false, supported = true } = {}) {
     }
   }
   if (!supported) Element.prototype.animate = undefined
-  const document = { documentElement: { dataset: {} }, body: { append: node => nodes.push(node) }, createElement: () => new Element(), createElementNS: () => new Element(), querySelector: () => new Element() }
-  const window = { location: { hash: '#home' }, innerWidth: 1280, matchMedia: () => motion, addEventListener: (event, callback) => listeners.set(event, callback), removeEventListener: event => listeners.delete(event) }
+  const document = {
+    documentElement: { dataset: {} }, body: { append: node => nodes.push(node) },
+    createElement: () => new Element(), createElementNS: () => new Element(), querySelector: () => new Element(),
+    getElementById: id => { if (!anchors.has(id)) anchors.set(id, new Element()); return anchors.get(id) },
+    addEventListener: (event, callback) => listeners.set(event, callback), removeEventListener: event => listeners.delete(event),
+  }
+  const window = {
+    get location() { return currentUrl },
+    history: {
+      state: null,
+      pushState(_, title, href) { currentUrl = new URL(href, currentUrl); entries.splice(++historyIndex); entries.push(currentUrl.href) },
+      replaceState(_, title, href) { currentUrl = new URL(href, currentUrl); entries[historyIndex] = currentUrl.href },
+      back() { if (historyIndex > 0) { currentUrl = new URL(entries[--historyIndex]); listeners.get('popstate')() } },
+      forward() { if (historyIndex < entries.length - 1) { currentUrl = new URL(entries[++historyIndex]); listeners.get('popstate')() } },
+    },
+    scrollTo: options => scrolls.push(options), innerWidth: 1280, matchMedia: () => motion,
+    addEventListener: (event, callback) => listeners.set(event, callback), removeEventListener: event => listeners.delete(event),
+  }
   const exports = {}
-  vm.runInNewContext(compiled, { exports, window, document, Element, getComputedStyle: node => ({ transform: node.style.transform || 'translateX(0)' }), requestAnimationFrame: callback => frames.push(callback), require: name => name === 'react-dom' ? { flushSync: callback => callback() } : {} })
+  vm.runInNewContext(compiled, { exports, window, document, Element, URL, getComputedStyle: node => ({ transform: node.style.transform || 'translateX(0)' }), requestAnimationFrame: callback => frames.push(callback), require: name => name === 'react-dom' ? { flushSync: callback => callback() } : name === '../lib/routes' ? routes : {} })
   let notifications = 0
   const unsubscribe = exports.subscribeToNavigation(() => notifications++)
   return {
-    api: exports, animations, nodes, document, motion, unsubscribe,
+    api: exports, animations, nodes, document, window, motion, unsubscribe, entries, scrolls, anchors, listeners,
     get notifications() { return notifications },
-    navigate(hash) { window.location.hash = hash; listeners.get('hashchange')() },
+    navigate(href, options = {}) {
+      const link = new Element()
+      link.href = new URL(href, currentUrl).href
+      link.target = options.target ?? ''
+      if (options.download) link.setAttribute('download', '')
+      const event = { target: link, button: 0, defaultPrevented: false, preventDefault() { this.defaultPrevented = true }, ...options }
+      listeners.get('click')(event)
+      return event
+    },
+    hash(hash) { currentUrl.hash = hash; listeners.get('hashchange')() },
     frame() { const callbacks = frames.splice(0); callbacks.forEach(callback => callback()) },
     changeMotion() { motion.matches = true; listeners.get('motion')() },
   }
@@ -55,9 +92,9 @@ async function reveal(h) { h.frame(); h.frame(); await settle(); h.animations.fo
 test('same-page anchors, reduced motion, and missing animation support update immediately', () => {
   for (const options of [{}, { reduced: true }, { supported: false }]) {
     const h = harness(options)
-    const destination = Object.keys(options).length ? '#/numbers' : '#projects'
+    const destination = Object.keys(options).length ? '/numbers' : '/#projects'
     h.navigate(destination)
-    assert.equal(h.api.getNavigationHash(), destination)
+    assert.equal(h.api.getNavigationLocation(), destination)
     assert.equal(h.nodes.length, 0)
     assert.equal(h.notifications, 1)
     h.unsubscribe()
@@ -66,15 +103,15 @@ test('same-page anchors, reduced motion, and missing animation support update im
 
 test('route changes stay hidden until covered and rapid clicks use the latest destination', async () => {
   const h = harness()
-  h.navigate('#/numbers')
-  assert.equal(h.api.getNavigationHash(), '#home')
+  h.navigate('/numbers')
+  assert.equal(h.api.getNavigationLocation(), '/')
   assert.equal(h.animations.length, 9)
-  h.navigate('#/projects/greenway')
+  h.navigate('/projects/greenway')
   assert.equal(h.animations.length, 9, 'another click should not restart the cover')
   const title = h.nodes[0].children[3].children[1].children[2]
   assert.equal(title.textContent, 'GREENWAY')
   await cover(h)
-  assert.equal(h.api.getNavigationHash(), '#/projects/greenway')
+  assert.equal(h.api.getNavigationLocation(), '/projects/greenway')
   assert.equal(h.notifications, 1)
   await reveal(h)
   assert.equal(h.nodes.length, 0)
@@ -83,16 +120,16 @@ test('route changes stay hidden until covered and rapid clicks use the latest de
 
 test('navigation during reveal reuses the curtain and does not apply stale cleanup', async () => {
   const h = harness()
-  h.navigate('#/numbers')
+  h.navigate('/numbers')
   await cover(h)
   h.frame(); h.frame(); await settle()
   const curtain = h.nodes[0]
-  h.navigate('#home')
+  h.navigate('/')
   assert.equal(h.nodes.length, 1)
   assert.equal(h.nodes[0], curtain)
   assert.equal(curtain.dataset.direction, 'back')
   await cover(h)
-  assert.equal(h.api.getNavigationHash(), '#home')
+  assert.equal(h.api.getNavigationLocation(), '/')
   await reveal(h)
   assert.equal(h.nodes.length, 0)
   h.unsubscribe()
@@ -100,7 +137,7 @@ test('navigation during reveal reuses the curtain and does not apply stale clean
 
 test('the new portrait and title finish their cut-in before the route swaps', async () => {
   const h = harness()
-  h.navigate('#/numbers')
+  h.navigate('/numbers')
   const artwork = h.nodes[0].children.find(node => node.className === 'page-cut-in')
   const characterStage = artwork.children[0]
   const image = characterStage.children.find(node => node.className === 'page-cut-in-portrait')
@@ -117,10 +154,10 @@ test('the new portrait and title finish their cut-in before the route swaps', as
   assert.equal(artwork.children[1].children[2].textContent, 'BY THE\nNUMBERS')
   h.animations.slice(0, 3).forEach(animation => animation.finish())
   await settle()
-  assert.equal(h.api.getNavigationHash(), '#home', 'closing the panels should not cut off the portrait arrival')
+  assert.equal(h.api.getNavigationLocation(), '/', 'closing the panels should not cut off the portrait arrival')
   h.animations.slice(3).forEach(animation => animation.finish())
   await settle()
-  assert.equal(h.api.getNavigationHash(), '#/numbers')
+  assert.equal(h.api.getNavigationLocation(), '/numbers')
   await reveal(h)
   assert.equal(h.nodes.length, 0)
   h.unsubscribe()
@@ -129,11 +166,11 @@ test('the new portrait and title finish their cut-in before the route swaps', as
 test('theme cancellation and a reduced-motion change commit pending navigation safely', async () => {
   for (const mode of ['theme', 'motion']) {
     const h = harness()
-    h.navigate('#/skills')
+    h.navigate('/skills')
     if (mode === 'theme') h.api.cancelPageNavigation()
     else h.changeMotion()
     await settle()
-    assert.equal(h.api.getNavigationHash(), '#/skills')
+    assert.equal(h.api.getNavigationLocation(), '/skills')
     assert.equal(h.nodes.length, 0)
     assert.equal(h.notifications, 1)
     h.unsubscribe()
@@ -142,7 +179,7 @@ test('theme cancellation and a reduced-motion change commit pending navigation s
 
 test('logic cards include a three-faced cube, a sliding puzzle, and a poker ace', async () => {
   const h = harness()
-  h.navigate('#/numbers')
+  h.navigate('/numbers')
   const artwork = h.nodes[0].children.find(node => node.className === 'page-cut-in')
   const cards = artwork.children.filter(node => node.dataset.kind)
   assert.deepEqual(Array.from(cards, card => card.dataset.kind), ['cube', 'puzzle', 'poker'])
@@ -157,8 +194,8 @@ test('logic cards include a three-faced cube, a sliding puzzle, and a poker ace'
 test('navigation during a theme reveal bypasses the curtain', () => {
   const h = harness()
   h.document.documentElement.dataset.themeTransition = 'reveal'
-  h.navigate('#/numbers')
-  assert.equal(h.api.getNavigationHash(), '#/numbers')
+  h.navigate('/numbers')
+  assert.equal(h.api.getNavigationLocation(), '/numbers')
   assert.equal(h.nodes.length, 0)
   h.unsubscribe()
 })

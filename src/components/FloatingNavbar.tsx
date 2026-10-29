@@ -73,12 +73,12 @@ export default function FloatingNavbar({ isHome = true, isNumbers = false }: { i
   return (
     <nav ref={navRef} className="side-nav" aria-label="Main navigation">
       <span className="side-nav-marker" aria-hidden="true" />
-      <a href="#home" aria-label="Home" aria-current={isHome ? 'page' : undefined} className={`side-nav-item${isHome ? ' is-active' : ''}`}><NavbarGlyph name="home" /><span className="side-nav-tooltip">Home</span></a>
+      <a href="/" aria-label="Home" aria-current={isHome ? 'page' : undefined} className={`side-nav-item${isHome ? ' is-active' : ''}`}><NavbarGlyph name="home" /><span className="side-nav-tooltip">Home</span></a>
       <span className="side-nav-divider" aria-hidden="true" />
       {items.map(({ label, icon }) => (
         <button type="button" key={label} className="side-nav-item" aria-label={`${label} — Coming soon`} aria-disabled="true"><NavbarGlyph name={icon} /><span className="side-nav-tooltip">{label}<span>Coming soon</span></span></button>
       ))}
-      <a href="#/numbers" aria-label="By the Numbers" aria-current={isNumbers ? 'page' : undefined} className={`side-nav-item${isNumbers ? ' is-active' : ''}`}><NavbarGlyph name="numbers" /><span className="side-nav-tooltip">By the Numbers</span></a>
+      <a href="/numbers" aria-label="By the Numbers" aria-current={isNumbers ? 'page' : undefined} className={`side-nav-item${isNumbers ? ' is-active' : ''}`}><NavbarGlyph name="numbers" /><span className="side-nav-tooltip">By the Numbers</span></a>
     </nav>
   )
 }

@@ -16,13 +16,13 @@ export default function Skills() {
 
   return (
     <div id="/skills" className="skills-page">
-      <a className="skip-link" href="#/skills/content">Skip to content</a>
+      <a className="skip-link" href="#skills-content">Skip to content</a>
       <SiteHeader isHome={false} />
 
-      <main id="/skills/content" className="skills-content" tabIndex={-1}>
+      <main id="skills-content" className="skills-content" tabIndex={-1}>
         <div className="page-width">
           <div className="skills-breadcrumb">
-            <a href="#capabilities" className="page-back-button"><ArrowLeft size={16} aria-hidden="true" /> Back to Home</a>
+            <a href="/#capabilities" className="page-back-button"><ArrowLeft size={16} aria-hidden="true" /> Back to Home</a>
             <span className="eyebrow">CAPABILITIES <span className="red">/</span> IN DETAIL</span>
           </div>
 
@@ -79,7 +79,7 @@ export default function Skills() {
 
         </div>
       </main>
-      <Footer topHref="#/skills" />
+      <Footer topHref="/skills" />
     </div>
   )
 }

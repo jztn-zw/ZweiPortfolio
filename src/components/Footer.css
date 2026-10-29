@@ -36,10 +36,7 @@
 .footer-visitors-summary { display: inline-flex; align-items: center; gap: 10px; min-width: 0; padding-left: 12px; border-left: 1px solid var(--line); }
 .footer-visitors-label { color: var(--theme-muted, #a6a295); font-size: 9px; letter-spacing: .9px; line-height: 1.5; text-transform: uppercase; flex-shrink: 0; }
 .footer-visitors-summary strong { min-width: 1ch; color: var(--interaction-text); font-size: 20px; font-weight: 600; line-height: 1.25; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.footer-visitors:focus-visible { outline: 1px solid var(--interaction-accent); outline-offset: 5px; }
-.footer-visitors-tooltip { position: absolute; z-index: 3; right: 0; bottom: calc(100% + 10px); width: max-content; max-width: min(265px, 80vw); padding: 10px 12px; border: 1px solid var(--interaction-border); border-left: 2px solid var(--interaction-primary); background: var(--interaction-tooltip); color: var(--interaction-text); font-family: var(--font-mono); font-size: 11px; font-weight: 400; line-height: 1.7; opacity: 0; visibility: hidden; translate: 0 4px; pointer-events: none; transition: opacity .2s ease, translate .2s ease, visibility .2s; }
-.footer-visitors:is(:hover, :focus-visible) .footer-visitors-tooltip { opacity: 1; visibility: visible; translate: 0 0; }
-@media (prefers-reduced-motion: reduce) { .footer-visitors-tooltip, .footer-visitor-avatar { transition: none; } .footer-visitor-avatar { translate: none !important; rotate: none !important; } }
+@media (prefers-reduced-motion: reduce) { .footer-visitor-avatar { transition: none; translate: none !important; rotate: none !important; } }
 @media (max-width: 800px) {
   .site-footer-identity { font-size: 11px; gap: 10px; }
   .site-footer-copyright { font-size: 11px; margin-left: 11px; }
@@ -48,7 +45,6 @@
 }
 @media (max-width: 560px) {
   .footer-visitor-avatar { width: 38px; height: 38px; flex-basis: 38px; }
-  .footer-visitors-tooltip { right: 0; left: auto; }
   .site-footer { padding-top: 20px; padding-bottom: calc(env(safe-area-inset-bottom) + 24px); }
   .site-footer-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; }
   .site-footer-identity { align-items: center; max-width: none; min-height: 44px; font-size: 12px; line-height: 1.5; letter-spacing: -.15px; gap: 10px; }

@@ -75,7 +75,7 @@ export const projects: Project[] = [
     artwork: 'greenway',
     status: 'Completed',
     liveUrl: 'https://greenway-candelaria.vercel.app/',
-    detailsUrl: '#/projects/greenway',
+    detailsUrl: '/projects/greenway',
   },
   { id: '003', title: '[PROJECT NAME]', category: '[PROJECT CATEGORY]', description: '[PROJECT DESCRIPTION]', technologies: ['[TECH STACK]'], artwork: 'structure' },
 ]

@@ -1,28 +1,31 @@
 import { lazy, Suspense, useEffect, useSyncExternalStore } from 'react'
 import Home from './pages/Home'
 import PageLoading, { PageLoadBoundary } from './components/PageLoading'
-import { loadPage, preloadHashPage, preloadLinkPage } from './lib/pageModules'
+import { loadPage, preloadRoutePage, preloadLinkPage } from './lib/pageModules'
 import { portfolio } from './data/portfolio'
 import { getVisitorCount } from './lib/visitorCount'
 import useScrollReveal from './hooks/useScrollReveal'
 import useAnimationVisibility from './hooks/useAnimationVisibility'
-import { getNavigationHash, subscribeToNavigation } from './hooks/pageNavigation'
+import { getNavigationLocation, subscribeToNavigation } from './hooks/pageNavigation'
+import { navigationPage, type Page } from './lib/routes'
 
 const Skills = lazy(() => loadPage('skills'))
 const GreenWay = lazy(() => loadPage('greenway'))
 const Numbers = lazy(() => loadPage('numbers'))
 
-type Page = 'home' | 'skills' | 'greenway' | 'numbers'
-
 // This mounts after a deferred page resolves, so focus and reveals find its content.
 function RenderedPage({ page }: { page: Page }) {
   useEffect(() => {
     document.title = `${portfolio.name} — ${page === 'numbers' ? 'By the Numbers' : page === 'greenway' ? 'GreenWay' : page === 'skills' ? 'Stack & Skills' : portfolio.role}`
-    if (page !== 'home') {
-      window.scrollTo({ top: 0, behavior: 'instant' })
-      document.getElementById(`${page}-title`)?.focus({ preventScroll: true })
+    let anchor = window.location.hash.slice(1)
+    try { anchor = decodeURIComponent(anchor) } catch { /* Keep malformed fragments literal. */ }
+    if (anchor) {
+      const target = document.getElementById(anchor)
+      target?.scrollIntoView({ behavior: 'instant', block: 'start' })
+      target?.focus({ preventScroll: true })
     } else {
-      document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ behavior: 'instant', block: 'start' })
+      window.scrollTo({ top: 0, behavior: 'instant' })
+      if (page !== 'home') document.getElementById(`${page}-title`)?.focus({ preventScroll: true })
     }
   }, [page])
   useScrollReveal(page)
@@ -31,11 +34,8 @@ function RenderedPage({ page }: { page: Page }) {
 }
 
 export default function App() {
-  const hash = useSyncExternalStore(subscribeToNavigation, getNavigationHash, () => '')
-  const isSkillsPage = hash === '#/skills' || hash === '#/skills/content'
-  const isGreenWayPage = hash === '#/projects/greenway' || hash === '#/projects/greenway/content'
-  const isNumbersPage = hash === '#/numbers' || hash === '#/numbers/content'
-  const page = isNumbersPage ? 'numbers' : isGreenWayPage ? 'greenway' : isSkillsPage ? 'skills' : 'home'
+  const route = useSyncExternalStore(subscribeToNavigation, getNavigationLocation, () => '/')
+  const page = navigationPage(route)
 
   useEffect(() => {
     if (import.meta.env.PROD) void getVisitorCount().catch(() => { /* The footer handles unavailable counts. */ })
@@ -46,12 +46,16 @@ export default function App() {
     document.addEventListener('pointerover', preload, { passive: true })
     document.addEventListener('focusin', preload)
     document.addEventListener('pointerdown', preload, { passive: true })
-    const preloadDestination = () => preloadHashPage(window.location.hash)
+    document.addEventListener('click', preload)
+    const preloadDestination = () => preloadRoutePage(window.location.pathname + window.location.search + window.location.hash)
+    window.addEventListener('popstate', preloadDestination)
     window.addEventListener('hashchange', preloadDestination)
     return () => {
       document.removeEventListener('pointerover', preload)
       document.removeEventListener('focusin', preload)
       document.removeEventListener('pointerdown', preload)
+      document.removeEventListener('click', preload)
+      window.removeEventListener('popstate', preloadDestination)
       window.removeEventListener('hashchange', preloadDestination)
     }
   }, [])

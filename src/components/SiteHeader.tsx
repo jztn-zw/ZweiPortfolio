@@ -11,7 +11,7 @@ export default function SiteHeader({ isHome = true, isNumbers = false }: { isHom
     <header className="site-header">
       <div className="site-header-inner page-width">
         <div className="site-header-brand">
-          <a href="#home" className="wordmark" aria-label={`${portfolio.name} — Home`}>
+          <a href="/" className="wordmark" aria-label={`${portfolio.name} — Home`}>
             <img src={theme === 'light' ? '/brand-mark-light.svg' : '/brand-mark.svg'} className="brand-mark" width="32" height="32" alt="" aria-hidden="true" />
             <span className="site-header-name">{portfolio.shortName.toUpperCase()}</span>
           </a>

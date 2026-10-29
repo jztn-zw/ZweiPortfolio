@@ -85,17 +85,17 @@ export default function GreenWay() {
   const project = projects.find(project => project.artwork === 'greenway')
 
   if (!project) {
-    return <><SiteHeader isHome={false} /><main className="greenway-case page-width"><h1 id="greenway-title" tabIndex={-1}>Project unavailable.</h1><a className="page-back-button" href="#home">Back to Home</a></main><Footer /></>
+    return <><SiteHeader isHome={false} /><main className="greenway-case page-width"><h1 id="greenway-title" tabIndex={-1}>Project unavailable.</h1><a className="page-back-button" href="/">Back to Home</a></main><Footer /></>
   }
 
   const additionalTools = project.technologies.filter(tech => !stackLayers.some(layer => layer.tools.some(tool => tool === tech)))
 
   return <div id="/projects/greenway" className="greenway-case-page">
-    <a className="skip-link" href="#/projects/greenway/content">Skip to content</a>
+    <a className="skip-link" href="#greenway-content">Skip to content</a>
     <SiteHeader isHome={false} />
-    <main id="/projects/greenway/content" className="greenway-case page-width" tabIndex={-1}>
+    <main id="greenway-content" className="greenway-case page-width" tabIndex={-1}>
       <div className="greenway-case-breadcrumb">
-        <a className="page-back-button" href="#home"><ArrowLeft size={16} aria-hidden="true" />Back to Home</a>
+        <a className="page-back-button" href="/"><ArrowLeft size={16} aria-hidden="true" />Back to Home</a>
         <span className="eyebrow greenway-project-label">SELECTED WORK <span aria-hidden="true">/</span> GREENWAY</span>
       </div>
 
@@ -162,9 +162,9 @@ export default function GreenWay() {
 
       <section className="greenway-case-next" aria-labelledby="greenway-next-title">
         <div><p className="eyebrow greenway-case-kicker">TAKE A CLOSER LOOK <GraphicMark variant="weave" /></p><h2 id="greenway-next-title">MEET GREENWAY<span>.</span></h2><p>Explore the web experience for yourself.</p></div>
-        <div>{project.liveUrl && <a className="greenway-case-live" href={project.liveUrl} target="_blank" rel="noopener noreferrer">Visit live site <ArrowUpRight size={18} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>}<a className="page-back-button" href="#home"><ArrowLeft size={16} aria-hidden="true" />Back to Home</a></div>
+        <div>{project.liveUrl && <a className="greenway-case-live" href={project.liveUrl} target="_blank" rel="noopener noreferrer">Visit live site <ArrowUpRight size={18} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>}<a className="page-back-button" href="/"><ArrowLeft size={16} aria-hidden="true" />Back to Home</a></div>
       </section>
     </main>
-    <Footer topHref="#/projects/greenway" />
+    <Footer topHref="/projects/greenway" />
   </div>
 }

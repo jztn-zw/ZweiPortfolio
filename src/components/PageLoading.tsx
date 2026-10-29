@@ -11,6 +11,6 @@ export class PageLoadBoundary extends Component<{ children: ReactNode }, { faile
   state = { failed: false }
   static getDerivedStateFromError() { return { failed: true } }
   render() {
-    return this.state.failed ? <><SiteHeader isHome={false} /><main className="page-loading page-width"><h1>Connection interrupted.</h1><p>The page couldn’t finish downloading.</p><button className="page-back-button" onClick={() => window.location.reload()}>Try again</button><a className="page-back-button" href="#home">Back to Home</a></main></> : this.props.children
+    return this.state.failed ? <><SiteHeader isHome={false} /><main className="page-loading page-width"><h1>Connection interrupted.</h1><p>The page couldn’t finish downloading.</p><button className="page-back-button" onClick={() => window.location.reload()}>Try again</button><a className="page-back-button" href="/">Back to Home</a></main></> : this.props.children
   }
 }

@@ -19,7 +19,7 @@
 :root[data-theme='light'] .side-nav-item { color: var(--theme-body); }
 :root[data-theme='light'] .side-nav-item.is-active { background: var(--theme-accent-soft); color: #822a33; border-color: var(--theme-accent-line); }
 :root[data-theme='light'] .side-nav-item.is-active::before { background: var(--theme-accent); }
-:root[data-theme='light'] :is(.side-nav-tooltip, .more-projects-tooltip, .footer-visitors-tooltip) { box-shadow: 0 6px 18px var(--theme-shadow); }
+:root[data-theme='light'] :is(.side-nav-tooltip, .more-projects-tooltip) { box-shadow: 0 6px 18px var(--theme-shadow); }
 :root[data-theme='light'] :is(.hero-button-outline, .capabilities-full-link, .capabilities-cta, .page-back-button, .contact-social-link) { background: #fffefa80; }
 :root[data-theme='light'] :is(a.hero-button-outline, .capabilities-cta, .page-back-button):is(:hover, :focus-visible) {
   background: var(--interaction-outline-surface);

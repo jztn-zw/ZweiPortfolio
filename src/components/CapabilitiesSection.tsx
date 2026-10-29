@@ -25,7 +25,7 @@ export default function CapabilitiesSection() {
           <div className="capabilities-intro">
             <p className="eyebrow">WHAT I CAN BUILD</p>
             <p>Turning ideas into functional digital experiences, from intuitive interfaces to complete applications.</p>
-            <a href="#/skills" className="capabilities-full-link">View Full Stack &amp; Skills <ArrowUpRight size={16} /></a>
+            <a href="/skills" className="capabilities-full-link">View Full Stack &amp; Skills <ArrowUpRight size={16} /></a>
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getVisitorCount } from '../lib/visitorCount'
 
 const visitorAvatars = [
@@ -10,7 +10,6 @@ const visitorAvatars = [
 export default function VisitorCounter() {
   const [count, setCount] = useState<number | null>(null)
   const [unavailable, setUnavailable] = useState(import.meta.env.DEV)
-  const tooltipId = useId()
   const visibleAvatars = visitorAvatars.slice(0, count ?? 0)
 
   useEffect(() => {
@@ -25,12 +24,12 @@ export default function VisitorCounter() {
     return () => { active = false }
   }, [])
 
-  const tooltip = unavailable ? 'Visitor count is currently unavailable.'
+  const status = unavailable ? 'Visitor count is currently unavailable.'
     : count === null ? 'Loading visitor count…'
-      : 'Decorative anime avatars. Estimated unique browsers; returning visits count once while the visitor cookie remains.'
+      : undefined
 
   return (
-    <div className="footer-visitors" tabIndex={0} aria-describedby={tooltipId}>
+    <div className="footer-visitors">
       {visibleAvatars.length > 0 ? (
         <span className="footer-visitor-avatars" aria-hidden="true">
           {visibleAvatars.map(avatar => (
@@ -47,9 +46,8 @@ export default function VisitorCounter() {
       </svg>}
       <span className="footer-visitors-summary">
         <span className="footer-visitors-label">{count === 1 ? 'Visitor' : 'Visitors'}</span>
-        <strong aria-live="polite" aria-atomic="true">{count === null ? '—' : count.toLocaleString('en-US')}</strong>
+        <strong aria-live="polite" aria-atomic="true" aria-label={status}>{count === null ? '—' : count.toLocaleString('en-US')}</strong>
       </span>
-      <span id={tooltipId} className="footer-visitors-tooltip" role="tooltip">{tooltip}</span>
     </div>
   )
 }

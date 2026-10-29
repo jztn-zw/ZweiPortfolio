@@ -1,4 +1,5 @@
 import { flushSync } from 'react-dom'
+import { isPagePath, navigationPage, normalizeRoute } from '../lib/routes'
 import './pageNavigation.css'
 
 type NavigationRun = {
@@ -14,23 +15,23 @@ type NavigationRun = {
   commit: (() => void) | undefined
 }
 
-let displayedHash = window.location.hash
+function browserRoute() {
+  const current = window.location.pathname + window.location.search + window.location.hash
+  const normalized = normalizeRoute(current)
+  if (normalized !== current) window.history.replaceState(window.history.state, '', normalized)
+  return normalized
+}
+
+let displayedRoute = browserRoute()
 let active: NavigationRun | undefined
 let preloadedArtwork: HTMLImageElement | undefined
 const artworkUrl = '/images/jaztin-transition-character-v3.webp'
 
-export function navigationPage(hash: string) {
-  if (hash === '#/skills' || hash === '#/skills/content') return 'skills'
-  if (hash === '#/projects/greenway' || hash === '#/projects/greenway/content') return 'greenway'
-  if (hash === '#/numbers' || hash === '#/numbers/content') return 'numbers'
-  return 'home'
-}
-
-export function getNavigationHash() { return displayedHash }
+export function getNavigationLocation() { return displayedRoute }
 
 function destinationTitle() {
   const titles = { home: 'BACK\nHOME', numbers: 'BY THE\nNUMBERS', skills: 'STACK &\nSKILLS', greenway: 'GREENWAY' }
-  return titles[navigationPage(window.location.hash)]
+  return titles[navigationPage(browserRoute())]
 }
 
 type LogicCardKind = 'cube' | 'puzzle' | 'poker'
@@ -260,7 +261,7 @@ async function animateNavigation(commit: () => void) {
   const coverDuration = compact ? 230 : 290
   const revealDuration = compact ? 380 : 460
   const stagger = compact ? 22 : 30
-  const backwards = navigationPage(window.location.hash) === 'home'
+  const backwards = navigationPage(browserRoute()) === 'home'
   const direction = backwards ? -1 : 1
   curtain.dataset.direction = backwards ? 'back' : 'forward'
 
@@ -344,12 +345,34 @@ export function subscribeToNavigation(onChange: () => void) {
     void preloadedArtwork.decode().catch(() => { /* The geometric curtain still works if the artwork cannot load. */ })
   }
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
-  const commit = () => {
-    displayedHash = window.location.hash
-    flushSync(onChange)
+  let requestedRoute = browserRoute()
+  const scrollWithinPage = () => {
+    const hash = window.location.hash.slice(1)
+    let id = hash
+    try { id = decodeURIComponent(hash) } catch { /* Treat malformed fragments literally. */ }
+    const target = id ? document.getElementById(id) : document.querySelector<HTMLElement>('main h1')
+    const behavior = motion.matches ? 'instant' : 'smooth'
+    if (id) target?.scrollIntoView({ behavior, block: 'start' })
+    else window.scrollTo({ top: 0, behavior })
+    if (!target) return
+    if (!target.hasAttribute('tabindex')) {
+      target.setAttribute('tabindex', '-1')
+      target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true })
+    }
+    target.focus({ preventScroll: true })
   }
-  const onHashChange = () => {
-    const changedPage = navigationPage(displayedHash) !== navigationPage(window.location.hash)
+  const commit = () => {
+    const next = browserRoute()
+    const samePage = navigationPage(displayedRoute) === navigationPage(next)
+    displayedRoute = next
+    flushSync(onChange)
+    if (samePage) scrollWithinPage()
+  }
+  const onLocationChange = () => {
+    const next = browserRoute()
+    if (next === requestedRoute) return
+    requestedRoute = next
+    const changedPage = navigationPage(displayedRoute) !== navigationPage(next)
     if ((!changedPage && !active) || motion.matches || document.documentElement.dataset.themeTransition || typeof Element.prototype.animate !== 'function') {
       cancelPageNavigation()
       commit()
@@ -357,11 +380,27 @@ export function subscribeToNavigation(onChange: () => void) {
     }
     void animateNavigation(commit)
   }
+  const onClick = (event: MouseEvent) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || !(event.target instanceof Element)) return
+    const link = event.target.closest<HTMLAnchorElement>('a[href]')
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return
+    const url = new URL(link.href, window.location.href)
+    if (url.origin !== window.location.origin || !isPagePath(url.pathname)) return
+    const next = normalizeRoute(url.pathname + url.search + url.hash)
+    event.preventDefault()
+    if (next === browserRoute()) { scrollWithinPage(); return }
+    window.history.pushState(null, '', next)
+    onLocationChange()
+  }
   const onMotionChange = () => { if (motion.matches) cancelPageNavigation() }
-  window.addEventListener('hashchange', onHashChange)
+  document.addEventListener('click', onClick)
+  window.addEventListener('popstate', onLocationChange)
+  window.addEventListener('hashchange', onLocationChange)
   motion.addEventListener('change', onMotionChange)
   return () => {
-    window.removeEventListener('hashchange', onHashChange)
+    document.removeEventListener('click', onClick)
+    window.removeEventListener('popstate', onLocationChange)
+    window.removeEventListener('hashchange', onLocationChange)
     motion.removeEventListener('change', onMotionChange)
     cancelPageNavigation()
   }
