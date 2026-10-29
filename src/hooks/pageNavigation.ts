@@ -108,50 +108,104 @@ function createLogicCard(kind: LogicCardKind) {
   const card = document.createElement('div')
   card.className = `page-logic-card page-logic-card--${kind}`
   card.dataset.kind = kind
-  const graphic = graphicNode('svg', { viewBox: '0 0 88 120', fill: 'none', class: 'page-logic-graphic', 'aria-hidden': 'true' })
-  graphic.append(graphicNode('rect', { x: '1.5', y: '1.5', width: '85', height: '117', rx: '2', fill: kind === 'poker' ? '#eeece1' : '#111', stroke: '#eeece1', 'stroke-width': '3' }))
-  graphic.append(graphicNode('path', { d: 'M8 23V8h15m42 0h15v15M8 97v15h15m42 0h15V97', stroke: kind === 'poker' ? '#a32732' : '#69675c', 'stroke-width': '.8' }))
+  const graphic = graphicNode('svg', { viewBox: kind === 'poker' ? '0 0 88 120' : '0 0 88 94', fill: 'none', class: 'page-logic-graphic', 'aria-hidden': 'true' })
   if (kind === 'cube') {
+    graphic.append(graphicNode('path', { d: 'm44 9 36 18v42L44 87 8 69V27Z', fill: '#0d0d0c', stroke: '#eeece1', 'stroke-width': '1.5' }))
     const faces = [
-      { origin: [44, 18], u: [10, 5], v: [-10, 5], colors: ['#eeece1', '#eeece1', '#c72f38'] },
-      { origin: [14, 33], u: [10, 5], v: [0, 12], colors: ['#4a4541', '#eeece1', '#272521'] },
-      { origin: [44, 48], u: [10, -5], v: [0, 12], colors: ['#d1363a', '#92232c', '#eeece1'] },
+      { origin: [44, 9], u: [12, 6], v: [-12, 6], colors: ['#eeece1', '#eeece1', '#c72f38'] },
+      { origin: [8, 27], u: [12, 6], v: [0, 14], colors: ['#4a4541', '#eeece1', '#272521'] },
+      { origin: [44, 45], u: [12, -6], v: [0, 14], colors: ['#d1363a', '#92232c', '#eeece1'] },
     ]
     faces.forEach(({ origin, u, v, colors }, face) => {
       for (let row = 0; row < 3; row++) for (let column = 0; column < 3; column++) {
         const points = [[.08, .08], [.92, .08], [.92, .92], [.08, .92]].map(([x, y]) => `${origin[0] + u[0] * (column + x) + v[0] * (row + y)},${origin[1] + u[1] * (column + x) + v[1] * (row + y)}`).join(' ')
         graphic.append(graphicNode('polygon', { points, fill: colors[(row + column * 2 + face) % 3], stroke: '#080808', 'stroke-width': '.8', 'data-face': String(face) }))
-        const edge = [[.14, .18], [.14, .84], [.84, .84]].map(([x, y]) => `${origin[0] + u[0] * (column + x) + v[0] * (row + y)},${origin[1] + u[1] * (column + x) + v[1] * (row + y)}`).join(' ')
-        graphic.append(graphicNode('polyline', { points: edge, stroke: '#eeece1', opacity: face === 1 ? '.18' : '.34', 'stroke-width': '.45' }))
+        const edge = [[.14, .84], [.14, .16], [.84, .16]].map(([x, y]) => `${origin[0] + u[0] * (column + x) + v[0] * (row + y)},${origin[1] + u[1] * (column + x) + v[1] * (row + y)}`).join(' ')
+        graphic.append(graphicNode('polyline', { points: edge, stroke: '#fffdf1', opacity: face === 1 ? '.2' : '.45', 'stroke-width': '.55' }))
       }
     })
-    graphic.append(graphicNode('path', { d: 'm44 18 30 15v36L44 84 14 69V33Zm0 30v36M14 33l30 15 30-15', stroke: '#eeece1', opacity: '.6', 'stroke-width': '.55' }))
-    graphic.append(graphicNode('path', { d: 'M12 101h64M14 12h13m34 0h13', stroke: '#d1363a', 'stroke-width': '2' }))
+    graphic.append(graphicNode('path', { d: 'm44 9 36 18v42L44 87 8 69V27Zm0 36v42M8 27l36 18 36-18', stroke: '#eeece1', opacity: '.7', 'stroke-width': '.65' }))
+    graphic.append(graphicNode('path', { d: 'm12 26 32-16 17 8M45 49v14m34-30v13', stroke: '#fffdf1', opacity: '.55', 'stroke-width': '.8' }))
+    graphic.append(graphicNode('path', { d: 'M8 19C13 10 23 7 32 7l-4-3m4 3-4 4M81 69c-2 10-13 19-25 20l4 3m-4-3 3-4', stroke: '#c72f38', 'stroke-width': '1', 'stroke-linecap': 'round', pathLength: '1', class: 'page-logic-turn-marks' }))
   } else if (kind === 'puzzle') {
     let movingTile: SVGGElement | undefined
     for (let index = 0; index < 9; index++) {
-      const x = 14 + index % 3 * 21, y = 26 + Math.floor(index / 3) * 23
+      const x = 4 + index % 3 * 26, y = 5 + Math.floor(index / 3) * 26
       const tile = graphicNode('g', { class: index === 7 ? 'page-puzzle-moving-tile' : 'page-puzzle-tile' })
-      tile.append(graphicNode('rect', { x: String(x), y: String(y), width: '18', height: '20', fill: index === 8 ? '#0b0b0b' : index === 4 ? '#d1363a' : '#24231f', stroke: index === 8 ? '#d1363a' : '#79766a', 'stroke-width': '.8' }))
       if (index < 8) {
-        tile.append(graphicNode('path', { d: `M${x + 2} ${y + 17}V${y + 2}h14`, stroke: '#eeece1', opacity: '.18', 'stroke-width': '.6' }))
-        tile.append(graphicNode('text', { x: String(x + 9), y: String(y + 14), fill: '#eeece1', 'font-size': '12', 'text-anchor': 'middle', 'font-family': 'Consolas,monospace' }, String(index + 1)))
+        tile.append(graphicNode('path', { d: `M${x} ${y + 19}h23v-16l3 3v20h-23l-3-3Z`, fill: 'var(--logic-tile-side,#10100f)' }))
+        tile.append(graphicNode('path', { d: `M${x + 2} ${y}h18l3 3v18l-2 2h-21v-21Z`, fill: index === 4 ? '#c72f38' : 'var(--logic-tile-face,#24231f)', stroke: 'var(--logic-tile-edge,#79766a)', 'stroke-width': '.8' }))
+        tile.append(graphicNode('path', { d: `M${x + 2} ${y + 19}v-17h16m3 4v14h-16`, stroke: '#eeece1', opacity: '.25', 'stroke-width': '.6' }))
+        tile.append(graphicNode('text', { x: String(x + 11.5), y: String(y + 16), fill: index === 4 ? '#eeece1' : 'var(--logic-tile-ink,#eeece1)', 'font-size': '13', 'font-weight': '600', 'text-anchor': 'middle', 'font-family': 'Consolas,monospace' }, String(index + 1)))
+      } else {
+        tile.append(graphicNode('path', { d: `M${x + 2} ${y + 8}v-6h6m13 13v6h-6`, stroke: '#c72f38', 'stroke-width': '1', opacity: '.65' }))
       }
       // Draw the moving tile last so it passes over the empty square cleanly.
       if (index === 7) movingTile = tile
       else graphic.append(tile)
     }
     if (movingTile) graphic.append(movingTile)
-    graphic.append(graphicNode('path', { d: 'M15 12h58M15 105h58', stroke: '#d1363a', 'stroke-width': '2' }))
   } else {
+    graphic.append(graphicNode('rect', { x: '1.5', y: '1.5', width: '85', height: '117', rx: '2', fill: '#eeece1', stroke: '#eeece1', 'stroke-width': '3' }))
+    graphic.append(graphicNode('path', { d: 'M8 23V8h15m42 0h15v15M8 97v15h15m42 0h15V97', stroke: '#a32732', 'stroke-width': '.8' }))
     const letter = { fill: '#111', 'font-size': '20', 'font-family': 'Georgia,serif', 'font-weight': '700' }
     graphic.append(graphicNode('text', { ...letter, x: '9', y: '22' }, 'A'), graphicNode('text', { ...letter, x: '9', y: '22', transform: 'rotate(180 44 60)' }, 'A'))
     graphic.append(graphicNode('path', { d: 'M44 32C39 41 25 47 25 59C25 72 39 74 44 64C49 74 63 72 63 59C63 47 49 41 44 32ZM41 63L36 82H52L47 63Z', fill: '#111' }))
     graphic.append(graphicNode('path', { d: 'm44 26 25 34-25 30-25-30Zm0 7 20 27-20 24-20-24Z', stroke: '#a32732', opacity: '.55', 'stroke-width': '.65' }))
     graphic.append(graphicNode('path', { d: 'M8 108h15M65 12h15', stroke: '#d1363a', 'stroke-width': '2.5' }))
+    const cornerSpade = 'M15 26c-1 2-4 3-4 6 0 3 3 4 4 2 1 2 4 1 4-2 0-3-3-4-4-6Zm-1 8-1 4h4l-1-4Z'
+    graphic.append(graphicNode('path', { d: cornerSpade, fill: '#111' }), graphicNode('path', { d: cornerSpade, fill: '#111', transform: 'rotate(180 44 60)' }))
+    graphic.append(graphicNode('path', { d: 'm44 19 3 3-3 3-3-3Zm0 76 3 3-3 3-3-3Z', fill: '#a32732' }))
+    graphic.append(graphicNode('path', { d: 'M25 94h9m20-68h9', stroke: '#a32732', 'stroke-width': '.55', opacity: '.6' }))
   }
   card.append(graphic)
   return card
+}
+
+function createLogicDetails() {
+  const details = document.createElement('div')
+  details.className = 'page-logic-details'
+  details.setAttribute('aria-hidden', 'true')
+  const pieces = graphicNode('svg', { viewBox: '0 0 132 104', fill: 'none', class: 'page-logic-detail page-logic-detail--jigsaw' })
+  // Two complementary silhouettes, with an exposed bevel instead of a frame.
+  const pieceShape = 'M5 15h15c-4-12 17-12 13 0h15v15c-12-4-12 17 0 13v15H33c4 12-17 12-13 0H5V43c12 4 12-17 0-13Z'
+  const pieceLeft = graphicNode('g', { class: 'page-jigsaw-piece page-jigsaw-piece--left', transform: 'translate(4 14) rotate(-14 27 37)' })
+  pieceLeft.append(
+    graphicNode('path', { d: pieceShape, transform: 'translate(3 4)', fill: '#671d29', stroke: '#391a20', 'stroke-width': '1.2' }),
+    graphicNode('path', { d: pieceShape, fill: '#c72f38', stroke: '#ef8b87', 'stroke-width': '1.2' }),
+    graphicNode('path', { d: 'M8 26v-8h11m18 0h8v10M8 47v8h11', stroke: '#f2a29a', 'stroke-width': '.8', opacity: '.7' }),
+    graphicNode('path', { d: 'm22 34 5-5 5 5-5 5Z', fill: '#eeece1' }),
+    graphicNode('path', { d: 'm22 34 5-5v10Z', fill: '#c8c3b6' }),
+  )
+  const pieceRight = graphicNode('g', { class: 'page-jigsaw-piece page-jigsaw-piece--right', transform: 'translate(68 17) rotate(12 27 37)' })
+  const matchingPieceShape = 'M5 15h15c-4-12 17-12 13 0h15v15c-12-4-12 17 0 13v15H33c4 12-17 12-13 0H5V43c-12 4-12-17 0-13Z'
+  pieceRight.append(
+    graphicNode('path', { d: matchingPieceShape, transform: 'translate(3 4)', fill: 'var(--logic-piece-side,#48443d)', stroke: 'var(--logic-piece-edge,#8c8779)', 'stroke-width': '1.2' }),
+    graphicNode('path', { d: matchingPieceShape, fill: 'var(--logic-piece-face,#eeece1)', stroke: 'var(--logic-piece-edge,#b4ad9b)', 'stroke-width': '1.2' }),
+    graphicNode('path', { d: 'M8 26v-8h11m18 0h8v10M8 47v8h11', stroke: 'var(--logic-piece-highlight,#fffdf1)', 'stroke-width': '.8' }),
+    graphicNode('path', { d: 'M18 37h7v-7h10m-10 7v8h10', stroke: '#a32732', 'stroke-width': '1.2' }),
+    graphicNode('circle', { cx: '18', cy: '37', r: '2', fill: '#a32732' }),
+    graphicNode('circle', { cx: '35', cy: '30', r: '2', fill: '#a32732' }),
+    graphicNode('circle', { cx: '35', cy: '45', r: '2', fill: '#a32732' }),
+  )
+  pieces.append(pieceLeft, pieceRight)
+
+  const knight = graphicNode('svg', { viewBox: '0 0 84 110', fill: 'none', class: 'page-logic-detail page-logic-detail--knight' })
+  knight.append(
+    graphicNode('path', { d: 'm23 96 5-12 5-20-15-6 3-16 14-14 4-15 10 11 12 10 6 19-4 17-6 14 5 12Z', transform: 'translate(3 3)', fill: '#080808', stroke: '#5d5049', 'stroke-width': '1.4' }),
+    graphicNode('path', { d: 'm23 96 5-12 5-20-15-6 3-16 14-14 4-15 10 11 12 10 6 19-4 17-6 14 5 12Z', fill: '#242320', stroke: '#d3cdbd', 'stroke-width': '1.4', 'stroke-linejoin': 'round' }),
+    graphicNode('path', { d: 'm39 13 10 11 12 10 6 19-4 17-6 14H45l10-22-1-20-10-9-14 9-9 0 14-14Z', fill: '#44413a' }),
+    graphicNode('path', { d: 'm39 13 4 20 11 9 1 20-10 22h12l6-14 4-17-6-19-12-10Z', fill: '#a32732' }),
+    graphicNode('path', { d: 'm40 20 6 9 12 10m-7 6 1 15-9 20M26 46l10-9', stroke: '#eeece1', 'stroke-width': '.8', opacity: '.7' }),
+    graphicNode('path', { d: 'm18 58 15 6 9-7-7-10-14 3Z', fill: '#111' }),
+    graphicNode('path', { d: 'm22 54 11 5 5-3m-9 29h28m-31 6h34', stroke: '#bdb5a2', 'stroke-width': '.8' }),
+    graphicNode('path', { d: 'm32 44 7-4-1 5-6 2Z', fill: '#e04a4d' }),
+    graphicNode('path', { d: 'm19 96 46 0 3 8H16Z', fill: '#242320', stroke: '#d3cdbd', 'stroke-width': '1.2' }),
+    graphicNode('path', { d: 'M22 100h39', stroke: '#c72f38', 'stroke-width': '1.4' }),
+    graphicNode('path', { d: 'M4 76v13h9m58-63h9v13', stroke: 'var(--logic-detail-ink,#b5ad9b)', 'stroke-width': '.7', opacity: '.5' }),
+  )
+  details.append(pieces, knight)
+  return details
 }
 
 // Original mixed display lettering, like individually collected print cuts.
@@ -249,7 +303,7 @@ async function animateNavigation(commit: () => void) {
     caption.append(byline, nameplate, title)
     artwork.append(portrait, caption)
     cards = (['cube', 'puzzle', 'poker'] as const).map(createLogicCard)
-    artwork.append(...cards)
+    artwork.append(...cards, createLogicDetails())
     curtain.append(artwork)
     document.body.append(curtain)
   }

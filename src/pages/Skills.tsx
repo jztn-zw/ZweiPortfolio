@@ -1,5 +1,6 @@
 import { ArrowDown, ArrowLeft, CodeXml, Database, Workflow } from 'lucide-react'
 import CapabilityArtwork from '../components/CapabilityArtwork'
+import SurfaceSignal from '../components/SurfaceSignal'
 import StackIllustration from '../components/StackIllustration'
 import SiteHeader from '../components/SiteHeader'
 import Footer from '../components/Footer'
@@ -50,7 +51,8 @@ export default function Skills() {
             {capabilities.map(capability => {
               const Icon = icons[capability.artwork]
               return (
-                <article className={`skill-discipline skill-discipline--${capability.artwork}`} key={capability.id} aria-labelledby={`skill-${capability.id}`}>
+                <article className={`skill-discipline skill-discipline--${capability.artwork}`} data-hover-surface="arsenal" key={capability.id} aria-labelledby={`skill-${capability.id}`}>
+                  <SurfaceSignal kind="arsenal" />
                   <div className="skill-discipline-summary">
                     <div className="skill-discipline-top">
                       <span className="eyebrow"><span className="red">{capability.id}</span> / ARSENAL</span>

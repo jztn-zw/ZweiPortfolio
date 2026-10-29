@@ -6,6 +6,7 @@ import { portfolio } from './data/portfolio'
 import { getVisitorCount } from './lib/visitorCount'
 import useScrollReveal from './hooks/useScrollReveal'
 import useAnimationVisibility from './hooks/useAnimationVisibility'
+import useSurfaceHover from './hooks/useSurfaceHover'
 import { getNavigationLocation, subscribeToNavigation } from './hooks/pageNavigation'
 import { navigationPage, type Page } from './lib/routes'
 
@@ -30,6 +31,7 @@ function RenderedPage({ page }: { page: Page }) {
   }, [page])
   useScrollReveal(page)
   useAnimationVisibility(page)
+  useSurfaceHover(page)
   return page === 'numbers' ? <Numbers /> : page === 'greenway' ? <GreenWay /> : page === 'skills' ? <Skills /> : <Home />
 }
 

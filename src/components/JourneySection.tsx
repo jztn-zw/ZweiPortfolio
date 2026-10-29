@@ -2,6 +2,7 @@ import { ArrowUpRight, CodeXml, GraduationCap, PenTool } from 'lucide-react'
 import { journey } from '../data/portfolio'
 import JourneyGraphic from './JourneyGraphic'
 import SectionHeading from './SectionHeading'
+import SurfaceSignal from './SurfaceSignal'
 import './JourneySection.css'
 
 const entryIcons = { capstone: CodeXml, education: GraduationCap, design: PenTool }
@@ -30,7 +31,8 @@ export default function JourneySection() {
             {journey.entries.map(entry => {
               const Icon = entryIcons[entry.id]
               return (
-                <li className={`journey-entry${entry.current ? ' journey-entry--current' : ''}`} key={entry.id}>
+                <li className={`journey-entry${entry.current ? ' journey-entry--current' : ''}`} data-hover-surface="timeline" key={entry.id}>
+                  <SurfaceSignal kind="timeline" />
                   <div className="journey-entry-date" aria-label={entry.date}>
                     <span className="journey-date-main" aria-hidden="true">{entry.dateMain}</span>
                     <span className="journey-date-detail eyebrow" aria-hidden="true">{entry.dateDetail.replace(/^—\s*/, '')}</span>

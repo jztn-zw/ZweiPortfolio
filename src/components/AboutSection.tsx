@@ -2,6 +2,8 @@ import { ArrowUpRight, CodeXml, Compass, GraduationCap, MapPin } from 'lucide-re
 import type { LucideIcon } from 'lucide-react'
 import { aboutMe } from '../data/portfolio'
 import { aboutPortraitOutline } from '../lib/aboutPortraitOutline'
+import useDetailsPointer from '../hooks/useDetailsPointer'
+import HudPointer from './HudPointer'
 import SectionHeading from './SectionHeading'
 import GraphicMark from './GraphicMark'
 import AboutProfilePoster from './AboutProfilePoster'
@@ -15,6 +17,7 @@ const detailIcons: Record<(typeof aboutMe.details)[number]['id'], LucideIcon> = 
 }
 
 export default function AboutSection() {
+  const detailsPointer = useDetailsPointer()
   return (
     <section id="about" className="about-me-section" aria-labelledby="about-me-title">
       <div className="about-me-mobile-portrait" aria-hidden="true">
@@ -45,18 +48,27 @@ export default function AboutSection() {
           </div>
         </div>
 
-        <div className="about-me-details">
+        <div className="about-me-details" ref={detailsPointer}>
+          <span className="about-details-digital" aria-hidden="true">
+            <span className="about-details-digital-field hud-node-field" />
+            <span className="about-details-digital-cursor">
+              <HudPointer />
+            </span>
+            <span className="about-details-digital-press"><span className="about-details-digital-pulse" /></span>
+          </span>
           <div className="about-me-details-heading">
             <h3>Quick Details</h3>
-            <span className="eyebrow" aria-hidden="true">A LITTLE MORE CONTEXT <span className="red">↘</span></span>
+            <span className="eyebrow" aria-hidden="true">A LITTLE MORE CONTEXT</span>
           </div>
           <dl className="about-me-details-grid">
             {aboutMe.details.map(detail => {
               const Icon = detailIcons[detail.id]
               return (
                 <div className={`about-me-detail about-me-detail--${detail.id}`} key={detail.id}>
-                  <dt><Icon size={16} strokeWidth={1.5} aria-hidden="true" /><span>{detail.label}</span></dt>
-                  <dd>{detail.value}</dd>
+                  <dt><span className="about-me-detail-icon" aria-hidden="true"><Icon size={18} strokeWidth={1.5} /></span><span>{detail.label}</span></dt>
+                  <dd>{detail.id === 'interests' ? (
+                    <ul className="about-me-interests">{detail.value.split(' • ').map(interest => <li key={interest}>{interest}</li>)}</ul>
+                  ) : detail.value}</dd>
                 </div>
               )
             })}

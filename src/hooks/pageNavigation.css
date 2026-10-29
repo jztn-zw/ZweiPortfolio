@@ -93,11 +93,21 @@
 .page-cut-in-title { display: block; width: fit-content; margin: 14px 0 0 auto; padding: 8px 15px; background: #111; color: #eeece1; border-right: 3px solid #d1363a; font: 600 clamp(10px,1.1vw,14px)/1.5 var(--font-mono,monospace); letter-spacing: 1.7px; white-space: normal; }
 .page-logic-card { position: absolute; isolation: isolate; z-index: 2; width: clamp(82px,8.5vw,132px); aspect-ratio: 88 / 120; opacity: 0; filter: drop-shadow(6px 9px 0 #0005); will-change: transform, opacity; }
 .page-logic-graphic { display: block; width: 100%; height: 100%; overflow: visible; }
-.page-logic-card--cube { left: 6%; top: 17%; }
-.page-logic-card--puzzle { right: 25%; top: 18%; width: clamp(74px,7.3vw,114px); }
+.page-logic-card--cube { left: 6%; top: 17%; aspect-ratio: 88 / 94; filter: drop-shadow(5px 9px 5px #0006); }
+.page-logic-card--puzzle { right: 25%; top: 18%; width: clamp(74px,7.3vw,114px); aspect-ratio: 88 / 94; filter: drop-shadow(4px 7px 4px #0006); }
 .page-logic-card--poker { right: 7%; top: 10%; }
-.page-logic-card--poker::before { content: ''; position: absolute; z-index: -1; inset: 0; border: 2px solid #eeece1; border-radius: 3px; background: repeating-linear-gradient(45deg,transparent 0 7px,#eeece133 7px 8px),repeating-linear-gradient(-45deg,#671d29 0 7px,#eeece133 7px 8px); transform: translate(-8px,6px) rotate(-8deg); }
+.page-logic-card--poker::before, .page-logic-card--poker::after { content: ''; position: absolute; z-index: -1; inset: 0; border: 2px solid #eeece1; border-radius: 3px; background: repeating-linear-gradient(45deg,transparent 0 7px,#eeece133 7px 8px),repeating-linear-gradient(-45deg,#671d29 0 7px,#eeece133 7px 8px); transform-origin: 50% 85%; animation: page-poker-fan 500ms cubic-bezier(.16,1,.3,1) 130ms both; }
+.page-logic-card--poker::before { --fan-x: -7px; --fan-y: 4px; --fan-turn: -8deg; }
+.page-logic-card--poker::after { --fan-x: -13px; --fan-y: 7px; --fan-turn: -16deg; z-index: -2; animation-delay: 180ms; }
 .page-puzzle-moving-tile { animation: page-puzzle-slide 900ms cubic-bezier(.45,0,.2,1) 150ms both; }
+.page-logic-turn-marks { stroke-dasharray: 1; animation: page-logic-trace 500ms cubic-bezier(.4,0,.2,1) 140ms both; }
+.page-logic-details { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.page-logic-detail { position: absolute; display: block; overflow: visible; opacity: 0; filter: drop-shadow(4px 7px 4px #0005); transform-origin: center; animation: page-logic-detail-arrive 480ms cubic-bezier(.16,1,.3,1) both; }
+.page-logic-detail--jigsaw { left: 5%; top: 52%; width: clamp(94px,11vw,156px); --detail-angle: -8deg; animation-delay: 150ms; }
+.page-logic-detail--knight { left: 19%; top: 9%; width: clamp(64px,6.4vw,96px); --detail-angle: 9deg; animation-delay: 200ms; }
+.page-jigsaw-piece { transform-box: fill-box; transform-origin: center; }
+.page-jigsaw-piece--left { animation: page-jigsaw-left 500ms cubic-bezier(.16,1,.3,1) 150ms both; }
+.page-jigsaw-piece--right { animation: page-jigsaw-right 500ms cubic-bezier(.16,1,.3,1) 150ms both; }
 
 /* A paper edition of the same cut-in. Only paint changes between themes;
    character art, geometry, timing and the route handoff stay shared. */
@@ -129,15 +139,27 @@
 :root[data-theme="light"] .page-cut-in-letter:nth-child(2)::before { background: #8a7f72; }
 :root[data-theme="light"] .page-cut-in-letter:nth-child(2)::after { background: #393630; }
 :root[data-theme="light"] .page-logic-card { filter: drop-shadow(5px 8px 0 #5b47332b); }
-:root[data-theme="light"] .page-logic-graphic > rect:first-child { fill: #fffefa; stroke: #514b43; }
+:root[data-theme="light"] :is(.page-logic-card--cube,.page-logic-card--puzzle) { filter: drop-shadow(4px 8px 5px #5b473345); }
+:root[data-theme="light"] .page-logic-card--poker .page-logic-graphic > rect:first-child { fill: #fffefa; stroke: #514b43; }
+:root[data-theme="light"] .page-logic-card--puzzle { --logic-tile-face: #eeece1; --logic-tile-side: #8b8173; --logic-tile-edge: #635b51; --logic-tile-ink: #29251f; }
+:root[data-theme="light"] .page-logic-details { --logic-piece-face: #fffefa; --logic-piece-side: #b8a997; --logic-piece-edge: #75695a; --logic-piece-highlight: #ffffff; --logic-detail-ink: #514b43; }
+:root[data-theme="light"] .page-logic-detail { filter: drop-shadow(4px 7px 4px #5b473330); }
 :root[data-theme="light"] .page-logic-graphic > path[stroke="#eeece1"] { stroke: #6e6459; }
 :root[data-theme="light"] .page-logic-graphic > path[stroke="#69675c"] { stroke: #a89c8d; }
-:root[data-theme="light"] .page-logic-card--poker::before {
+:root[data-theme="light"] .page-logic-card--poker::before, :root[data-theme="light"] .page-logic-card--poker::after {
   border-color: #8a706c;
   background: repeating-linear-gradient(45deg, transparent 0 7px, #a55f6655 7px 8px), repeating-linear-gradient(-45deg, #e2bfc0 0 7px, #a55f6655 7px 8px);
 }
 @keyframes page-logic-depth { from { transform: perspective(1200px) translateX(-20px) rotateY(-4deg) scale(1.08); } to { transform: perspective(1200px) translateX(0) rotateY(0) scale(1); } }
-@keyframes page-puzzle-slide { 0%,28% { transform: translateX(0); } 62%,100% { transform: translateX(21px); } }
+@keyframes page-puzzle-slide { 0%,28% { transform: translateX(0); } 62%,100% { transform: translateX(26px); } }
+@keyframes page-poker-fan { from { opacity: 0; transform: translate(0,0) rotate(0); } to { opacity: 1; transform: translate(var(--fan-x),var(--fan-y)) rotate(var(--fan-turn)); } }
+@keyframes page-logic-trace { from { opacity: 0; stroke-dashoffset: 1; } to { opacity: .8; stroke-dashoffset: 0; } }
+@keyframes page-logic-detail-arrive {
+  from { opacity: 0; transform: perspective(700px) translate(-10px,24px) rotate(calc(var(--detail-angle) - 12deg)) rotateY(-16deg) scale(.86); }
+  to { opacity: 1; transform: perspective(700px) translate(0,0) rotate(var(--detail-angle)) rotateY(0) scale(1); }
+}
+@keyframes page-jigsaw-left { from { translate: -9px 3px; rotate: -8deg; } to { translate: 2px 0; rotate: 0deg; } }
+@keyframes page-jigsaw-right { from { translate: 10px -3px; rotate: 8deg; } to { translate: -5px 0; rotate: 0deg; } }
 @keyframes page-name-arrive {
   from { opacity: 0; transform: perspective(500px) translate(16px,calc(var(--letter-y) - 16px)) rotate(calc(var(--letter-turn) + 9deg)) rotateY(calc(var(--letter-yaw) + 18deg)) skewX(var(--letter-skew)) scale(1.1); }
   to { opacity: 1; transform: perspective(500px) translate(0,var(--letter-y)) rotate(var(--letter-turn)) rotateY(var(--letter-yaw)) skewX(var(--letter-skew)) scale(1); }
@@ -154,5 +176,8 @@
   .page-logic-card--cube { left: 4%; top: 19%; }
   .page-logic-card--puzzle { right: 25%; top: 18%; width: 56px; }
   .page-logic-card--poker { right: 5%; top: 12%; }
+  .page-logic-detail--jigsaw { left: 3%; top: 43%; width: 72px; }
+  .page-logic-detail--knight { display: none; }
 }
-@media (prefers-reduced-motion: reduce) { .page-shutter { display: none; } .page-cut-in-letter, .page-cut-in::before, .page-puzzle-moving-tile, .character-shoulder-accent, .character-sleeve-marks, .character-emblem { animation: none; } }
+@media (max-height: 520px) and (min-width: 641px) { .page-logic-detail--knight { display: none; } .page-logic-detail--jigsaw { top: 54%; width: 86px; } }
+@media (prefers-reduced-motion: reduce) { .page-shutter { display: none; } .page-cut-in-letter, .page-cut-in::before, .page-puzzle-moving-tile, .page-logic-turn-marks, .page-logic-detail, .page-jigsaw-piece, .page-logic-card--poker::before, .page-logic-card--poker::after, .character-shoulder-accent, .character-sleeve-marks, .character-emblem { animation: none; } }

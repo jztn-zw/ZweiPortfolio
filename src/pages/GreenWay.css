@@ -70,14 +70,14 @@
 .greenway-product-stage::before { position: absolute; content: ''; top: 0; left: 24px; width: 44px; height: 2px; background: var(--greenway-crimson); }
 .greenway-product-stage::after { position: absolute; content: ''; top: 13px; right: -6px; width: 40px; height: 1px; background: var(--greenway-crimson); transform: rotate(45deg); }
 .greenway-case-window { position: relative; width: 96%; border: 1px solid #627868; border-radius: 4px; overflow: hidden; box-shadow: 0 18px 30px #0002; transform: perspective(1000px) rotateY(5deg) rotateZ(-3deg); transition: transform .8s cubic-bezier(.22,1,.36,1); }
-.greenway-case-product:hover .greenway-case-window { transform: perspective(1000px) rotateY(0) rotateZ(0); }
+@media (hover: hover) and (pointer: fine) { .greenway-case-product:hover .greenway-case-window { transform: perspective(1000px) rotateY(0) rotateZ(0); } }
 .greenway-case-window-bar { display: flex; align-items: center; gap: 5px; height: 26px; padding-inline: 10px; background: #1b3022; }
 .greenway-case-window-bar > span { width: 4px; height: 4px; background: #91ac96; }
 .greenway-case-window-bar > i { margin: auto; padding-right: 22px; color: #b5c9b8; font-family: var(--font-mono); font-size: 8px; font-style: normal; }
 .greenway-case-web-canvas { aspect-ratio: 1920 / 919; overflow: hidden; background: #e5eee6; }
 .greenway-case-web-canvas img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: bottom; }
 .greenway-case-phone { position: absolute; width: 30%; max-width: 177px; top: 135px; right: 6%; padding: 5px; border: 1px solid #849c88; border-radius: 23px; background: #122017; box-shadow: 5px 6px 0 #25372b, 9px 16px 20px #0003; transform: rotate(5deg); transition: transform .8s cubic-bezier(.22,1,.36,1); }
-.greenway-case-product:hover .greenway-case-phone { transform: translateY(-8px) rotate(2deg); }
+@media (hover: hover) and (pointer: fine) { .greenway-case-product:hover .greenway-case-phone { transform: translateY(-8px) rotate(2deg); } }
 .greenway-case-phone img { display: block; width: 100%; height: auto; border-radius: 17px; }
 .greenway-product-coordinate { position: absolute; bottom: 28px; left: 26px; color: var(--greenway-accent); font-size: 10px; letter-spacing: 1.3px; }
 .greenway-case-product figcaption { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 20px; color: var(--greenway-muted); font-size: 10px; }
@@ -92,7 +92,7 @@
 .greenway-stack-board-top .graphic-mark { width: 30px; height: 15px; }
 .greenway-stack-layer { display: grid; grid-template-columns: minmax(190px, .5fr) minmax(0, 1fr); align-items: center; gap: 30px; padding: 29px 26px; transition: background .25s; }
 .greenway-stack-layer + .greenway-stack-layer { border-top: 1px solid var(--greenway-line); }
-.greenway-stack-layer:hover { background: var(--interaction-surface); }
+@media (hover: hover) and (pointer: fine) { .greenway-stack-layer:hover { background: var(--interaction-surface); } }
 .greenway-stack-layer-label { display: flex; align-items: center; gap: 18px; }
 .greenway-stack-layer-label > .graphic-mark { width: 32px; height: 24px; color: var(--greenway-accent); }
 .greenway-stack-layer-label h3 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.3px; }

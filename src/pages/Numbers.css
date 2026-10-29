@@ -22,9 +22,11 @@
 .numbers-metrics::before { content: ''; position: absolute; top: -2px; left: 0; width: 58px; height: 3px; background: var(--numbers-accent); z-index: 1; }
 .numbers-metric { position: relative; isolation: isolate; min-width: 0; overflow: hidden; display: flex; flex-direction: column; padding: 24px 23px 20px; min-height: 300px; transition: background .35s, color .35s; }
 .numbers-metric + .numbers-metric { border-left: 1px solid var(--numbers-line); }
-.numbers-metric::after { content: ''; position: absolute; z-index: -1; width: 65px; height: 3px; background: var(--numbers-accent); right: -9px; top: 82px; rotate: -45deg; opacity: .5; transition: width .65s cubic-bezier(.22,1,.36,1); }
-.numbers-metric:hover { background: var(--interaction-surface); }
-.numbers-metric:hover::after { width: 120px; }
+.numbers-metric::after { content: ''; position: absolute; z-index: -1; width: 120px; height: 3px; background: var(--numbers-accent); right: -9px; top: 82px; rotate: -45deg; scale: .54 1; transform-origin: right center; opacity: .5; transition: scale .45s cubic-bezier(.22,1,.36,1); }
+@media (hover: hover) and (pointer: fine) {
+  .numbers-metric:hover { background: var(--interaction-surface); }
+  .numbers-metric:hover::after { scale: 1 1; }
+}
 .numbers-metric-top { display: flex; align-items: start; justify-content: space-between; gap: 12px; min-height: 29px; font-size: 9px; letter-spacing: .7px; color: var(--numbers-muted); }
 .numbers-metric-top svg { flex-shrink: 0; color: var(--numbers-accent); }
 .numbers-metric-value { position: relative; width: max-content; max-width: 100%; margin-block: 24px 25px; font-family: Impact, 'Arial Narrow', sans-serif; font-size: clamp(72px, 7.6vw, 112px); line-height: 1; letter-spacing: -2px; font-variant-numeric: tabular-nums; }
@@ -77,7 +79,7 @@
   .numbers-metric > .numbers-metric-description { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
   .numbers-metric > .numbers-metric-compact { display: block; font-size: 11px; margin: auto 0 0; padding-top: 6px; line-height: 1.4; }
   .numbers-metric .numbers-metric-status { font-size: 9px; letter-spacing: .1px; line-height: 1.4; padding-top: 6px; }
-  .numbers-metric::after { width: 44px; height: 2px; top: 24%; }
+  .numbers-metric::after { width: 82px; height: 2px; top: 24%; }
 }
 @media (max-width: 360px) {
   .numbers-metric { padding: 9px; }
@@ -86,5 +88,6 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .numbers-metric, .numbers-metric::after, .numbers-metric-art { transition: none; }
+  .numbers-metric:hover::after { scale: .54 1; }
 }
 .numbers-metric-status { color: var(--numbers-muted); font-size: 10px; margin-top: auto; padding-top: 10px; }

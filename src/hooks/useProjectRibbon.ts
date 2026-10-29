@@ -17,11 +17,10 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
   const idleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const centerFrame = useRef<number | null>(null)
   const centerTarget = useRef<number | null>(null)
+  const cardStep = useRef(0)
+  const hasScrollEnd = useRef(false)
   const afterCenter = useRef<() => void>(() => {})
-  const { dragging, stopMomentum, shiftDragOrigin, dragHandlers } = useProjectDrag(listRef)
-  const shiftOriginRef = useRef(shiftDragOrigin)
-
-  useEffect(() => { shiftOriginRef.current = shiftDragOrigin }, [shiftDragOrigin])
+  const { dragging, stopMomentum, isCoasting, dragHandlers } = useProjectDrag(listRef)
 
   const clearIdle = useCallback(() => {
     if (idleTimer.current !== null) clearTimeout(idleTimer.current)
@@ -35,6 +34,7 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
   }, [])
 
   const animateTo = useCallback((target: number) => {
+    clearIdle()
     cancelCentering()
     const list = listRef.current
     if (!list || !compact.current) return
@@ -45,13 +45,14 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
       afterCenter.current()
       return
     }
-    const duration = Math.abs(distance) < 8 ? 350 : 720
+    const duration = Math.abs(distance) < 8 ? 280 : 620
     let start: number | null = null
     centerTarget.current = target
     const tick = (time: number) => {
       if (start === null) start = time
       const progress = Math.min(1, (time - start) / duration)
-      const eased = progress * progress * (3 - 2 * progress)
+      // Decelerate into the center without a second acceleration.
+      const eased = 1 - Math.pow(1 - progress, 3)
       list.scrollTo({ left: from + distance * eased, behavior: 'instant' })
       if (progress < 1) centerFrame.current = requestAnimationFrame(tick)
       else {
@@ -61,24 +62,24 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
       }
     }
     centerFrame.current = requestAnimationFrame(tick)
-  }, [cancelCentering])
+  }, [cancelCentering, clearIdle])
 
   const geometry = useCallback(() => {
     if (!compact.current) return null
     const list = listRef.current
-    const first = list?.children[0] as HTMLElement | undefined
-    const second = list?.children[1] as HTMLElement | undefined
-    if (!list || !first || !second) return null
-    const step = second.getBoundingClientRect().left - first.getBoundingClientRect().left
+    const step = cardStep.current
+    if (!list) return null
     return step > 0 ? { list, step } : null
   }, [])
 
   const settle = useCallback(() => {
     const layout = geometry()
-    if (!layout || !ready.current || pointerDown.current || centerFrame.current !== null || layout.list.classList.contains('project-list--dragging')) return
+    if (!layout || !ready.current || pointerDown.current || isCoasting() || centerFrame.current !== null) return
     const { list, step } = layout
     const nearest = Math.round(list.scrollLeft / step)
     const logical = modulo(nearest, projectCount)
+    activeRef.current = logical
+    setActiveProject(logical)
     const target = nearest * step
     if (Math.abs(list.scrollLeft - target) > .75) {
       animateTo(target)
@@ -87,20 +88,29 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
     // Identical copies keep the picture unchanged when returning to the middle set.
     const canonical = (projectRibbonMiddle * projectCount + logical) * step
     if (Math.abs(list.scrollLeft - canonical) > .75) list.scrollTo({ left: canonical, behavior: 'instant' })
-  }, [animateTo, geometry, projectCount])
+  }, [animateTo, geometry, isCoasting, projectCount])
 
   useEffect(() => { afterCenter.current = settle }, [settle])
 
   const scheduleSettle = useCallback(() => {
     clearIdle()
-    idleTimer.current = setTimeout(settle, 150)
+    idleTimer.current = setTimeout(settle, 240)
   }, [clearIdle, settle])
 
   useEffect(() => {
     const list = listRef.current
     if (!list) return
     const media = window.matchMedia('(max-width: 800px)')
+    hasScrollEnd.current = 'onscrollend' in list
+    let previousWidth = -1
+    let previousCompact: boolean | undefined
     const synchronizeLayout = () => {
+      // Mobile browser chrome changes the rail's height through svh. Only a
+      // horizontal layout change should interrupt a gesture or recenter it.
+      const width = list.getBoundingClientRect().width
+      if (previousCompact === media.matches && Math.abs(width - previousWidth) < .5) return
+      previousWidth = width
+      previousCompact = media.matches
       compact.current = media.matches
       setIsCompact(media.matches)
       cancelCentering()
@@ -115,16 +125,26 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
         list.dataset.ready = 'true'
         return
       }
+      const first = list.children[0] as HTMLElement | undefined
+      const second = list.children[1] as HTMLElement | undefined
+      cardStep.current = first && second
+        ? second.getBoundingClientRect().left - first.getBoundingClientRect().left
+        : 0
       const layout = geometry()
       if (!layout) return
       list.scrollTo({ left: (projectRibbonMiddle * projectCount + activeRef.current) * layout.step, behavior: 'instant' })
       ready.current = true
       list.dataset.ready = 'true'
     }
+    synchronizeLayout()
     const observer = new ResizeObserver(synchronizeLayout)
     observer.observe(list)
     media.addEventListener('change', synchronizeLayout)
-    list.addEventListener('scrollend', settle)
+    const onScrollEnd = () => {
+      clearIdle()
+      settle()
+    }
+    list.addEventListener('scrollend', onScrollEnd)
     const releaseOutside = () => {
       if (!pointerDown.current) return
       pointerDown.current = false
@@ -135,7 +155,7 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
     return () => {
       observer.disconnect()
       media.removeEventListener('change', synchronizeLayout)
-      list.removeEventListener('scrollend', settle)
+      list.removeEventListener('scrollend', onScrollEnd)
       window.removeEventListener('pointerup', releaseOutside)
       window.removeEventListener('pointercancel', releaseOutside)
       clearIdle()
@@ -148,19 +168,16 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
     const layout = geometry()
     if (!layout) return
     const list = event.currentTarget
-    const period = projectCount * layout.step
-    let left = list.scrollLeft
-    // Keep generous buffers on either side, even through a long held drag.
-    if (left < period || left > period * (projectRibbonCopies - 1)) {
-      const rebased = projectRibbonMiddle * period + modulo(left, period)
-      shiftOriginRef.current(rebased - left)
-      list.scrollTo({ left: rebased, behavior: 'instant' })
-      left = rebased
+    // Never rewrite scrollLeft during native inertia. Rebase identical copies
+    // only after centering, when there is no motion for the jump to interrupt.
+    if (centerFrame.current !== null) return
+    const logical = modulo(Math.round(list.scrollLeft / layout.step), projectCount)
+    if (logical !== activeRef.current) {
+      activeRef.current = logical
+      setActiveProject(logical)
     }
-    const logical = modulo(Math.round(left / layout.step), projectCount)
-    activeRef.current = logical
-    setActiveProject(logical)
-    if (centerFrame.current === null) scheduleSettle()
+    clearIdle()
+    if (!hasScrollEnd.current) scheduleSettle()
   }
 
   const moveTo = (physicalIndex: number) => {
@@ -168,6 +185,9 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
     if (!layout) return
     clearIdle()
     stopMomentum()
+    const logical = modulo(physicalIndex, projectCount)
+    activeRef.current = logical
+    setActiveProject(logical)
     animateTo(physicalIndex * layout.step)
   }
 
@@ -216,5 +236,19 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
     scheduleSettle()
   }
 
-  return { listRef, activeProject, dragging, isCompact, handlers: { ...dragHandlers, onPointerDown, onPointerUp, onPointerCancel, onScroll, onKeyDown, onFocusCapture } }
+  const onWheel = () => {
+    if (!compact.current) return
+    clearIdle()
+    cancelCentering()
+    stopMomentum()
+    scheduleSettle()
+  }
+
+  // The last mouse coast frame can round to the same scroll offset, producing
+  // no scrollend event. Still finish centering once that coast has stopped.
+  useEffect(() => {
+    if (!dragging) scheduleSettle()
+  }, [dragging, scheduleSettle])
+
+  return { listRef, activeProject, dragging, isCompact, handlers: { ...dragHandlers, onPointerDown, onPointerUp, onPointerCancel, onScroll, onWheel, onKeyDown, onFocusCapture } }
 }

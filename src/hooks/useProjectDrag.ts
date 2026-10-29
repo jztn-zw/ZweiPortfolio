@@ -16,6 +16,8 @@ export default function useProjectDrag(listRef: RefObject<HTMLDivElement | null>
     setDragging(false)
   }, [])
 
+  const isCoasting = useCallback(() => momentum.current !== null, [])
+
   useEffect(() => () => {
     if (momentum.current !== null) cancelAnimationFrame(momentum.current)
   }, [])
@@ -85,7 +87,7 @@ export default function useProjectDrag(listRef: RefObject<HTMLDivElement | null>
   return {
     dragging,
     stopMomentum,
-    shiftDragOrigin: (amount: number) => { gesture.current.startLeft += amount },
+    isCoasting,
     dragHandlers: {
       onPointerDown,
       onPointerMove,

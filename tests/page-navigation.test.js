@@ -177,7 +177,7 @@ test('theme cancellation and a reduced-motion change commit pending navigation s
   }
 })
 
-test('logic cards include a three-faced cube, a sliding puzzle, and a poker ace', async () => {
+test('logic props include a standalone cube and puzzle, with only the poker ace framed as a card', async () => {
   const h = harness()
   h.navigate('/numbers')
   const artwork = h.nodes[0].children.find(node => node.className === 'page-cut-in')
@@ -185,6 +185,14 @@ test('logic cards include a three-faced cube, a sliding puzzle, and a poker ace'
   assert.deepEqual(Array.from(cards, card => card.dataset.kind), ['cube', 'puzzle', 'poker'])
   const stickers = cards[0].children[0].children.filter(node => node.attributes['data-face'] !== undefined)
   for (let face = 0; face < 3; face++) assert.equal(stickers.filter(node => node.attributes['data-face'] === String(face)).length, 9)
+  const hasCardFrame = card => card.children[0].children.some(node => node.attributes.width === '85' && node.attributes.height === '117')
+  assert.equal(hasCardFrame(cards[0]), false)
+  assert.equal(hasCardFrame(cards[1]), false)
+  assert.equal(hasCardFrame(cards[2]), true)
+  const puzzleTiles = cards[1].children[0].children
+  assert.equal(puzzleTiles.length, 9)
+  assert.equal(puzzleTiles.filter(tile => tile.children.some(node => node.textContent)).length, 8)
+  assert.equal(puzzleTiles.at(-1).attributes.class, 'page-puzzle-moving-tile', 'the sliding tile should paint above the empty position')
   await cover(h)
   await reveal(h)
   assert.equal(h.nodes.length, 0)

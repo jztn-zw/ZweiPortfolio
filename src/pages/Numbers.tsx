@@ -5,6 +5,7 @@ import Footer from '../components/Footer'
 import GraphicMark from '../components/GraphicMark'
 import GitHubCalendar from '../components/GitHubCalendar'
 import NumberMetricArtwork from '../components/NumberMetricArtwork'
+import SurfaceSignal from '../components/SurfaceSignal'
 import TechnicalNumber from '../components/TechnicalNumber'
 import { completedProjects, projectTechnologies, workflowTools } from '../data/numbers'
 import { getVisitorCount } from '../lib/visitorCount'
@@ -82,7 +83,8 @@ export default function Numbers() {
 
           <section className="numbers-metrics" aria-label="Portfolio statistics">
             {metrics.map(({ label, value, description, compactDescription, category, Icon }, index) => (
-              <article key={label} className="numbers-metric" aria-label={label}>
+              <article key={label} className="numbers-metric" data-hover-surface="metric" aria-label={label}>
+                <SurfaceSignal kind="metric" />
                 <NumberMetricArtwork index={index} />
                 <div className="numbers-metric-top eyebrow"><span>{String(index + 1).padStart(2, '0')} / {category}</span><Icon size={17} strokeWidth={1.4} aria-hidden="true" /></div>
                 <div className="numbers-metric-value"><Count value={value} /><span className="numbers-metric-tick" aria-hidden="true" /><span className="numbers-metric-ruler" aria-hidden="true" /></div>

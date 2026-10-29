@@ -69,7 +69,7 @@
   --foundation-accent-fill: #8b3b46;
   --foundation-accent-core: #f8eeeb;
 }
-:root[data-theme='light'] .about-me-details-heading { background: var(--theme-surface); }
+:root[data-theme='light'] .about-me-details-heading { background: transparent; }
 :root[data-theme='light'] :is(.about-me-detail dt, .journey-entry-meta .eyebrow) { color: var(--theme-muted); }
 :root[data-theme='light'] .profile-cover { --profile-paper: var(--theme-text); --profile-ink: var(--theme-panel); --profile-line: var(--theme-strong-line); --profile-muted: var(--theme-muted); --profile-accent: var(--theme-accent); }
 :root[data-theme='light'] .profile-cover .profile-cover-caption { color: #f4f3ef; }
@@ -117,7 +117,7 @@
 :root[data-theme='light'] .skill-discipline { background: var(--theme-panel); border-color: var(--theme-strong-line); }
 :root[data-theme='light'] .skill-discipline-icon { background: var(--theme-surface); color: var(--theme-body); }
 :root[data-theme='light'] .numbers-metric { background: var(--theme-panel); }
-:root[data-theme='light'] .numbers-metric:hover { background: #f1ece6; }
+@media (hover: hover) and (pointer: fine) { :root[data-theme='light'] .numbers-metric:hover { background: #f1ece6; } }
 :root[data-theme='light'] .greenway-product-stage { background: linear-gradient(135deg, #fffefa, #e8eee4); }
 :root[data-theme='light'] .greenway-stack-board { background: var(--theme-panel); }
 :root[data-theme='light'] .greenway-stack-board-top { background: var(--theme-surface); }

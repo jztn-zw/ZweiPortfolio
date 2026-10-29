@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowUpRight, CalendarDays, MapPinned, MessageSquareText, Pa
 import SiteHeader from '../components/SiteHeader'
 import Footer from '../components/Footer'
 import GraphicMark from '../components/GraphicMark'
+import SurfaceSignal from '../components/SurfaceSignal'
 import { projects } from '../data/portfolio'
 import './GreenWay.css'
 
@@ -130,11 +131,12 @@ export default function GreenWay() {
           <p className="eyebrow greenway-case-kicker"><span className="greenway-section-index">02 /</span> THE EXPERIENCE</p>
           <h2 id="greenway-features-title">BUILT AROUND<br />THE EVERYDAY<span>.</span></h2>
           <ol className="greenway-case-feature-list">
-            {features.map(({ title, icon: Icon, description }, index) => <li key={title}><Icon size={21} strokeWidth={1.4} aria-hidden="true" /><div><h3>{title}</h3><p>{description}</p></div><span className="greenway-case-feature-index eyebrow" aria-hidden="true">0{index + 1}</span></li>)}
+            {features.map(({ title, icon: Icon, description }, index) => <li key={title} data-hover-surface="feature"><SurfaceSignal kind="feature" /><Icon size={21} strokeWidth={1.4} aria-hidden="true" /><div><h3>{title}</h3><p>{description}</p></div><span className="greenway-case-feature-index eyebrow" aria-hidden="true">0{index + 1}</span></li>)}
           </ol>
         </div>
         <figure className="greenway-case-product">
-          <div className="greenway-product-stage">
+          <div className="greenway-product-stage" data-hover-surface="product">
+            <SurfaceSignal kind="product" />
             <div className="greenway-product-grid" aria-hidden="true" />
             <div className="greenway-case-window">
               <div className="greenway-case-window-bar" aria-hidden="true"><span /><span /><span /><i>greenway-candelaria.vercel.app</i></div>
@@ -154,9 +156,9 @@ export default function GreenWay() {
           {stackLayers.map(layer => {
             const tools = project.technologies.filter(tech => layer.tools.some(tool => tool === tech))
             if (!tools.length) return null
-            return <section className="greenway-stack-layer" key={layer.id} aria-labelledby={`greenway-stack-${layer.id}`}><div className="greenway-stack-layer-label"><GraphicMark variant={layer.mark} /><h3 id={`greenway-stack-${layer.id}`}>{layer.title}</h3></div><ul aria-label={`${layer.title} technologies`}>{tools.map(tech => <li key={tech}>{tech}</li>)}</ul></section>
+            return <section className="greenway-stack-layer" data-hover-surface="system" key={layer.id} aria-labelledby={`greenway-stack-${layer.id}`}><SurfaceSignal kind="system" /><div className="greenway-stack-layer-label"><GraphicMark variant={layer.mark} /><h3 id={`greenway-stack-${layer.id}`}>{layer.title}</h3></div><ul aria-label={`${layer.title} technologies`}>{tools.map(tech => <li key={tech}>{tech}</li>)}</ul></section>
           })}
-          {additionalTools.length > 0 && <section className="greenway-stack-layer" aria-labelledby="greenway-stack-additional"><div className="greenway-stack-layer-label"><GraphicMark variant="chevrons" /><h3 id="greenway-stack-additional">Additional tools</h3></div><ul aria-label="Additional technologies">{additionalTools.map(tech => <li key={tech}>{tech}</li>)}</ul></section>}
+          {additionalTools.length > 0 && <section className="greenway-stack-layer" data-hover-surface="system" aria-labelledby="greenway-stack-additional"><SurfaceSignal kind="system" /><div className="greenway-stack-layer-label"><GraphicMark variant="chevrons" /><h3 id="greenway-stack-additional">Additional tools</h3></div><ul aria-label="Additional technologies">{additionalTools.map(tech => <li key={tech}>{tech}</li>)}</ul></section>}
         </div>
       </section>
 
