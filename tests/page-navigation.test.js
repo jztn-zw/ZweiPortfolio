@@ -199,3 +199,88 @@ test('navigation during a theme reveal bypasses the curtain', () => {
   assert.equal(h.nodes.length, 0)
   h.unsubscribe()
 })
+
+test('clean direct links and old hash bookmarks initialize without another history entry', () => {
+  for (const [initial, expected] of [
+    ['/numbers', '/numbers'], ['/skills/', '/skills'],
+    ['/?ref=bookmark#/numbers', '/numbers?ref=bookmark'],
+    ['/#/projects/greenway/content', '/projects/greenway#greenway-content'],
+  ]) {
+    const h = harness({ initial })
+    assert.equal(h.api.getNavigationLocation(), expected)
+    assert.equal(h.window.location.pathname + h.window.location.search + h.window.location.hash, expected)
+    assert.equal(h.entries.length, 1)
+    assert.equal(h.nodes.length, 0)
+    h.unsubscribe()
+  }
+})
+
+test('Back and Forward preserve clean URLs and wait for the page transition', async () => {
+  const h = harness()
+  h.navigate('/numbers')
+  await cover(h); await reveal(h)
+  h.navigate('/skills')
+  await cover(h); await reveal(h)
+  h.window.history.back()
+  assert.equal(h.window.location.pathname, '/numbers')
+  assert.equal(h.api.getNavigationLocation(), '/skills')
+  h.listeners.get('hashchange')()
+  await cover(h); await reveal(h)
+  assert.equal(h.api.getNavigationLocation(), '/numbers')
+  h.window.history.forward()
+  await cover(h); await reveal(h)
+  assert.equal(h.api.getNavigationLocation(), '/skills')
+  h.unsubscribe()
+  assert.equal(h.listeners.has('click'), false)
+  assert.equal(h.listeners.has('popstate'), false)
+})
+
+test('section links scroll and focus without a page curtain or duplicate history entries', () => {
+  const h = harness()
+  const event = h.navigate('/#projects')
+  assert.equal(event.defaultPrevented, true)
+  assert.equal(h.api.getNavigationLocation(), '/#projects')
+  assert.equal(h.document.activeElement, h.anchors.get('projects'))
+  assert.equal(h.scrolls.at(-1).behavior, 'smooth')
+  assert.equal(h.nodes.length, 0)
+  h.navigate('/#projects')
+  assert.equal(h.entries.length, 2)
+  h.navigate('/')
+  assert.equal(h.scrolls.at(-1).top, 0)
+  h.unsubscribe()
+})
+
+test('modified clicks, external links, downloads, assets, and APIs retain native browser behavior', () => {
+  const h = harness()
+  for (const [href, options] of [
+    ['/numbers', { ctrlKey: true }], ['/skills', { metaKey: true }],
+    ['/numbers', { shiftKey: true }], ['/numbers', { altKey: true }],
+    ['/numbers', { button: 1 }], ['/numbers', { target: '_blank' }],
+    ['/numbers', { download: true }], ['https://example.com/numbers', {}],
+    ['/api/visitors', {}], ['/images/jaztin-portrait.webp', {}], ['/numbers-extra', {}],
+  ]) assert.equal(h.navigate(href, options).defaultPrevented, false)
+  assert.equal(h.entries.length, 1)
+  assert.equal(h.api.getNavigationLocation(), '/')
+  assert.equal(h.nodes.length, 0)
+  h.unsubscribe()
+})
+
+test('legacy hash navigation converts to a clean path and still uses the curtain', async () => {
+  const h = harness()
+  h.hash('#/skills')
+  assert.equal(h.window.location.pathname, '/skills')
+  assert.equal(h.window.location.hash, '')
+  assert.equal(h.api.getNavigationLocation(), '/')
+  await cover(h); await reveal(h)
+  assert.equal(h.api.getNavigationLocation(), '/skills')
+  h.unsubscribe()
+})
+
+test('Vercel rewrites cover app pages without capturing assets or API functions', () => {
+  const config = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
+  for (const path of ['/numbers', '/skills', '/projects/greenway']) {
+    assert.equal(config.rewrites.find(rule => rule.source === path)?.destination, '/index.html')
+  }
+  assert.ok(config.rewrites.every(rule => routes.isPagePath(rule.source)))
+  assert.equal(config.trailingSlash, false)
+})
