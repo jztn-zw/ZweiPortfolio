@@ -1,0 +1,49 @@
+.detail-stripes { display: inline-block; width: 62px; height: 11px; flex-shrink: 0; background: repeating-linear-gradient(-55deg, currentColor 0 4px, transparent 4px 8px); }
+.detail-dot-matrix { display: block; width: 46px; height: 28px; flex-shrink: 0; background: radial-gradient(circle, currentColor 1.7px, transparent 2px) 0 0 / 9px 9px; }
+.discipline-divider { display: block; width: 22px; height: 22px; flex-shrink: 0; background: url('/four-diamonds.svg') center / contain no-repeat; }
+.hero-signature .detail-stripes { width: 36px; height: 9px; color: #d1363a; }
+.portrait-art { isolation: isolate; }
+.portrait-art::before { content: ''; position: absolute; z-index: -1; width: 90px; height: 100px; right: 3%; top: 17%; background: radial-gradient(circle, #8c8c7e 1px, transparent 1.5px) 0 0 / 10px 10px; opacity: .4; }
+.hero-portrait { position: relative; }
+.portrait-cross-top { display: flex; flex-direction: column; gap: 12px; }
+.portrait-cross-top .detail-stripes { color: #d1363a; width: 38px; height: 8px; }
+.portrait-serial { position: absolute; top: 34%; right: 0; writing-mode: vertical-rl; font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; color: #8c8c80; }
+.portrait-data { position: absolute; bottom: 66px; left: 5px; display: flex; align-items: flex-end; gap: 10px; color: #bbbbae; }
+.portrait-data .barcode { width: 48px; height: 28px; opacity: .7; }
+.portrait-data .eyebrow { font-size: 6px; line-height: 1.8; letter-spacing: 1px; }
+.portrait-caption { padding-top: 13px; border-top: 1px solid #373730; }
+.portrait-caption .detail-dot-matrix { width: 36px; height: 18px; color: #d1363a; }
+.technical-graphic { position: relative; min-height: inherit; height: 100%; padding: 23px; display: flex; flex-direction: column; justify-content: space-between; isolation: isolate; color: #a6a698; }
+.technical-graphic-top { display: flex; justify-content: space-between; align-items: center; gap: 15px; font-size: 11px; }
+.technical-graphic-top .detail-stripes { width: 52px; color: #d1363a; }
+.human-orbit { position: absolute; z-index: -1; inset: 30px 0 36px; width: 100%; height: calc(100% - 66px); color: #77776b; opacity: .6; }
+.human-orbit-track { stroke: #d1363a; stroke-width: 2; }
+.human-orbit-nodes { color: #d1363a; }
+.human-diagram-type { padding-block: 70px; text-align: center; font-family: "Arial Black", Arial, sans-serif; font-size: clamp(25px, 3.1vw, 43px); font-weight: 900; line-height: .98; letter-spacing: -1.8px; color: #edece3; }
+.human-diagram-type > span { display: block; }
+.technical-graphic-bottom { display: flex; align-items: center; gap: 17px; }
+.technical-graphic-bottom .eyebrow { font-size: 11px; }
+.diagram-number { margin-left: auto; font-family: Impact, "Arial Narrow", sans-serif; font-size: 48px; line-height: .8; color: #d1363a; }
+.projects-toolbar { position: relative; }
+.projects-toolbar::after { content: ''; position: absolute; left: 0; bottom: -1px; width: 58px; height: 3px; background: #d1363a; }
+.contact-section > .eyebrow { display: flex; align-items: center; }
+.contact-section > .eyebrow::after { content: ''; margin-left: auto; width: 88px; height: 12px; background: repeating-linear-gradient(-55deg, #d1363a 0 5px, transparent 5px 10px); }
+@media (max-width: 800px) {
+  .discipline-divider { width: 18px; height: 18px; }
+  .technical-graphic { padding: 19px; }
+  .technical-graphic-top { font-size: 11px; }
+  .technical-graphic-top .detail-stripes { width: 30px; height: 8px; }
+  .human-diagram-type { font-size: 30px; padding-block: 60px; }
+  .technical-graphic-bottom { gap: 10px; }
+  .technical-graphic-bottom .eyebrow { font-size: 11px; }
+}
+@media (max-width: 560px) {
+  .discipline-divider { width: 14px; height: 14px; }
+  .portrait-serial { right: 0; font-size: 11px; }
+  .portrait-data { bottom: 57px; }
+  .portrait-data .barcode { width: 35px; height: 24px; }
+  .human-diagram-type { font-size: 38px; padding-block: 68px; }
+  .technical-graphic-top { font-size: 11px; }
+  .technical-graphic-bottom .eyebrow { font-size: 11px; }
+  .contact-section > .eyebrow::after { width: 58px; height: 9px; }
+}

@@ -1,0 +1,19 @@
+.graphic-mark { display: inline-block; width: 36px; height: 18px; flex-shrink: 0; vertical-align: middle; color: #aaa99b; pointer-events: none; }
+.graphic-mark--globe, .graphic-mark--registration, .graphic-mark--contour { width: 20px; height: 20px; }
+.graphic-mark-accent { color: var(--graphic-mark-accent, #d1363a); }
+:root[data-theme="light"] .graphic-mark { color: #68695c; --graphic-mark-accent: #ad3037; }
+
+.hero-signature .graphic-mark { width: 32px; height: 16px; transform: scaleX(-1); }
+.portrait-cross-top .graphic-mark { width: 34px; height: 34px; }
+.portrait-caption .graphic-mark { width: 36px; height: 18px; }
+.about-me-who .graphic-mark { width: 20px; height: 20px; }
+.about-profile-top .graphic-mark { width: 36px; height: 18px; }
+.about-me-copy-signoff .graphic-mark { width: 26px; height: 26px; }
+.about-me-footer > .graphic-mark { width: 40px; height: 20px; }
+.capabilities-footer-copy .graphic-mark { width: 20px; height: 20px; }
+.journey-graphic-bottom .graphic-mark { width: 36px; height: 18px; }
+.technical-graphic-top .graphic-mark { width: 36px; height: 18px; }
+.skills-eyebrow .graphic-mark { width: 20px; height: 20px; }
+.skill-discipline-count .graphic-mark { width: 36px; height: 18px; }
+.numbers-eyebrow .graphic-mark { width: 36px; height: 18px; }
+.github-calendar-header .graphic-mark { width: 36px; height: 18px; }

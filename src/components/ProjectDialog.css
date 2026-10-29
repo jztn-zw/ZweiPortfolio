@@ -1,0 +1,4 @@
+.project-live-link { display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-height: 44px; padding: 12px 17px; margin-top: 24px; border: 1px solid #88b896; background: #183a29; color: #e1eee2; font-size: 12px; transition: background .2s, border-color .2s; }
+.project-live-link:hover { background: #245137; border-color: #b2dfb9; }
+.project-live-link:focus-visible { outline-color: #88b896; }
+@media (prefers-reduced-motion: reduce) { .project-live-link { transition: none; } }

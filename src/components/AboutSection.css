@@ -1,0 +1,134 @@
+.about-me-section { position: relative; isolation: isolate; background: var(--theme-canvas, #111111); border-bottom: 1px solid var(--line); }
+.about-me-mobile-portrait { display: none; }
+.about-me-backdrop-mask { position: absolute; pointer-events: none; }
+.about-me-inner { padding-block: 82px 35px; }
+.about-me-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-bottom: 43px; }
+.about-me-heading h2 { font-size: clamp(44px, 5.35vw, 78px); }
+.about-me-who { display: inline-flex; align-items: center; gap: 20px; font-size: 11px; color: #aaa99d; margin-bottom: 4px; flex-shrink: 0; }
+.about-me-who .detail-stripes { width: 36px; height: 7px; color: #d1363a; }
+.about-me-story { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.25fr); align-items: center; gap: 65px; }
+.about-me-copy { min-width: 0; }
+.about-me-quote { margin: 0 0 27px; padding: 3px 0 3px 23px; border-left: 3px solid #d1363a; }
+.about-me-quote p { margin: 0; font-size: clamp(18px, 1.8vw, 26px); line-height: 1.6; font-weight: 600; font-style: italic; color: #ece8dc; letter-spacing: -.5px; text-wrap: pretty; }
+.about-me-biography p { margin: 0 0 16px; font-size: 14px; line-height: 1.95; color: #b4b1a5; max-width: 630px; text-wrap: pretty; }
+.about-me-biography p:last-child { margin-bottom: 0; }
+.about-me-biography strong { color: #e1ddcf; font-weight: 600; }
+.about-me-copy-signoff { display: flex; align-items: center; gap: 15px; margin-top: 26px; color: #999687; }
+.about-me-copy-signoff .detail-dot-matrix { width: 23px; height: 20px; background-size: 7px 7px; color: #d1363a; }
+.about-me-copy-signoff .eyebrow { font-size: 11px; letter-spacing: .8px; }
+.about-me-details { margin-top: 45px; border: 1px solid var(--theme-line, #4b4b41); }
+.about-me-details-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 18px 24px; border-bottom: 1px solid #57574a; background: var(--theme-surface, #171716); position: relative; }
+.about-me-details-heading::after { content: ''; position: absolute; left: 24px; bottom: -1px; width: 44px; height: 3px; background: #d1363a; }
+.about-me-details-heading h3 { margin: 0; font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.4px; }
+.about-me-details-heading > .eyebrow { font-size: 11px; color: #929081; }
+.about-me-details-heading > .eyebrow .red { margin-left: 15px; }
+.about-me-details-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; }
+.about-me-detail { min-width: 0; padding: 23px 24px; border-bottom: 1px solid var(--theme-line, #35352e); }
+.about-me-detail:nth-child(odd) { border-right: 1px solid var(--theme-line, #35352e); }
+.about-me-detail:last-child, .about-me-detail:nth-last-child(2):nth-child(odd) { border-bottom: 0; }
+.about-me-detail:last-child:nth-child(odd) { grid-column: 1 / -1; border-right: 0; }
+.about-me-detail dt { display: flex; align-items: center; gap: 11px; margin-bottom: 13px; color: #9c998b; font-family: var(--font-mono); font-size: 11px; letter-spacing: .8px; text-transform: uppercase; }
+.about-me-detail dt svg { color: #d1363a; flex-shrink: 0; }
+.about-me-detail dd { margin: 0; color: #dedace; font-size: 12px; font-weight: 600; line-height: 1.8; text-wrap: pretty; }
+.about-me-detail--availability dd { display: flex; align-items: center; gap: 10px; }
+.about-availability-dot { height: 5px; width: 5px; flex-shrink: 0; border-radius: 50%; background: #d1363a; }
+.about-me-footer { display: flex; justify-content: space-between; align-items: center; gap: 25px; padding-top: 24px; }
+.about-me-footer > .detail-stripes { color: #6c6b5b; height: 7px; width: 33px; }
+.about-me-footer a { display: inline-flex; align-items: center; gap: 24px; min-height: 39px; color: #dedace; font-size: 11px; transition: color .2s; }
+.about-me-footer a svg { color: #d1363a; transition: transform .2s; }
+.about-me-footer a:hover { color: #fff; }
+.about-me-footer a:hover svg { transform: translate(2px, -2px); }
+
+@media (max-width: 1100px) {
+  .about-me-story { grid-template-columns: minmax(0, .85fr) minmax(0, 1.3fr); gap: 42px; }
+  .about-me-quote { padding-left: 18px; margin-bottom: 23px; }
+  .about-me-quote p { font-size: 19px; }
+  .about-me-biography p { font-size: 12px; }
+}
+@media (max-width: 800px) {
+  .about-me-section { --about-portrait-opacity: .36; }
+  .about-me-mobile-portrait {
+    display: block;
+    position: absolute;
+    z-index: 0;
+    inset: 0 0 auto;
+    height: min(100%, 780px);
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+    mask-image: linear-gradient(180deg, transparent, #000 9%, #000 55%, transparent 98%);
+  }
+  .about-me-mobile-portrait img {
+    display: block;
+    position: absolute;
+    top: -35px;
+    right: -12%;
+    width: min(120%, 760px);
+    max-width: none;
+    height: calc(100% + 35px);
+    object-fit: cover;
+    object-position: 56% 26%;
+    filter: grayscale(1) brightness(1.6) contrast(1.05);
+    opacity: var(--about-portrait-opacity);
+    mask-image: linear-gradient(90deg, transparent 3%, #000 38%);
+  }
+  .about-me-mobile-portrait::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--theme-canvas, #111111) 92%, transparent), color-mix(in srgb, var(--theme-canvas, #111111) 48%, transparent) 85%);
+  }
+  :root[data-theme='light'] .about-me-section { --about-portrait-opacity: .62; }
+  :root[data-theme='light'] .about-me-mobile-portrait img {
+    height: auto;
+    clip-path: url(#about-mobile-portrait-subject);
+    filter: grayscale(1) brightness(1.02) contrast(1.12);
+    mix-blend-mode: normal;
+    mask-image: linear-gradient(180deg, transparent 4%, #000 18%, #000 34%, #00000073 44%, #0000003d 62%, transparent 96%);
+  }
+  :root[data-theme='light'] .about-me-mobile-portrait::after { background: linear-gradient(90deg, color-mix(in srgb, var(--theme-canvas) 70%, transparent), color-mix(in srgb, var(--theme-canvas) 14%, transparent) 85%); }
+  .about-me-inner { position: relative; z-index: 1; padding-block: 62px 29px; }
+  .about-me-heading { margin-bottom: 32px; }
+  .about-me-heading h2 { font-size: clamp(36px, 6.4vw, 52px); }
+  .about-me-who { gap: 12px; font-size: 11px; }
+  .about-me-who .detail-stripes { width: 25px; height: 6px; }
+  .about-me-story { display: block; }
+  .about-me-story > .about-profile-poster { display: none; }
+  .about-me-copy { max-width: 640px; }
+  .about-me-quote p { font-size: 21px; }
+  .about-me-biography p { font-size: 14px; line-height: 1.9; }
+  .about-me-copy-signoff { margin-top: 20px; }
+  .about-me-copy-signoff .eyebrow { font-size: 11px; }
+  .about-me-details { margin-top: 35px; }
+  .about-me-detail dd { font-size: 11px; }
+}
+@media (max-width: 560px) {
+  .about-me-mobile-portrait img { right: -19%; width: 130%; object-position: 56% 20%; }
+  .about-me-inner { padding-block: 46px 25px; }
+  .about-me-heading { align-items: flex-start; gap: 16px; margin-bottom: 29px; }
+  .about-me-heading h2 { font-size: clamp(36px, 9.8vw, 55px); }
+  .about-me-who { display: none; }
+  .about-me-quote { padding-left: 17px; margin-bottom: 23px; }
+  .about-me-quote p { font-size: 19px; line-height: 1.65; }
+  .about-me-biography p { font-size: 13px; line-height: 1.9; margin-bottom: 16px; }
+  .about-me-copy-signoff { margin-top: 24px; }
+  .about-me-copy-signoff .eyebrow { font-size: 11px; }
+  .about-me-details { margin-top: 32px; }
+  .about-me-details-heading { padding: 17px 18px; }
+  .about-me-details-heading::after { left: 18px; }
+  .about-me-details-heading h3 { font-size: 11px; }
+  .about-me-details-heading > .eyebrow { display: none; }
+  .about-me-details-grid { grid-template-columns: 1fr; }
+  .about-me-detail { padding: 21px 18px; }
+  .about-me-detail:nth-child(odd) { border-right: 0; }
+  .about-me-detail:nth-last-child(2):nth-child(odd) { border-bottom: 1px solid var(--theme-line, #35352e); }
+  .about-me-detail dt { font-size: 11px; }
+  .about-me-detail dd { font-size: 12px; }
+}
+@media print {
+  .about-me-mobile-portrait { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-me-footer a, .about-me-footer a svg { transition: none; }
+  .about-me-footer a:hover svg { transform: none; }
+}

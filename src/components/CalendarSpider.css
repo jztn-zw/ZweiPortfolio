@@ -1,0 +1,43 @@
+.calendar-spider-stage {
+  --spider-dark: #1a1113;
+  --spider-shell-light: #f17c80;
+  --spider-shell-dark: #65232c;
+  --spider-armor: #3b3535;
+  --spider-edge: #9e5b5b;
+  --spider-highlight: #e4dcc7;
+  position: absolute;
+  inset: -56px 0 -56px;
+  width: 100%;
+  height: calc(100% + 112px);
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+.calendar-spider-chassis { filter: drop-shadow(0 0 3px #d1363a30); }
+.calendar-spider-position { outline: none; }
+.calendar-spider-hit { fill: transparent; pointer-events: all; cursor: pointer; }
+.calendar-spider-position:focus-visible .calendar-spider-hit { stroke: var(--numbers-accent); stroke-width: 1; stroke-dasharray: 4 7; }
+.calendar-spider-stage:is([data-mode="climbing"], [data-mode="exiting"], [data-mode="fleeing"], [data-mode="hidden"]) .calendar-spider-hit { pointer-events: none; cursor: default; }
+.calendar-spider-shell-side { fill: var(--spider-shell-dark); stroke: var(--spider-edge); stroke-width: .65; stroke-linejoin: bevel; }
+.calendar-spider-facet { fill: var(--spider-shell-dark); stroke: var(--spider-edge); stroke-width: .65; stroke-linejoin: bevel; pointer-events: none; }
+.calendar-spider-facet:is(.calendar-spider-facet-0,.calendar-spider-facet-3,.calendar-spider-facet-4) { fill: var(--numbers-accent); }
+.calendar-spider-facet:is(.calendar-spider-facet-1,.calendar-spider-facet-5) { fill: var(--spider-armor); }
+.calendar-spider-facet-6 { fill: var(--spider-dark); stroke: var(--spider-shell-light); stroke-width: 1.2; }
+.calendar-spider-shadow { fill: #000; opacity: .12; filter: blur(7px); }
+.calendar-spider-ground path { fill: none; stroke: #000; stroke-width: 3; opacity: .08; }
+.calendar-spider-ground ellipse { fill: #000; }
+.calendar-spider-leg { stroke-linejoin: bevel; }
+.calendar-spider-core { opacity: var(--virus-pulse, .9); filter: drop-shadow(0 0 2px var(--numbers-accent)); }
+.calendar-spider-impact { opacity: 0; fill: none; stroke: var(--numbers-accent); stroke-width: .8; }
+.calendar-spider-impact rect { fill: var(--numbers-accent); stroke: none; }
+.github-calendar-graph rect.github-day { transform-box: fill-box; transform-origin: center; }
+:root[data-theme="light"] .calendar-spider-stage {
+  --spider-dark: #f0e5df;
+  --spider-shell-light: #7b1f30;
+  --spider-shell-dark: #d48990;
+  --spider-armor: #493c3d;
+  --spider-edge: #8a4a52;
+  --spider-highlight: #ddd0b8;
+}
+:root[data-theme="light"] .calendar-spider-shadow { opacity: .16; }
+@media (prefers-reduced-motion: reduce) { .calendar-spider-stage { display: none; } }

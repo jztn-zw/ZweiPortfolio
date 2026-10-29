@@ -1,0 +1,69 @@
+.stack-illustration {
+  --stack-panel-top: #3d3d37;
+  --stack-panel: #242421;
+  --stack-platform: #20201d;
+  --stack-inset: #171716;
+  --stack-line: #4f4f45;
+  --stack-edge: #9e9b88;
+  --stack-muted: #8d8b79;
+  --stack-ink: #e5e1d2;
+  --stack-accent: #d1363a;
+  --stack-core-fill: #442225;
+  --stack-shadow: #000;
+  --stack-motion: 0;
+  --stack-play: paused;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: initial;
+  outline-offset: -5px;
+}
+.stack-illustration svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.stack-art-type { fill: var(--stack-muted); font-family: var(--font-mono); font-size: 7px; letter-spacing: .8px; }
+.stack-module, .stack-core-lift { transform-box: view-box; transform-origin: center; transition: translate .8s cubic-bezier(.22, 1, .36, 1); }
+.stack-module--interface { translate: calc(var(--stack-motion) * -3px) calc(var(--stack-motion) * -6px); }
+.stack-module--server { translate: calc(var(--stack-motion) * 3px) calc(var(--stack-motion) * -6px); transition-delay: 90ms; }
+.stack-core-lift { translate: 0 calc(var(--stack-motion) * -5px); transition-delay: 45ms; }
+.stack-module-shadow { fill: var(--stack-shadow); opacity: .16; }
+.stack-circuit-base { stroke: var(--stack-line); stroke-width: 1.2; }
+.stack-circuit-lit { stroke: var(--stack-accent); stroke-width: 1; opacity: calc(.1 + var(--stack-motion) * .45); transition: opacity .65s; }
+.stack-circuit-signal { stroke: var(--stack-accent); stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 5 95; opacity: var(--stack-motion); animation: stack-signal 3.2s cubic-bezier(.45, 0, .25, 1) infinite; animation-play-state: var(--stack-play); transition: opacity .4s; }
+.stack-core-halo { opacity: calc(.12 + var(--stack-motion) * .3); transition: opacity .65s; }
+.stack-core-orbit { transform-origin: 240px 105px; opacity: calc(.3 + var(--stack-motion) * .65); animation: stack-orbit 12s linear infinite; animation-play-state: var(--stack-play); transition: opacity .6s; }
+.stack-core-status, .stack-server-led { animation: stack-status 3.2s ease-in-out infinite; animation-play-state: var(--stack-play); }
+.stack-core-status { animation-delay: .9s; }
+.stack-server-bay--0 .stack-server-led { animation-delay: 1.5s; }
+.stack-server-bay--1 .stack-server-led { animation-delay: 1.7s; }
+.stack-server-bay--2 .stack-server-led { animation-delay: 1.9s; }
+.stack-interface-scan { opacity: var(--stack-motion); animation: stack-scan 3.2s ease-in-out infinite; animation-play-state: var(--stack-play); transition: opacity .4s; }
+.stack-footer-status { opacity: calc(.45 + var(--stack-motion) * .55); transition: opacity .4s; }
+.stack-hint-idle { opacity: calc(1 - var(--stack-motion)); }
+.stack-hint-active { opacity: var(--stack-motion); fill: var(--stack-accent); }
+.stack-hint-idle, .stack-hint-active { transition: opacity .35s ease; }
+.stack-illustration:is(:focus-visible, [aria-pressed="true"]) { --stack-motion: 1; --stack-play: running; }
+@media (hover: hover) { .stack-illustration:hover { --stack-motion: 1; --stack-play: running; } }
+:root[data-theme="light"] .stack-illustration {
+  --stack-panel-top: var(--theme-art-top);
+  --stack-panel: var(--theme-art-base);
+  --stack-platform: var(--theme-art-base);
+  --stack-inset: var(--theme-art-inset);
+  --stack-line: var(--theme-art-line);
+  --stack-edge: var(--theme-art-edge);
+  --stack-muted: var(--theme-muted);
+  --stack-ink: var(--theme-art-ink);
+  --stack-accent: var(--theme-accent);
+  --stack-core-fill: var(--theme-accent-soft);
+  --stack-shadow: #484338;
+}
+@keyframes stack-signal { from { stroke-dashoffset: 6; } to { stroke-dashoffset: -95; } }
+@keyframes stack-orbit { to { transform: rotate(360deg); } }
+@keyframes stack-status { 0%, 35%, 70%, 100% { opacity: .35; } 47%, 57% { opacity: 1; } }
+@keyframes stack-scan { 0%, 10% { transform: translateY(0); opacity: 0; } 22% { opacity: 1; } 55%, 100% { transform: translateY(17px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .stack-illustration *, .stack-illustration .stack-module, .stack-illustration .stack-core-lift { animation: none; transition: none; }
+  .stack-illustration .stack-module, .stack-illustration .stack-core-lift { translate: none; }
+  .stack-circuit-signal, .stack-interface-scan { display: none; }
+}

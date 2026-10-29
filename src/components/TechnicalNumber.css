@@ -1,0 +1,4 @@
+.technical-number { display: inline-flex; align-items: flex-end; gap: .025em; width: max-content; max-width: 100%; vertical-align: bottom; }
+.technical-number-glyph { display: block; width: .54em; height: 1em; min-width: 0; overflow: visible; flex: 0 1 .54em; }
+.technical-number-glyph text { font-family: Impact, 'Arial Narrow', sans-serif; font-size: 112px; font-weight: 400; fill: currentColor; letter-spacing: 0; }
+.technical-number-glyph--punctuation { width: .18em; flex-basis: .18em; }

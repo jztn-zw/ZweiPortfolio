@@ -1,0 +1,133 @@
+/* Light mode uses the same editorial hierarchy and motion as dark mode.
+   Keep these rules scoped so the established dark palette stays independent. */
+:root[data-theme='light'] {
+  accent-color: var(--theme-accent);
+  scrollbar-color: #a19c91 var(--theme-canvas);
+}
+:root[data-theme='light'] ::selection { background: #e9bdc0; color: #4c1720; }
+:root[data-theme='light'] :focus-visible { outline-color: var(--theme-accent); }
+:root[data-theme='light'] :is(h1, h2, .capability-title-line h3) { color: var(--theme-text); }
+:root[data-theme='light'] :is(.red, .navbar-glyph-accent, .graphic-mark-accent) { color: var(--theme-accent); }
+:root[data-theme='light'] .graphic-mark { color: var(--theme-muted); --graphic-mark-accent: var(--theme-accent); }
+:root[data-theme='light'] .hero-name-echo { -webkit-text-stroke-color: #76756d; }
+:root[data-theme='light'] .hero-eyebrow-line { background: var(--theme-strong-line); }
+:root[data-theme='light'] .portrait-art { filter: drop-shadow(0 12px 16px #3733290c); }
+:root[data-theme='light'] .hero-portrait-background { mix-blend-mode: multiply; }
+
+/* Crisp navigation and a visible active state. */
+:root[data-theme='light'] .site-header { box-shadow: 0 1px 0 #fff9; }
+:root[data-theme='light'] .side-nav-item { color: var(--theme-body); }
+:root[data-theme='light'] .side-nav-item.is-active { background: var(--theme-accent-soft); color: #822a33; border-color: var(--theme-accent-line); }
+:root[data-theme='light'] .side-nav-item.is-active::before { background: var(--theme-accent); }
+:root[data-theme='light'] :is(.side-nav-tooltip, .more-projects-tooltip, .footer-visitors-tooltip) { box-shadow: 0 6px 18px var(--theme-shadow); }
+:root[data-theme='light'] :is(.hero-button-outline, .capabilities-full-link, .capabilities-cta, .page-back-button, .contact-social-link) { background: #fffefa80; }
+:root[data-theme='light'] :is(a.hero-button-outline, .capabilities-cta, .page-back-button):is(:hover, :focus-visible) {
+  background: var(--interaction-outline-surface);
+  color: var(--interaction-outline-text);
+  border-color: var(--interaction-outline-border);
+}
+:root[data-theme='light'] :is(.capabilities-full-link, .more-projects-button):is(:hover, :focus-visible) { background: var(--interaction-fill); color: var(--interaction-ink); }
+:root[data-theme='light'] a.contact-social-link:is(:hover, :focus-visible) { background: var(--theme-panel); color: var(--theme-accent); border-color: var(--theme-accent-line); }
+:root[data-theme='light'] button.contact-social-link:disabled { background: transparent; color: var(--theme-muted); border-color: var(--theme-line); }
+
+/* White paper panels and neutral framing give the drawings definition. */
+:root[data-theme='light'] :is(.capabilities-list, .journey-timeline, .about-me-details) { background: var(--theme-panel); border-color: var(--theme-line); }
+:root[data-theme='light'] :is(.capability-visual, .journey-graphic, .skills-overview-art) { background: var(--theme-surface); border-color: var(--theme-strong-line); box-shadow: inset 0 1px 0 #fff9; }
+:root[data-theme='light'] .capability-visual::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(135deg, #fff6, transparent 40%); }
+:root[data-theme='light'] .capability-number-rule { background: var(--theme-line); }
+:root[data-theme='light'] .capability-tags li { background: #fffefa9c; border-color: #aaa69a; color: var(--theme-body); }
+:root[data-theme='light'] :is(.capability-visual-label, .capability-visual-caption) { color: var(--theme-body); }
+:root[data-theme='light'] :is(.capability-row, .skill-discipline):is(:hover, :focus-within) { background: #f2eee8; border-color: var(--theme-accent-line); }
+:root[data-theme='light'] .journey-timeline { --journey-date-hover: #eee1dd; --journey-hover-wash: #ad30390b; --journey-node-halo: #ad30391a; }
+:root[data-theme='light'] .journey-entry-date { background: var(--theme-surface); }
+:root[data-theme='light'] .journey-date-main { color: var(--theme-body); }
+:root[data-theme='light'] .journey-entry--current .journey-date-main { color: var(--theme-text); }
+:root[data-theme='light'] .journey-foundation {
+  --foundation-shadow: #625b4e;
+  --foundation-shadow-opacity: .2;
+  --foundation-plate-top: var(--theme-art-top);
+  --foundation-plate-bottom: var(--theme-art-base);
+  --foundation-build-side: #d0cdc3;
+  --foundation-design-side: #cfccc2;
+  --foundation-inset: var(--theme-art-inset);
+  --foundation-edge: var(--theme-art-edge);
+  --foundation-edge-bright: #7f7a6d;
+  --foundation-line: var(--theme-art-line);
+  --foundation-muted: #77746a;
+  --foundation-ink: #55534b;
+  --foundation-grid: #817d71;
+  --foundation-accent: var(--theme-accent);
+  --foundation-accent-top: #eac9c7;
+  --foundation-accent-bottom: #d8a3a5;
+  --foundation-accent-side: #c08a8f;
+  --foundation-accent-edge: #a6555f;
+  --foundation-accent-bright: #9c414c;
+  --foundation-accent-detail: var(--theme-accent);
+  --foundation-accent-soft: #7e3e47;
+  --foundation-accent-ink: #7c3540;
+  --foundation-accent-ink-bright: #692d38;
+  --foundation-accent-fill: #8b3b46;
+  --foundation-accent-core: #f8eeeb;
+}
+:root[data-theme='light'] .about-me-details-heading { background: var(--theme-surface); }
+:root[data-theme='light'] :is(.about-me-detail dt, .journey-entry-meta .eyebrow) { color: var(--theme-muted); }
+:root[data-theme='light'] .profile-cover { --profile-paper: var(--theme-text); --profile-ink: var(--theme-panel); --profile-line: var(--theme-strong-line); --profile-muted: var(--theme-muted); --profile-accent: var(--theme-accent); }
+:root[data-theme='light'] .profile-cover .profile-cover-caption { color: #f4f3ef; }
+:root[data-theme='light'] .profile-cover-study { border-color: var(--theme-strong-line); }
+:root[data-theme='light'] .contact-availability { border-left-color: var(--theme-accent-line); }
+:root[data-theme='light'] .site-footer { background: var(--theme-canvas); }
+
+/* GreenWay has its own mint paper palette, including the hover fade. */
+:root[data-theme='light'] .project-tile.project-tile--greenway {
+  --project-hover-accent: #3e7357;
+  --project-hover-text: #244d36;
+  --project-hover-border: #629272;
+}
+:root[data-theme='light'] .project-tile--showcase.project-tile--greenway { background: #e6eee3; }
+:root[data-theme='light'] .project-tile--greenway .project-tile-art { background: radial-gradient(ellipse at 68% 42%, #c4ddc6, #dce9d8 48%, #e6eee3 85%); }
+:root[data-theme='light'] .project-tile--greenway .project-tile-art::after { background: linear-gradient(#e6eee366, transparent 35%, transparent 72%, #e6eee3); }
+:root[data-theme='light'] .project-tile--showcase.project-tile--greenway::after { background: linear-gradient(#e6eee300 26%, #e6eee3e8 48%, #e6eee3 80%); }
+:root[data-theme='light'] .project-tile--showcase.project-tile--greenway::before { background: #629272; }
+:root[data-theme='light'] .project-tile--showcase.project-tile--greenway .project-tile-copy h3 { color: #254431; }
+:root[data-theme='light'] .project-tile--showcase.project-tile--greenway :is(.project-tile-top p, .tile-category, .tile-status, .tile-description) { color: #415d48; }
+:root[data-theme='light'] .project-tile--showcase.project-tile--greenway .tile-details .tile-description { color: #364c3b; }
+:root[data-theme='light'] .project-tile--greenway .project-tile-icon { background: #f6faf299; color: #345f43; border-color: #82a58a; }
+:root[data-theme='light'] .project-tile--showcase.project-tile--greenway .project-tile-bottom { border-color: #7b9e7f55; }
+:root[data-theme='light'] .project-tile--greenway .project-tile-bottom a { color: #254431; }
+:root[data-theme='light'] .project-tile--greenway .project-tile-bottom a:is(:hover, :focus-visible) { color: #397147; }
+:root[data-theme='light'] .project-tile--greenway .tile-status::before { background: #3c7751; box-shadow: 0 0 0 3px #3c775114; }
+:root[data-theme='light'] .project-tile--showcase.project-tile--greenway .tile-technologies > :is(span, button, a) { background: #f9fcf4e8; color: #31533c; border-color: #93ac91; }
+:root[data-theme='light'] .greenway-route :is(path, ellipse, circle) { stroke: #528164; }
+:root[data-theme='light'] .greenway-device-shadow { background: #3b604b50; }
+:root[data-theme='light'] .greenway-device-glow { background: radial-gradient(ellipse, #fffefa8c, #b5d2ba35 48%, transparent 70%); }
+:root[data-theme='light'] .project-tile--showcase.project-tile--greenway .greenway-web { box-shadow: 2px 3px 0 #4f755b, 12px 22px 28px #2b4b3529; }
+:root[data-theme='light'] .project-tile--showcase.project-tile--greenway .greenway-phone { box-shadow: 2px 1px 0 #8ba58f, 5px 3px 0 #53775b, 14px 19px 24px #2b4b3540; }
+:root[data-theme='light'] .project-tile--cards { background: var(--theme-panel); border-color: var(--theme-line); }
+:root[data-theme='light'] .project-tile--cards :is(h3, .project-tile-bottom a, .project-tile-bottom button) { color: var(--theme-text); }
+:root[data-theme='light'] .project-tile--cards :is(.tile-description, .tile-category, .tile-status, .project-tile-top p) { color: var(--theme-body); }
+:root[data-theme='light'] .project-tile--cards .tile-technologies { border-color: var(--theme-line); }
+:root[data-theme='light'] .project-tile--cards .tile-technologies > :is(span, button, a) { color: var(--theme-body); border-color: var(--theme-strong-line); }
+:root[data-theme='light'] .project-dialog .placeholder-notice { color: var(--theme-body); background: var(--theme-surface); }
+:root[data-theme='light'] .project-dialog .close-button { color: var(--theme-body); }
+:root[data-theme='light'] .project-dialog .dialog-art { background: var(--theme-surface); color: #71766b; }
+
+/* Detail pages share the same paper depth and contrast hierarchy. */
+:root[data-theme='light'] .skills-overview { background: var(--theme-panel); border-color: var(--theme-line); }
+:root[data-theme='light'] .skills-overview-counts { background: var(--theme-panel); }
+:root[data-theme='light'] .skill-discipline { background: var(--theme-panel); border-color: var(--theme-strong-line); }
+:root[data-theme='light'] .skill-discipline-icon { background: var(--theme-surface); color: var(--theme-body); }
+:root[data-theme='light'] .numbers-metric { background: var(--theme-panel); }
+:root[data-theme='light'] .numbers-metric:hover { background: #f1ece6; }
+:root[data-theme='light'] .greenway-product-stage { background: linear-gradient(135deg, #fffefa, #e8eee4); }
+:root[data-theme='light'] .greenway-stack-board { background: var(--theme-panel); }
+:root[data-theme='light'] .greenway-stack-board-top { background: var(--theme-surface); }
+:root[data-theme='light'] .greenway-film-control { background: #fffefae8; color: var(--theme-text); border-color: var(--theme-strong-line); }
+:root[data-theme='light'] .greenway-film-control:is(:hover, :focus-visible) { color: var(--interaction-outline-text); border-color: var(--theme-accent); background: var(--theme-accent-soft); }
+
+@media (max-width: 680px) {
+  :root[data-theme='light'] .capability-backdrop { opacity: .17; }
+  :root[data-theme='light'] .capability-tags li { background: #fffefae8; }
+}
+@media (max-width: 560px) {
+  :root[data-theme='light'] .journey-timeline .journey-entry-date { background: transparent; }
+}

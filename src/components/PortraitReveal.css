@@ -1,0 +1,70 @@
+@property --portrait-progress {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.portrait-reveal {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: #edece3;
+  isolation: isolate;
+  --portrait-pixel-crimson: #d1363a;
+  --portrait-pixel-cream: #e7dfce;
+  --portrait-pixel-muted: #8d8475;
+}
+
+.portrait-reveal-defs { position: absolute; pointer-events: none; }
+.portrait-reveal-images { position: absolute; inset: 0; pointer-events: none; }
+.portrait-reveal .hero-portrait {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.portrait-reveal-preload { display: none; }
+.portrait-pixel { opacity: clamp(0, calc((var(--portrait-progress) - var(--pixel-start)) * 6.363636), 1); shape-rendering: crispEdges; }
+.portrait-reveal:not(.is-transitioning):not(.is-revealed) .portrait-reveal-illustration > image { mask: none; }
+.portrait-reveal:not(.is-transitioning):not(.is-revealed) .portrait-reveal-photo { visibility: hidden; }
+.portrait-reveal:not(.is-transitioning).is-revealed .portrait-reveal-illustration { visibility: hidden; }
+.portrait-reveal:not(.is-transitioning).is-revealed .portrait-reveal-photo > g { mask: none; }
+.portrait-glitch { overflow: visible; }
+.portrait-reveal:not(.is-transitioning) .portrait-glitch { display: none; }
+.portrait-glitch > g {
+  --fragment-phase: clamp(0, calc((var(--portrait-progress) - var(--fragment-start)) * 3.181818), 1);
+  --fragment-visibility: max(0, min(calc(var(--fragment-phase) * 4), calc((1 - var(--fragment-phase)) * 1.4)));
+}
+.portrait-body-fragment { opacity: calc(var(--fragment-visibility) * var(--portrait-fragment-opacity, .9)); }
+.portrait-body-fragment--out { translate: calc(var(--fragment-x) * var(--fragment-phase)) calc(var(--fragment-y) * var(--fragment-phase)); }
+.portrait-body-fragment--in { translate: calc(var(--fragment-x) * -.65 * (1 - var(--fragment-phase))) calc(var(--fragment-y) * -.65 * (1 - var(--fragment-phase))); }
+.portrait-glitch-pixel { opacity: calc(var(--fragment-visibility) * .55); fill: var(--portrait-pixel-crimson); translate: calc(var(--fragment-x) * var(--fragment-phase)) calc(var(--fragment-y) * var(--fragment-phase)); }
+.portrait-glitch-pixel--1 { fill: var(--portrait-pixel-cream); }
+.portrait-glitch-pixel--2 { fill: var(--portrait-pixel-muted); }
+.portrait-glitch-scan { fill: var(--portrait-pixel-crimson); opacity: max(0, min(.3, calc(var(--portrait-progress) * 3), calc((1 - var(--portrait-progress)) * 3))); translate: 0 calc(var(--portrait-progress) * 1400px); }
+:root[data-theme="light"] .portrait-reveal {
+  --portrait-pixel-crimson: var(--theme-accent, #ad3039);
+  --portrait-pixel-cream: #e8d2ce;
+  --portrait-pixel-muted: #a99b91;
+  --portrait-fragment-opacity: .64;
+}
+
+/* Keep the same tile reveal, fragment travel and timing in both themes.
+   Lift only the temporary fragment tones so black samples blend with paper. */
+:root[data-theme="light"] .portrait-body-fragment { filter: brightness(1.12) contrast(.92) sepia(.08); }
+
+.portrait-art > .portrait-cross,
+.portrait-art > .portrait-index,
+.portrait-art > .portrait-serial,
+.portrait-art > .portrait-data,
+.portrait-art > .portrait-caption { pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait-glitch { display: none; }
+}

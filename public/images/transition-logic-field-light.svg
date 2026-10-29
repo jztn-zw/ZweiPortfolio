@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" fill="none">
+  <defs>
+    <pattern id="maze" width="112" height="112" patternUnits="userSpaceOnUse" patternTransform="rotate(-12)">
+      <path d="M0 16h64v32H32v32h64V16h16M0 96h16V0m32 0v16M80 48h32M48 80v32m32-16v16" stroke="#9a8c80" stroke-width="3" opacity=".2"/>
+    </pattern>
+    <linearGradient id="fade"><stop stop-color="#ad7773" stop-opacity="0"/><stop offset="1" stop-color="#ad7773" stop-opacity=".1"/></linearGradient>
+  </defs>
+  <path fill="url(#maze)" d="M0 0h1440v900H0z"/>
+  <path fill="url(#fade)" d="M0 0h1440v900H0z"/>
+  <g transform="translate(800 60) scale(4.8)" stroke="#76695f" stroke-width=".28" opacity=".18">
+    <path d="m44 18 30 15-30 15-30-15Zm0 30v36L14 69V33m30 51 30-15V33"/>
+    <path d="m24 28 30 15m-20-20 30 15m-40 0 30-15m-20 20 30-15M24 38v36m10-31v36M14 45l30 15M14 57l30 15M54 43v36m10-41v36M44 60l30-15M44 72l30-15"/>
+  </g>
+  <g stroke="#76695f" opacity=".16" stroke-width="1.5">
+    <path d="M768 0v95l96 96h170l90 90h316M1100 0v95l-80 80v190l130 130h290M1440 580h-210l-95-95H935l-105 105v310M1440 785h-182l-160-160H974l-70 70v205"/>
+    <path d="m0 780 490-150h460l490 150M0 835l490-205M215 900l275-270m120 270 35-270m265 270L800 630m430 270L950 630"/>
+    <circle cx="864" cy="191" r="5"/><circle cx="1124" cy="281" r="5"/><circle cx="1230" cy="580" r="5"/><circle cx="974" cy="625" r="5"/>
+    <path d="m1190 95 60-35 60 35v70l-60 35-60-35Zm0 0 60 35 60-35m-60 35v70M135 240l58-58 58 58-58 58Zm0 34 58 58 58-58"/>
+  </g>
+  <g stroke="#76695f" opacity=".17">
+    <path d="M105 114h180l60 60v120l-60 60H105l-60-60V174Z" stroke-width="2"/>
+    <path d="M80 185h195v100H115v-65h125v30h-90m-70 55h195V150H115m210 25v140l-60 60H85" stroke-width="3"/>
+    <path d="M1030 740h270m-270 11h160m-160 11h230M88 560h120m-120 12h200m-200 12h155"/>
+  </g>
+</svg>
+

@@ -1,0 +1,62 @@
+[
+  {
+    "asset": "greenway-web",
+    "original": 787480,
+    "optimized": 425396,
+    "pixel_identical": true
+  },
+  {
+    "asset": "greenway-welcome",
+    "original": 1388490,
+    "optimized": 781398,
+    "pixel_identical": true
+  },
+  {
+    "asset": "jaztin-about-editorial",
+    "original": 1868941,
+    "optimized": 1137362,
+    "pixel_identical": true
+  },
+  {
+    "asset": "jaztin-portrait",
+    "original": 1501485,
+    "optimized": 920914,
+    "pixel_identical": true
+  },
+  {
+    "asset": "jaztin-portrait-real-matched",
+    "original": 1573851,
+    "optimized": 996544,
+    "pixel_identical": true
+  },
+  {
+    "asset": "jaztin-profile-studies",
+    "original": 3224746,
+    "optimized": 1913410,
+    "pixel_identical": true
+  },
+  {
+    "asset": "jaztin-transition-character-v3",
+    "original": 943588,
+    "optimized": 624028,
+    "pixel_identical": true
+  },
+  {
+    "asset": "visitor-avatars/character-01",
+    "original": 1393421,
+    "optimized": 691782,
+    "pixel_identical": true
+  },
+  {
+    "asset": "visitor-avatars/character-02",
+    "original": 364503,
+    "optimized": 173996,
+    "pixel_identical": true
+  },
+  {
+    "asset": "visitor-avatars/character-03",
+    "original": 277006,
+    "optimized": 121426,
+    "pixel_identical": true
+  }
+]

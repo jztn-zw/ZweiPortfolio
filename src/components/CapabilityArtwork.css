@@ -1,0 +1,98 @@
+.capability-artwork {
+  --cap-shell-top: #42423c;
+  --cap-shell-bottom: #252523;
+  --cap-screen: #181817;
+  --cap-rear: #242421;
+  --cap-panel: #343430;
+  --cap-inset: #20201d;
+  --cap-edge: #a7a391;
+  --cap-edge-soft: #555548;
+  --cap-line: #777464;
+  --cap-muted: #aaa694;
+  --cap-ink: #e3dfd0;
+  --cap-accent: #d1363a;
+  --cap-accent-panel: #54272a;
+  --cap-accent-ink: #edbdb3;
+  --cap-accent-line: #c96564;
+  --cap-grid: #888573;
+  --cap-mark: #6d6a5c;
+  --cap-shadow: #000;
+  --cap-motion: 0;
+  --cap-play-state: paused;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+:root[data-theme="light"] .capability-artwork {
+  --cap-shell-top: var(--theme-art-top);
+  --cap-shell-bottom: var(--theme-art-base);
+  --cap-screen: var(--theme-art-inset);
+  --cap-rear: var(--theme-art-shade);
+  --cap-panel: var(--theme-art-base);
+  --cap-inset: #dad7cd;
+  --cap-edge: var(--theme-art-edge);
+  --cap-edge-soft: var(--theme-art-line);
+  --cap-line: #8d8c81;
+  --cap-muted: var(--theme-muted);
+  --cap-ink: var(--theme-art-ink);
+  --cap-accent: var(--theme-accent);
+  --cap-accent-panel: var(--theme-accent-soft);
+  --cap-accent-ink: #7d2630;
+  --cap-accent-line: var(--theme-accent-line);
+  --cap-grid: #99978c;
+  --cap-mark: #aaa69a;
+  --cap-shadow: #484338;
+}
+.cap-part { transform-box: fill-box; transform-origin: center; transition: translate .8s cubic-bezier(.22, 1, .36, 1), rotate .8s cubic-bezier(.22, 1, .36, 1); }
+.cap-web-browser { translate: calc(var(--cap-motion) * -3px) calc(var(--cap-motion) * -3px); }
+.cap-web-phone { translate: calc(var(--cap-motion) * 7px) calc(var(--cap-motion) * -6px); rotate: calc(var(--cap-motion) * -2deg); transition-delay: 80ms; }
+.cap-web-hero { translate: 0 calc(var(--cap-motion) * -3px); }
+.cap-web-card { translate: 0 calc(var(--cap-motion) * -4px); }
+.cap-web-card--0 { transition-delay: 80ms; }
+.cap-web-card--1 { transition-delay: 140ms; }
+.cap-web-card--2 { transition-delay: 200ms; }
+.cap-web-card-line { transform-box: fill-box; transform-origin: left; scale: var(--cap-motion) 1; transition: scale .65s cubic-bezier(.22, 1, .36, 1); }
+.cap-web-card--1 .cap-web-card-line { transition-delay: 120ms; }
+.cap-web-card--2 .cap-web-card-line { transition-delay: 240ms; }
+.cap-phone-progress { transform-box: fill-box; transform-origin: left; scale: calc(.25 + var(--cap-motion) * .75) 1; transition: scale 1s cubic-bezier(.22, 1, .36, 1) .15s; }
+.cap-connection-mark { opacity: calc(.3 + var(--cap-motion) * .7); transition: opacity .5s; }
+.cap-backend-server { translate: 0 calc(var(--cap-motion) * -4px); }
+.cap-backend-core { translate: 0 calc(var(--cap-motion) * -5px); transition-delay: 80ms; }
+.cap-backend-database { translate: 0 calc(var(--cap-motion) * -3px); transition-delay: 160ms; }
+.cap-circuit-base { stroke: var(--cap-line); stroke-width: 1; opacity: .55; }
+.cap-circuit-lit { stroke: var(--cap-accent); stroke-width: 1; opacity: calc(.15 + var(--cap-motion) * .5); transition: opacity .5s; }
+.cap-flow { stroke: var(--cap-accent); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 6 94; opacity: var(--cap-motion); animation: capability-flow 3.6s cubic-bezier(.45, 0, .25, 1) infinite; animation-play-state: var(--cap-play-state); transition: opacity .4s; }
+.cap-led { animation: capability-led 3.6s ease-in-out infinite; animation-play-state: var(--cap-play-state); }
+.cap-led--1 { animation-delay: .18s; }
+.cap-led--2 { animation-delay: .36s; }
+.cap-led--database { animation-delay: 1.8s; }
+.cap-db-write { stroke-dasharray: 20 80; opacity: var(--cap-motion); animation: capability-db-write 3.6s ease-in-out infinite; animation-play-state: var(--cap-play-state); transition: opacity .4s; }
+.cap-core-orbit { transform-box: fill-box; transform-origin: center; opacity: calc(.2 + var(--cap-motion) * .65); animation: capability-orbit 14.4s linear infinite; animation-play-state: var(--cap-play-state); transition: opacity .5s; }
+.cap-workflow-input { translate: calc(var(--cap-motion) * -3px) calc(var(--cap-motion) * -4px); }
+.cap-workflow-core { translate: 0 calc(var(--cap-motion) * -5px); transition-delay: 80ms; }
+.cap-workflow-output { translate: calc(var(--cap-motion) * 3px) calc(var(--cap-motion) * -4px); transition-delay: 160ms; }
+.cap-code-cursor { opacity: calc(.2 + var(--cap-motion) * .8); transition: opacity .6s; }
+.cap-core-spark { transform-box: fill-box; transform-origin: center; scale: calc(.65 + var(--cap-motion) * .35); opacity: calc(.25 + var(--cap-motion) * .75); transition: scale .8s cubic-bezier(.22, 1, .36, 1), opacity .6s; }
+.cap-output-status { animation: capability-led 3.6s ease-in-out 1.7s infinite; animation-play-state: var(--cap-play-state); }
+.cap-stage-check { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: var(--cap-motion); animation: capability-stage-check 3.6s ease-in-out infinite; animation-play-state: var(--cap-play-state); transition: opacity .4s; }
+.cap-stage-check--1 { animation-delay: .7s; }
+.cap-stage-check--2 { animation-delay: 1.4s; }
+.cap-mobile-device--0 { translate: calc(var(--cap-motion) * -5px) calc(var(--cap-motion) * -3px); rotate: -5deg; }
+.cap-mobile-device--1 { translate: calc(var(--cap-motion) * 5px) calc(var(--cap-motion) * -6px); rotate: 5deg; }
+
+:where(.capability-visual[aria-pressed="true"], .capability-visual:focus-visible, .skill-discipline:focus-within) .capability-artwork { --cap-motion: 1; --cap-play-state: running; }
+@media (hover: hover) {
+  :where(.capability-row:hover, .skill-discipline:hover) .capability-artwork,
+  .capability-artwork:hover { --cap-motion: 1; --cap-play-state: running; }
+}
+@keyframes capability-flow { from { stroke-dashoffset: 6; } to { stroke-dashoffset: -94; } }
+@keyframes capability-orbit { to { transform: rotate(360deg); } }
+@keyframes capability-led { 0%, 20%, 70%, 100% { opacity: .35; } 36%, 48% { opacity: 1; } }
+@keyframes capability-db-write { 0%, 38% { stroke-dashoffset: 20; } 78%, 100% { stroke-dashoffset: -80; } }
+@keyframes capability-stage-check { 0%, 12% { stroke-dashoffset: 1; } 28%, 70% { stroke-dashoffset: 0; } 95%, 100% { stroke-dashoffset: -1; } }
+@media (prefers-reduced-motion: reduce) {
+  .capability-artwork *, .capability-artwork .cap-part { animation: none; transition: none; }
+  .capability-artwork .cap-part { translate: none; rotate: none; }
+  .cap-flow, .cap-db-write { display: none; }
+  .cap-stage-check { stroke-dashoffset: 0; }
+}

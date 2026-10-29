@@ -1,0 +1,61 @@
+.greenway-artwork { position: absolute; top: 65px; left: 0; right: 0; height: 325px; isolation: isolate; }
+.greenway-route { position: absolute; inset: 0; width: 100%; height: 100%; }
+.greenway-web { position: absolute; top: 30px; left: 8%; width: 84%; padding: 4px; border: 1px solid #8da996; border-radius: 8px; background: #1a3023; transform: perspective(800px) rotateY(-12deg) rotateZ(-5deg); box-shadow: 3px 3px 0 #122319, 14px 22px 30px #06120a99; }
+.greenway-web-chrome { height: 15px; display: flex; align-items: center; gap: 3px; padding-inline: 4px; }
+.greenway-web-chrome > span { width: 3px; height: 3px; border-radius: 50%; background: #92b29c; }
+.greenway-web-address { display: flex; align-items: center; justify-content: center; gap: 3px; flex: 1; min-width: 0; margin-inline: 6px; padding: 2px 4px; border-radius: 3px; background: #a5c9b010; color: #bdd2c3; font-family: var(--font-mono); font-size: 6px; letter-spacing: -.15px; white-space: nowrap; }
+.greenway-web-address svg { width: 7px; height: 7px; flex-shrink: 0; }
+.greenway-web-address > span { overflow: hidden; text-overflow: ellipsis; }
+.greenway-window-icon { width: 8px; height: 8px; margin-left: auto; color: #9bbca7; }
+.greenway-web-screen { aspect-ratio: 1920 / 919; border-radius: 3px; overflow: hidden; background: #edf4ef; }
+.greenway-web-screen img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: bottom; }
+.greenway-phone { position: absolute; top: 95px; left: 70%; transform: translateX(-50%) rotate(7deg); width: 30%; max-width: 104px; aspect-ratio: 922 / 2048; padding: 5px; border: 1px solid #779b87; border-radius: 21px; background: #17251e; box-shadow: 12px 18px 32px #0007, -3px -2px 0 #bad4c21a; }
+.greenway-phone::before { content: ''; position: absolute; left: -3px; top: 43px; width: 2px; height: 22px; background: #779b87; border-radius: 2px; }
+.greenway-phone::after { content: ''; position: absolute; right: -3px; top: 50px; width: 2px; height: 32px; background: #779b87; border-radius: 2px; }
+.greenway-phone img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 15px; }
+.greenway-phone-camera { position: absolute; top: 8px; left: 50%; width: 22%; height: 4px; transform: translateX(-50%); border-radius: 5px; background: #15231c; box-shadow: 0 1px 1px #fff2; }
+.greenway-device-glow { position: absolute; z-index: 0; inset: 5% 4% 2%; border-radius: 50%; background: radial-gradient(ellipse, #9dc8a52b, #63a47510 48%, transparent 70%); opacity: calc(.6 + var(--greenway-motion, 0) * .4); transition: opacity .8s; pointer-events: none; }
+.greenway-device-shadow { position: absolute; bottom: -1%; left: 14%; width: 68%; height: 11%; border-radius: 50%; background: #06130bcc; filter: blur(12px); opacity: .5; pointer-events: none; }
+.greenway-route-signal { opacity: var(--greenway-motion, 0); animation: greenway-route-flow 3.8s linear infinite; animation-play-state: var(--greenway-play, paused); transition: opacity .6s; }
+.project-tile.project-tile--greenway { --project-hover-accent: #9ac9a6; --project-hover-text: #cae9ce; --project-hover-border: #9ac9a6; --greenway-motion: 0; --greenway-play: paused; }
+.project-tile--greenway .project-tile-art { background: radial-gradient(ellipse at 68% 48%, #2c5840 0, #153a28 38%, #10271c 68%, #101813 100%); }
+.project-tile--greenway .project-tile-art::after { background: linear-gradient(180deg, #0c1e16b3, transparent 35%, transparent 77%, #101813 100%); pointer-events: none; }
+.project-tile--showcase.project-tile--greenway { background: #101813; }
+.project-tile--showcase.project-tile--greenway::after { background: linear-gradient(180deg, #10181300 26%, #101813d9 45%, #101813f0 65%, #101813 100%); }
+.project-tile--showcase.project-tile--greenway .greenway-artwork { inset: 144px 0 72px; height: auto; }
+.project-tile--showcase.project-tile--greenway .greenway-artwork::before { content: ''; position: absolute; inset: -20px 0; background-image: linear-gradient(#b6dfc307 1px, transparent 1px), linear-gradient(90deg, #b6dfc307 1px, transparent 1px); background-size: 28px 28px; mask-image: radial-gradient(ellipse, #000 25%, transparent 72%); }
+.project-tile--showcase.project-tile--greenway .greenway-route { inset: -10% 0; height: 120%; opacity: .8; }
+.project-tile--showcase.project-tile--greenway .greenway-web { z-index: 1; top: 12%; left: 7%; width: 84%; padding: 4px; border-color: #a4c0ac; background: linear-gradient(150deg, #45634f, #203d2b 35%, #162a1e); transform: perspective(900px) rotateY(-8deg) rotateZ(-5deg) translate(calc(var(--greenway-motion) * -3px), calc(var(--greenway-motion) * -6px)); box-shadow: 2px 3px 0 #0a1c12, 0 0 0 1px #c3e0cb16, 12px 22px 28px #05130b66; transition: transform .85s cubic-bezier(.22, 1, .36, 1), border-color .6s; }
+.project-tile--showcase.project-tile--greenway .greenway-web::before { content: ''; position: absolute; z-index: -1; inset: -7px; border: 1px solid #a7cfb33d; border-radius: 10px; transform: translate(5px, 5px); pointer-events: none; }
+.project-tile--showcase.project-tile--greenway .greenway-web-chrome { height: 18px; }
+.project-tile--showcase.project-tile--greenway .greenway-phone { z-index: 2; top: 18%; left: 72%; width: auto; height: 74%; max-width: none; padding: 4px; border: 1px solid #bed2c2; border-radius: 17px; background: linear-gradient(135deg, #d2ded3, #516e5b 18%, #14291c 48%, #0c1911 80%, #829e88); transform: translateX(-50%) perspective(900px) rotateY(calc(-12deg + var(--greenway-motion) * 5deg)) rotateZ(calc(8deg - var(--greenway-motion) * 3deg)) translateY(calc(var(--greenway-motion) * -8px)); box-shadow: 2px 1px 0 #57705e, 5px 3px 0 #0c2014, 14px 19px 24px #04130bb3; transition: transform .85s cubic-bezier(.22, 1, .36, 1); }
+.project-tile--showcase.project-tile--greenway .greenway-phone img { border-radius: 14px; object-fit: contain; }
+.project-tile--showcase.project-tile--greenway .project-tile-top p { color: #b9d1bd; font-size: 10px; letter-spacing: 1px; }
+.project-tile--showcase.project-tile--greenway .project-tile-icon { background: #acd4b408; border-color: #a8c9ad55; }
+.project-tile--showcase.project-tile--greenway .project-tile-copy h3 { color: #f0f5e9; letter-spacing: -.7px; }
+.project-tile--showcase.project-tile--greenway .project-tile-bottom { border-top: 1px solid #9abd9f30; padding-top: 10px; gap: 6px; }
+.project-tile--showcase.project-tile--greenway .tile-status { display: inline-flex; align-items: center; gap: 6px; }
+.project-tile--greenway .tile-status::before { content: ''; width: 4px; height: 4px; flex-shrink: 0; border-radius: 50%; background: #a4d4ae; box-shadow: 0 0 0 3px #9fc8a512; }
+.project-tile--greenway .project-tile-bottom a svg { transition: transform .45s cubic-bezier(.22, 1, .36, 1); }
+.project-tile--greenway .project-tile-bottom a:is(:hover, :focus-visible) svg { transform: translate(2px, -2px); }
+@media (hover: hover) {
+  .project-tile--greenway:hover { --greenway-motion: 1; --greenway-play: running; }
+}
+.project-tile--greenway:focus-within { --greenway-motion: 1; --greenway-play: running; }
+.project-list--dragging .project-tile--greenway { --greenway-motion: 0; --greenway-play: paused; }
+@keyframes greenway-route-flow { from { stroke-dashoffset: 7; } to { stroke-dashoffset: -93; } }
+.project-tile--greenway .poster-placeholder { margin-top: 335px; color: #bbd5be; font-size: 11px; letter-spacing: .7px; }
+.project-tile--greenway .project-tile-icon { color: #c9e2cb; border-color: #a5d3ad55; }
+.project-tile--greenway .tile-category { color: #bdd0be; }
+.project-tile--greenway .tile-technologies > :is(span, button, a) { border-color: #54775c; color: #c8d9c9; }
+.project-tile--greenway .tile-status { color: #b5d4b9; font-size: 11px; letter-spacing: .2px; }
+.project-tile--showcase.project-tile--greenway::before { background: #88b896; }
+.dialog-art.project-greenway { position: relative; height: 385px; background: radial-gradient(ellipse at center, #24593e, #10291e 70%); }
+.dialog-art.project-greenway .greenway-artwork { top: 22px; }
+@media (max-width: 800px) {
+  .project-tile--greenway .tile-category { overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .project-tile--greenway { --greenway-motion: 0 !important; --greenway-play: paused !important; }
+  .project-tile--greenway :is(.greenway-web, .greenway-phone, .greenway-device-glow, .greenway-route-signal, .project-tile-bottom a svg) { transition: none; animation: none; }
+}

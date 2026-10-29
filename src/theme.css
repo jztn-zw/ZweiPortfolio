@@ -1,0 +1,265 @@
+/* Theme overrides change palette only; component geometry stays in its own stylesheet. */
+/* The selected palette reveals from the toggle; the snapshots keep images and layout unchanged. */
+@property --theme-reveal-radius { syntax: '<length>'; inherits: false; initial-value: -96px; }
+:root[data-theme-transition="reveal"]::view-transition-old(root),
+:root[data-theme-transition="reveal"]::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+:root[data-theme-transition="reveal"]::view-transition-old(root) { z-index: 1; }
+:root[data-theme-transition="reveal"]::view-transition-new(root) {
+  z-index: 2;
+  --theme-pixel-half-band: 48px;
+  --theme-pixel-band: 96px;
+  --theme-pixel-tile: 128px;
+  mask-image:
+    radial-gradient(circle at var(--theme-reveal-x) var(--theme-reveal-y), #000 calc(var(--theme-reveal-radius) - 6px), transparent var(--theme-reveal-radius)),
+    url('/theme-pixels-dense.svg'),
+    radial-gradient(circle at var(--theme-reveal-x) var(--theme-reveal-y), #000 calc(var(--theme-reveal-radius) + var(--theme-pixel-half-band) - 12px), transparent calc(var(--theme-reveal-radius) + var(--theme-pixel-half-band))),
+    url('/theme-pixels-sparse.svg'),
+    radial-gradient(circle at var(--theme-reveal-x) var(--theme-reveal-y), #000 calc(var(--theme-reveal-radius) + var(--theme-pixel-band) - 12px), transparent calc(var(--theme-reveal-radius) + var(--theme-pixel-band)));
+  mask-size: 100% 100%, var(--theme-pixel-tile) var(--theme-pixel-tile), 100% 100%, var(--theme-pixel-tile) var(--theme-pixel-tile), 100% 100%;
+  mask-repeat: no-repeat, repeat, no-repeat, repeat, no-repeat;
+  mask-position: 0 0;
+  mask-mode: alpha;
+  mask-composite: add, intersect, add, intersect, add;
+}
+@media (max-width: 640px) {
+  :root[data-theme-transition="reveal"]::view-transition-new(root) {
+    --theme-pixel-half-band: 36px;
+    --theme-pixel-band: 72px;
+    --theme-pixel-tile: 96px;
+  }
+}
+:root[data-theme-transition="reveal"]::view-transition-group(root) { animation-duration: 0s; }
+:root[data-theme-transition="reveal"]::view-transition-image-pair(root) { isolation: isolate; }
+:root[data-theme-transition="reveal"]::view-transition { pointer-events: none; }
+:root[data-theme-transition="fade"],
+:root[data-theme-transition="fade"] *,
+:root[data-theme-transition="fade"] *::before,
+:root[data-theme-transition="fade"] *::after { transition-property: color, background-color, border-color, box-shadow !important; transition-duration: 280ms !important; transition-timing-function: ease !important; }
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme-transition="fade"], :root[data-theme-transition="fade"] *,
+  :root[data-theme-transition="fade"] *::before, :root[data-theme-transition="fade"] *::after { transition: none !important; }
+}
+:root {
+  color-scheme: dark;
+  --theme-canvas: #111111;
+  --interaction-surface: #191919;
+  --interaction-border: #8e464b;
+  --interaction-accent: #e46d73;
+  --interaction-fill: #edece3;
+  --interaction-ink: #171715;
+  --interaction-text: #f1eee4;
+  --interaction-primary: #d1363a;
+  --interaction-tooltip: #1b1b1b;
+  --interaction-outline-surface: #211818;
+  --interaction-outline-border: #d1363a;
+  --interaction-outline-text: #f5f4e9;
+  --interaction-soft-border: #8d8d83;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --theme-canvas: #f4f3ef;
+  --theme-surface: #eae8e2;
+  --theme-panel: #fffefa;
+  --theme-text: #232321;
+  --theme-body: #50504b;
+  --theme-muted: #64635d;
+  --theme-line: #c9c6be;
+  --theme-strong-line: #96938a;
+  --theme-accent: #ad3039;
+  --theme-accent-soft: #f2e1df;
+  --theme-accent-line: #c28a8b;
+  --theme-shadow: #37332912;
+  --theme-art-top: #fffefa;
+  --theme-art-base: #e4e1d9;
+  --theme-art-inset: #f1efe9;
+  --theme-art-shade: #d2cec3;
+  --theme-art-edge: #79776e;
+  --theme-art-line: #aaa69a;
+  --theme-art-ink: #343530;
+  --interaction-surface: #eeebe5;
+  --interaction-border: #ae6a71;
+  --interaction-accent: #992a34;
+  --interaction-fill: var(--theme-text);
+  --interaction-ink: var(--theme-panel);
+  --interaction-text: var(--theme-text);
+  --interaction-primary: var(--theme-accent);
+  --interaction-tooltip: var(--theme-panel);
+  --interaction-outline-surface: var(--theme-accent-soft);
+  --interaction-outline-border: var(--theme-accent);
+  --interaction-outline-text: #7d2630;
+  --interaction-soft-border: var(--theme-strong-line);
+  --muted: var(--theme-muted);
+  --line: var(--theme-line);
+  --color-canvas: var(--theme-canvas);
+  color: var(--theme-text);
+  background: var(--theme-canvas);
+}
+
+:root[data-theme="light"] :is(body, .journey-section) { background: var(--theme-canvas); }
+:root[data-theme="light"] :is(.capabilities-section, .about-me-section, .discipline-strip) { background: var(--theme-canvas); }
+:root[data-theme="light"] .site-header { background: #f4f3efed; border-color: var(--theme-line); }
+:root[data-theme="light"] .hero-github-soon { color: var(--theme-muted); border-color: var(--theme-line); }
+:root[data-theme="light"] .side-nav-divider { background: var(--theme-line); }
+:root[data-theme="light"] .side-nav-item { color: #56584d; }
+:root[data-theme="light"] .navbar-glyph-accent { color: #ad3037; }
+:root[data-theme="light"] .side-nav-item.is-active { color: #8f2029; background: #efdcda; border-color: #c9908e; }
+:root[data-theme="light"] .side-nav-item:hover,
+:root[data-theme="light"] .side-nav-item:focus-visible { color: var(--theme-text); background: #e5e1d6; border-color: var(--theme-strong-line); }
+:root[data-theme="light"] .side-nav-item.is-active:hover { background: #e8cfcc; border-color: #af595b; }
+:root[data-theme="light"] :is(.side-nav-tooltip, .more-projects-tooltip) { background: var(--theme-panel); color: var(--theme-text); border-color: var(--theme-strong-line); border-left-color: #b32e35; }
+:root[data-theme="light"] .side-nav-tooltip > span { color: var(--theme-muted); }
+
+:root[data-theme="light"] :is(.red, .outline-dot) { color: #b42e35; }
+:root[data-theme="light"] :is(.capability-number .eyebrow, .about-profile-number) { color: #b42e35; }
+:root[data-theme="light"] .outline-dot { color: transparent; }
+:root[data-theme="light"] :is(.section-kicker, .hero-role, .about-me-quote p, .about-me-biography strong,
+  .contact-finale-copy > p.contact-finale-lead, .contact-availability p, .site-footer-identity,
+  .about-profile-nameplate p, .about-me-detail dd, .journey-introduction .eyebrow,
+  .journey-entry-context, .journey-entry--current .journey-date-main,
+  .skills-overview-counts strong, .skill-technology-list h3, .skill-discipline-icon) { color: var(--theme-text); }
+:root[data-theme="light"] .section-kicker-number { color: #a12a31; background: #efddda; border-color: #cc9c96; }
+:root[data-theme="light"] :is(.discipline-divider, .capability-visual-diamonds) { filter: invert(1); }
+:root[data-theme="light"] .hero-name-echo { -webkit-text-stroke-color: #7d7c6c; }
+:root[data-theme="light"] .portrait-data .barcode { background: repeating-linear-gradient(90deg, #57584d 0 1px, transparent 1px 3px, #57584d 3px 5px, transparent 5px 8px, #57584d 8px 9px, transparent 9px 11px); }
+:root[data-theme="light"] :is(.hero--portrait .hero-description, .section-note, .discipline-strip span,
+  .capabilities-intro > p:not(.eyebrow), .capability-copy > p, .journey-introduction > p:last-child,
+  .journey-entry-description, .about-me-biography p, .contact-finale-copy > p,
+  .skills-intro-description, .skill-discipline-summary > p, .skill-technology-list p,
+  .skills-next-step h2 + p, .dialog-content > p:not(.eyebrow)) { color: var(--theme-body); }
+:root[data-theme="light"] :is(.hero-signature, .hero-foot, .portrait-index, .portrait-serial,
+  .portrait-data, .portrait-caption .eyebrow, .portrait-cross, .projects-count,
+  .work-caption, .about-me-who, .about-profile-top, .about-profile-nameplate .eyebrow,
+  .about-me-copy-signoff, .about-me-detail dt, .about-me-details-heading > .eyebrow,
+  .capabilities-intro .eyebrow, .journey-graphic-top, .journey-graphic-bottom,
+  .journey-entry-meta .eyebrow, .journey-entry-icon, .journey-date-detail,
+  .journey-footer p, .contact-coming-soon, .contact-availability > .eyebrow,
+  .contact-social-soon, .site-footer-copyright, .site-footer-bottom,
+  .footer-visitors > svg, .skills-breadcrumb > .eyebrow, .skills-overview-counts .eyebrow,
+  .skills-section-divider > span, .skill-discipline-top .eyebrow, .skill-technology-index,
+  .skill-discipline-count, .dialog-header, .placeholder-notice span) { color: var(--theme-muted); }
+:root[data-theme="light"] :is(.projects-count-value, .journey-date-main, .journey-aside-note,
+  .journey-footer a, .about-me-footer a, .site-footer-back, .skills-breadcrumb a,
+  .skills-projects-link, .capabilities-footer-copy p) { color: var(--theme-body); }
+:root[data-theme="light"] :is(.journey-footer a:hover, .about-me-footer a:hover,
+  .site-footer-back:hover, .skills-breadcrumb a:hover, .skills-projects-link:hover) { color: #9b242c; }
+
+:root[data-theme="light"] :is(.hero-button-primary, .contact-primary, .skills-contact-link) {
+  background: var(--theme-text); color: #fbfaf5; border-color: var(--theme-text);
+}
+:root[data-theme="light"] :is(.hero-button-primary:hover, a.contact-primary:hover, .skills-contact-link:hover) {
+  background: #b42e35; border-color: #b42e35; color: #fff;
+}
+:root[data-theme="light"] :is(.hero-button-outline, .more-projects-button, .capabilities-full-link,
+  .capabilities-cta, .contact-social-link) { background: transparent; color: var(--theme-text); border-color: var(--theme-strong-line); }
+:root[data-theme="light"] :is(a.hero-button-outline:hover, .more-projects-button:hover,
+  .more-projects-button:focus-visible, .capabilities-full-link:hover, .capabilities-cta:hover,
+  a.contact-social-link:hover) { background: var(--theme-text); color: #fbfaf5; border-color: var(--theme-text); }
+:root[data-theme="light"] .skip-link { background: var(--theme-text); color: #fbfaf5; }
+
+:root[data-theme="light"] :is(.capability-row, .capabilities-list, .capabilities-cta,
+  .journey-timeline, .journey-entry, .journey-entry-date, .journey-footer,
+  .about-profile-poster, .about-profile-nameplate, .about-me-details-heading, .about-me-detail,
+  .site-footer, .site-footer-bottom, .portrait-caption, .skills-overview,
+  .skills-overview-counts, .skills-overview-counts > div + div, .skills-section-divider,
+  .skill-discipline, .skill-discipline-icon, .skill-technology-list, .skill-technology-list li,
+  .placeholder-notice) { border-color: var(--theme-line); }
+:root[data-theme="light"] .capability-row:hover { background: #e7e3d8; }
+:root[data-theme="light"] :is(.capability-tags li, .skill-discipline-icon) { border-color: var(--theme-strong-line); color: #4c5045; }
+:root[data-theme="light"] :is(.capability-title-line svg, .journey-entry-icon) { color: #77786b; }
+:root[data-theme="light"] :is(.capability-visual, .skills-overview-art) { background: var(--theme-surface); border-color: var(--theme-strong-line); }
+:root[data-theme="light"] :is(.capability-visual-label, .capability-visual-caption) { color: #52564a; border-color: var(--theme-line); }
+:root[data-theme="light"] .capability-row:hover .capability-visual { border-color: var(--theme-strong-line); }
+:root[data-theme="light"] :is(.journey-graphic, .about-profile-poster, .skills-overview) { background: var(--theme-surface); border-color: var(--theme-strong-line); }
+:root[data-theme="light"] .journey-graphic-type { color: var(--theme-text); }
+:root[data-theme="light"] .journey-foundation text { fill: var(--theme-body); }
+:root[data-theme="light"] .journey-graphic::before { background-image: linear-gradient(#77736217 1px, transparent 1px), linear-gradient(90deg, #77736217 1px, transparent 1px); }
+:root[data-theme="light"] .journey-entry-date::after { background: var(--theme-canvas); border-color: #878576; }
+:root[data-theme="light"] .journey-entry--current .journey-entry-date { border-color: #c98d89; }
+:root[data-theme="light"] .journey-entry--current .journey-entry-date::after { background: #b42e35; border-color: #b42e35; }
+:root[data-theme="light"] .journey-entry--current .journey-date-detail { color: #a52b32; }
+:root[data-theme="light"] .journey-entry::before { background: var(--theme-line); }
+:root[data-theme="light"] .journey-entry--current::before { background: #c98d89; }
+:root[data-theme="light"] .about-profile-nameplate { background: #e2dfd4; }
+:root[data-theme="light"] .about-profile-echo { -webkit-text-stroke-color: #8a8878; }
+:root[data-theme="light"] .about-profile-artwork::after { background: linear-gradient(90deg, #f4f2eb11, transparent 45%, #f4f2eb55), linear-gradient(180deg, transparent 65%, #eae7df99); }
+:root[data-theme="light"] .skill-discipline { background: var(--theme-panel); }
+:root[data-theme="light"] .skill-discipline:hover { border-color: var(--theme-strong-line); }
+
+/* Artwork keeps its native raster colors. Placeholder posters use lighter surfaces. */
+:root[data-theme="light"] .project-tile--showcase:not(.project-tile--greenway) { background: var(--theme-surface); --project-hover-text: var(--interaction-accent); }
+:root[data-theme="light"] .project-tile--terrain .project-tile-art { background: #dedfd7; color: #797d70; }
+:root[data-theme="light"] .project-tile--structure .project-tile-art { background: #e4e2da; color: #686b62; }
+:root[data-theme="light"] .structure-svg path { stroke: #7f8479; }
+:root[data-theme="light"] .structure-svg path:nth-child(1) { fill: #e2e5dc; }
+:root[data-theme="light"] .structure-svg path:nth-child(2) { fill: #bfc5b7; }
+:root[data-theme="light"] .structure-svg path:nth-child(3) { fill: #9aa68f; }
+:root[data-theme="light"] .project-tile--orbit .project-tile-art { background: #e6d6cf; color: #8d6e67; }
+:root[data-theme="light"] .project-tile--showcase:not(.project-tile--greenway) .project-tile-art::after { background: linear-gradient(180deg, #fffefa77, #fffefa00 50%, var(--theme-surface)); }
+:root[data-theme="light"] .project-tile--showcase:not(.project-tile--greenway)::after { background: linear-gradient(180deg, #f4f3ef00 20%, #f4f3efed 58%, var(--theme-canvas)); }
+:root[data-theme="light"] .project-tile--showcase:not(.project-tile--greenway) :is(h3, .project-tile-bottom a, .project-tile-bottom button) { color: var(--theme-text); }
+:root[data-theme="light"] .project-tile--showcase:not(.project-tile--greenway) :is(.project-tile-top p, .tile-category, .tile-status, .project-tile-icon) { color: var(--theme-body); border-color: var(--theme-strong-line); }
+:root[data-theme="light"] .project-tile--showcase:not(.project-tile--greenway) .tile-details .tile-description { color: var(--theme-body); }
+:root[data-theme="light"] .project-tile--showcase:not(.project-tile--greenway) .tile-technologies > :is(span, button, a) { background: #fbfaf5cc; border-color: var(--theme-strong-line); color: var(--theme-text); }
+:root[data-theme="light"] .project-tile--showcase:not(.project-tile--greenway) .project-tile-bottom :is(a, button):hover { color: #a12931; }
+:root[data-theme="light"] .project-dialog { background: var(--theme-panel); color: var(--theme-text); border-color: var(--theme-strong-line); }
+:root[data-theme="light"] .project-dialog .tech-tags span { color: var(--theme-body); border-color: var(--theme-strong-line); }
+:root[data-theme="light"] .project-dialog::backdrop { background: #292a235c; }
+
+:root[data-theme="light"] .page-back-button { color: var(--theme-text); }
+:root[data-theme="light"] .project-live-link { background: #d9e5d5; color: #24462c; border-color: #9db498; }
+:root[data-theme="light"] .project-live-link:hover { background: #c6d9c0; border-color: #6f9466; }
+
+/* Each button role keeps its own hover treatment, using the same palette for keyboard focus. */
+:root[data-theme] :is(.capability-row, .skill-discipline):is(:hover, :focus-within) {
+  background: var(--interaction-surface);
+  border-color: var(--interaction-border);
+}
+:root[data-theme] .capability-row:is(:hover, :focus-within) .capability-visual {
+  border-color: var(--interaction-border);
+}
+:root[data-theme] .capability-row:is(:hover, :focus-within) .capability-title-line > svg {
+  color: var(--interaction-accent);
+}
+:root[data-theme] :is(.more-projects-button, .capabilities-full-link):is(:hover, :focus-visible) {
+  background: var(--interaction-fill);
+  border-color: var(--interaction-fill);
+  color: var(--interaction-ink);
+}
+:root[data-theme] :is(a.hero-button-outline, .capabilities-cta, .page-back-button):is(:hover, :focus-visible) {
+  background: var(--interaction-outline-surface);
+  border-color: var(--interaction-outline-border);
+  color: var(--interaction-outline-text);
+}
+:root[data-theme] a.contact-social-link:is(:hover, :focus-visible) {
+  background: var(--interaction-surface);
+  border-color: var(--interaction-soft-border);
+  color: var(--interaction-text);
+}
+:root[data-theme] :is(.hero-button-primary, a.contact-primary, .skills-contact-link):is(:hover, :focus-visible) {
+  background: var(--interaction-primary);
+  border-color: var(--interaction-primary);
+  color: #fff;
+}
+:root[data-theme] .side-nav-item:is(:hover, :focus-visible),
+:root[data-theme] .side-nav-item.is-active:is(:hover, :focus-visible) {
+  background: var(--interaction-surface);
+  border-color: var(--interaction-border);
+  color: var(--interaction-text);
+}
+:root[data-theme] :is(.journey-footer a, .about-me-footer a, .site-footer-back,
+  .skills-projects-link, .scroll-cue, .text-button,
+  .project-action, .close-button):is(:hover, :focus-visible) { color: var(--interaction-accent); }
+:root[data-theme] :is(.side-nav-tooltip, .more-projects-tooltip) {
+  background: var(--interaction-tooltip);
+  color: var(--interaction-text);
+}
+:root[data-theme] .project-tile:not(.project-tile--greenway) {
+  --project-hover-accent: var(--interaction-accent);
+  --project-hover-text: var(--interaction-accent);
+  --project-hover-border: var(--interaction-border);
+}
+:root[data-theme="light"] .project-tile--showcase:not(.project-tile--greenway) .project-tile-bottom :is(a, button):is(:hover, :focus-visible) {
+  color: var(--interaction-accent);
+}
+:root[data-theme] .capabilities-cta:is(:hover, :focus-visible) svg { color: var(--interaction-accent); }
+

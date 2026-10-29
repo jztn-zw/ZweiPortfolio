@@ -1,0 +1,158 @@
+/* A character intro: angular red fields, a plaid-cardigan cutout, and JAZTIN lettering. */
+.page-shutter {
+  position: fixed;
+  inset: var(--site-header-height, 88px) 0 0;
+  z-index: 25;
+  pointer-events: none;
+  overflow: clip;
+  contain: paint;
+}
+.page-shutter-panel {
+  position: absolute;
+  inset: -2px;
+  transform: translateX(-102%);
+  background: #171716;
+  background-image: url('/images/transition-logic-field.svg');
+  background-size: cover;
+  background-position: center;
+  clip-path: polygon(0 0,46.3% 0,30.3% 100%,0 100%);
+  will-change: transform;
+}
+.page-shutter-panel:nth-child(2) { background-color: var(--interaction-primary, #d1363a); clip-path: polygon(45.7% 0,81.3% 0,65.3% 100%,29.7% 100%); }
+.page-shutter-panel:nth-child(3) { background-color: #891f29; clip-path: polygon(80.7% 0,100% 0,100% 100%,64.7% 100%); }
+.page-cut-in {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  opacity: 0;
+  clip-path: polygon(0 0,0 0,0 100%,0 100%);
+  will-change: transform, clip-path, opacity;
+  pointer-events: none;
+}
+.page-cut-in::before {
+  content: '';
+  position: absolute;
+  inset: 21% -4% 13%;
+  background-color: #111;
+  background-image: radial-gradient(ellipse at 33% 45%,#9e1e2f55,transparent 60%),url('/images/transition-logic-field.svg');
+  background-size: cover;
+  clip-path: polygon(0 14%,100% 0,100% 81%,0 100%);
+  animation: page-logic-depth 1250ms cubic-bezier(.16,1,.3,1) both;
+}
+.page-cut-in::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 19%;
+  left: -5%;
+  width: 112%;
+  height: 13%;
+  background: #eeece1;
+  clip-path: polygon(0 64%,82% 0,76% 28%,100% 12%,95% 46%,18% 100%,24% 72%);
+}
+.page-character-stage {
+  position: absolute;
+  z-index: 3;
+  bottom: -16%;
+  left: -7%;
+  width: 82%;
+  height: 112%;
+  will-change: transform, opacity;
+}
+.page-cut-in-portrait { position: absolute; z-index: 1; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; filter: drop-shadow(4px 1px 0 #eeece1) drop-shadow(-2px -1px 0 #eeece1); user-select: none; }
+.page-character-geometry { position: absolute; inset: 0; display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.page-character-geometry--back { z-index: 0; }
+.page-character-geometry--front { z-index: 2; }
+.character-shoulder-accent { transform-box: fill-box; transform-origin: right center; animation: character-accent-in 520ms cubic-bezier(.16,1,.3,1) 150ms both; }
+.character-sleeve-marks { animation: character-decal-in 400ms ease-out 250ms both; }
+.character-emblem { transform-box: fill-box; transform-origin: center; animation: character-emblem-in 450ms cubic-bezier(.16,1,.3,1) both; }
+.character-emblem--logic { animation-delay: 210ms; }
+.character-emblem--direction { animation-delay: 250ms; }
+.character-emblem--tiles { animation-delay: 290ms; }
+@keyframes character-emblem-in { from { opacity: 0; transform: translateY(10px) scale(.9); } to { opacity: .9; transform: translateY(0) scale(1); } }
+@keyframes character-accent-in { from { opacity: 0; transform: translate(-20px,8px) rotate(-4deg) scale(.94); } to { opacity: 1; transform: translate(0,0) rotate(0) scale(1); } }
+@keyframes character-decal-in { from { opacity: 0; } }
+.page-cut-in-caption { position: absolute; z-index: 4; bottom: 24%; right: 5%; max-width: 54%; opacity: 0; transform: rotate(-4deg); will-change: transform, opacity; }
+.page-cut-in-byline { display: block; width: fit-content; margin: 0 0 13px 28px; padding: 7px 12px; background: #111; color: #eeece1; border-left: 3px solid #d1363a; font: 600 11px/1.4 var(--font-mono,monospace); letter-spacing: 1.4px; }
+.page-cut-in-nameplate { --tile-size: clamp(56px,7.7vw,116px); position: relative; isolation: isolate; display: flex; align-items: flex-end; gap: 0; width: fit-content; padding: 0 4px 6px; transform-origin: 0 100%; transform: perspective(900px) rotateY(12deg) rotateX(-5deg) rotateZ(-3deg); }
+.page-cut-in-nameplate::before { content: ''; position: absolute; z-index: -1; left: 3%; right: -2%; bottom: -3%; height: 22%; background: #a32732; clip-path: polygon(2% 33%,100% 0,95% 75%,0 100%); }
+.page-cut-in-letter { --letter-turn: -3deg; --letter-y: 0px; --letter-yaw: 0deg; --letter-skew: 0deg; --letter-shape: polygon(1% 5%,97% 0,100% 96%,0 100%); position: relative; isolation: isolate; display: block; flex: none; width: calc(var(--tile-size) * .76); height: var(--tile-size); margin-left: calc(var(--tile-size) * -.075); padding: calc(var(--tile-size) * .065); color: #eeece1; font-size: 0; box-sizing: border-box; transform: perspective(500px) translateY(var(--letter-y)) rotate(var(--letter-turn)) rotateY(var(--letter-yaw)) skewX(var(--letter-skew)); animation: page-name-arrive 420ms cubic-bezier(.16,1,.3,1) both; }
+.page-name-glyph { display: block; width: 100%; height: 100%; overflow: visible; }
+.page-cut-in-letter::before, .page-cut-in-letter::after { content: ''; position: absolute; clip-path: var(--letter-shape); }
+.page-cut-in-letter::before { z-index: -2; inset: 0; background: #eeece1; }
+.page-cut-in-letter::after { z-index: -1; inset: 2px; background: #0d0d0d; }
+.page-cut-in-letter:first-child { --letter-turn: -10deg; --letter-yaw: -7deg; --letter-skew: -3deg; --letter-shape: polygon(3% 0,91% 4%,100% 91%,0 100%); margin-left: 0; width: calc(var(--tile-size) * 1.07); height: calc(var(--tile-size) * 1.68); padding: calc(var(--tile-size) * .085); z-index: 6; }
+.page-cut-in-letter:first-child::before { background: linear-gradient(155deg,#eeece1 0 87%,#d1363a 87%); }
+.page-cut-in-letter:nth-child(2) { --letter-turn: 8deg; --letter-y: calc(var(--tile-size) * -.06); --letter-yaw: 9deg; --letter-skew: 3deg; --letter-shape: polygon(0 8%,92% 0,100% 91%,7% 100%); width: calc(var(--tile-size) * .68); height: calc(var(--tile-size) * .82); color: #111; z-index: 1; }
+.page-cut-in-letter:nth-child(2)::after { inset: 4px; background: #eeece1; }
+.page-cut-in-letter:nth-child(2)::before { background: #111; box-shadow: none; }
+.page-cut-in-letter:nth-child(3) { --letter-turn: -7deg; --letter-y: calc(var(--tile-size) * -.1); --letter-yaw: -6deg; --letter-skew: -4deg; --letter-shape: polygon(2% 4%,100% 0,96% 95%,0 100%); height: calc(var(--tile-size) * 1.03); z-index: 2; }
+.page-cut-in-letter:nth-child(4) { --letter-turn: 5deg; --letter-y: calc(var(--tile-size) * -.035); --letter-yaw: 8deg; --letter-skew: 2deg; --letter-shape: polygon(4% 0,100% 6%,94% 100%,0 95%); width: calc(var(--tile-size) * .8); height: calc(var(--tile-size) * 1.08); z-index: 3; }
+.page-cut-in-letter:nth-child(5) { --letter-turn: -9deg; --letter-y: calc(var(--tile-size) * -.14); --letter-yaw: -9deg; --letter-skew: -3deg; --letter-shape: polygon(0 8%,95% 0,100% 90%,5% 100%); width: calc(var(--tile-size) * .55); height: calc(var(--tile-size) * .88); padding-inline: calc(var(--tile-size) * .035); z-index: 4; }
+.page-cut-in-letter:nth-child(6) { --letter-turn: 3deg; --letter-y: calc(var(--tile-size) * -.18); --letter-yaw: 7deg; --letter-skew: 3deg; --letter-shape: polygon(0 3%,98% 0,100% 96%,2% 100%); width: calc(var(--tile-size) * .8); height: calc(var(--tile-size) * 1.04); z-index: 5; }
+.page-cut-in-title { display: block; width: fit-content; margin: 14px 0 0 auto; padding: 8px 15px; background: #111; color: #eeece1; border-right: 3px solid #d1363a; font: 600 clamp(10px,1.1vw,14px)/1.5 var(--font-mono,monospace); letter-spacing: 1.7px; white-space: normal; }
+.page-logic-card { position: absolute; isolation: isolate; z-index: 2; width: clamp(82px,8.5vw,132px); aspect-ratio: 88 / 120; opacity: 0; filter: drop-shadow(6px 9px 0 #0005); will-change: transform, opacity; }
+.page-logic-graphic { display: block; width: 100%; height: 100%; overflow: visible; }
+.page-logic-card--cube { left: 6%; top: 17%; }
+.page-logic-card--puzzle { right: 25%; top: 18%; width: clamp(74px,7.3vw,114px); }
+.page-logic-card--poker { right: 7%; top: 10%; }
+.page-logic-card--poker::before { content: ''; position: absolute; z-index: -1; inset: 0; border: 2px solid #eeece1; border-radius: 3px; background: repeating-linear-gradient(45deg,transparent 0 7px,#eeece133 7px 8px),repeating-linear-gradient(-45deg,#671d29 0 7px,#eeece133 7px 8px); transform: translate(-8px,6px) rotate(-8deg); }
+.page-puzzle-moving-tile { animation: page-puzzle-slide 900ms cubic-bezier(.45,0,.2,1) 150ms both; }
+
+/* A paper edition of the same cut-in. Only paint changes between themes;
+   character art, geometry, timing and the route handoff stay shared. */
+:root[data-theme="light"] .page-shutter-panel {
+  background-color: #eae8e2;
+  background-image: url('/images/transition-logic-field-light.svg');
+}
+:root[data-theme="light"] .page-shutter-panel:nth-child(2) { background-color: #ead6d2; }
+:root[data-theme="light"] .page-shutter-panel:nth-child(3) { background-color: #cdb5af; }
+:root[data-theme="light"] .page-cut-in::before {
+  background-color: var(--theme-panel, #fffefa);
+  background-image: radial-gradient(ellipse at 33% 45%, #ad303914, transparent 60%), url('/images/transition-logic-field-light.svg');
+}
+:root[data-theme="light"] .page-cut-in::after { background: var(--theme-accent, #ad3039); }
+:root[data-theme="light"] .page-cut-in-portrait {
+  filter: drop-shadow(4px 1px 0 #fffefa) drop-shadow(-2px -1px 0 #fffefa) drop-shadow(0 8px 12px #51392e22);
+}
+:root[data-theme="light"] :is(.page-cut-in-byline, .page-cut-in-title) {
+  background: var(--theme-panel, #fffefa);
+  color: var(--theme-text, #232321);
+  border-color: var(--theme-accent, #ad3039);
+}
+:root[data-theme="light"] .page-cut-in-nameplate::before { background: var(--theme-accent, #ad3039); }
+:root[data-theme="light"] .page-cut-in-letter { color: var(--theme-text, #232321); }
+:root[data-theme="light"] .page-cut-in-letter::before { background: #393630; }
+:root[data-theme="light"] .page-cut-in-letter::after { background: var(--theme-panel, #fffefa); }
+:root[data-theme="light"] .page-cut-in-letter:first-child::before { background: linear-gradient(155deg, #393630 0 87%, var(--theme-accent, #ad3039) 87%); }
+:root[data-theme="light"] .page-cut-in-letter:nth-child(2) { color: var(--theme-panel, #fffefa); }
+:root[data-theme="light"] .page-cut-in-letter:nth-child(2)::before { background: #8a7f72; }
+:root[data-theme="light"] .page-cut-in-letter:nth-child(2)::after { background: #393630; }
+:root[data-theme="light"] .page-logic-card { filter: drop-shadow(5px 8px 0 #5b47332b); }
+:root[data-theme="light"] .page-logic-graphic > rect:first-child { fill: #fffefa; stroke: #514b43; }
+:root[data-theme="light"] .page-logic-graphic > path[stroke="#eeece1"] { stroke: #6e6459; }
+:root[data-theme="light"] .page-logic-graphic > path[stroke="#69675c"] { stroke: #a89c8d; }
+:root[data-theme="light"] .page-logic-card--poker::before {
+  border-color: #8a706c;
+  background: repeating-linear-gradient(45deg, transparent 0 7px, #a55f6655 7px 8px), repeating-linear-gradient(-45deg, #e2bfc0 0 7px, #a55f6655 7px 8px);
+}
+@keyframes page-logic-depth { from { transform: perspective(1200px) translateX(-20px) rotateY(-4deg) scale(1.08); } to { transform: perspective(1200px) translateX(0) rotateY(0) scale(1); } }
+@keyframes page-puzzle-slide { 0%,28% { transform: translateX(0); } 62%,100% { transform: translateX(21px); } }
+@keyframes page-name-arrive {
+  from { opacity: 0; transform: perspective(500px) translate(16px,calc(var(--letter-y) - 16px)) rotate(calc(var(--letter-turn) + 9deg)) rotateY(calc(var(--letter-yaw) + 18deg)) skewX(var(--letter-skew)) scale(1.1); }
+  to { opacity: 1; transform: perspective(500px) translate(0,var(--letter-y)) rotate(var(--letter-turn)) rotateY(var(--letter-yaw)) skewX(var(--letter-skew)) scale(1); }
+}
+@media (max-width: 640px) {
+  .page-cut-in::before { inset: 27% -12% 17%; }
+  .page-cut-in::after { top: 24%; }
+  .page-character-stage { width: 130%; height: 102%; left: -29%; bottom: 0; }
+  .page-cut-in-caption { right: 6%; bottom: 22%; max-width: 88%; }
+  .page-cut-in-nameplate { --tile-size: clamp(42px,12vw,72px); }
+  .page-cut-in-title { font-size: 10px; letter-spacing: 1px; padding: 7px 10px; }
+  .page-cut-in-byline { font-size: 9px; letter-spacing: 1px; padding: 6px 9px; margin-left: 20px; }
+  .page-logic-card { width: 66px; }
+  .page-logic-card--cube { left: 4%; top: 19%; }
+  .page-logic-card--puzzle { right: 25%; top: 18%; width: 56px; }
+  .page-logic-card--poker { right: 5%; top: 12%; }
+}
+@media (prefers-reduced-motion: reduce) { .page-shutter { display: none; } .page-cut-in-letter, .page-cut-in::before, .page-puzzle-moving-tile, .character-shoulder-accent, .character-sleeve-marks, .character-emblem { animation: none; } }
