@@ -27,6 +27,8 @@ Gemini is primary; Groq handles quota exhaustion and temporary failures before a
 3. Ensure `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are set. The visitor counter already uses these names. Chat uses separate Redis keys and never modifies visitor totals. Hosted chat stays unavailable if shared rate-limit storage is missing.
 4. Select the intended deployment environments, save, and redeploy your portfolio. Local `.env.local` values do not upload automatically.
 
+The project pins Node 22.x and explicitly includes the four shared TypeScript source files in the chat function. This preserves the `.ts` import paths used by the backend after Vercel emits compiled `.js` copies. Node 22's built-in type stripping runs these erasable-TypeScript sources. Keep the function's `includeFiles` list in sync if adding shared runtime modules; `tests/chat-package.test.js` checks this and boots a minimal isolated function package without the frontend tree or local environment file. Deploy the updated source and configuration together to fix `ERR_MODULE_NOT_FOUND` errors for `src/data/portfolio.ts`.
+
 ## Limits and behavior
 
 - Replies use Jaztin’s first-person portfolio voice and only the confirmed public information. If asked, the chat honestly identifies itself as automated; it never claims Jaztin is personally typing live.
