@@ -19,7 +19,7 @@ function harness(activeIndex = 0) {
     closest() { return this }
     getAttribute(name) { return name === 'aria-disabled' && this.unavailable ? 'true' : null }
   }
-  const items = [new Element(0), new Element(1, true), new Element(2, true), new Element(3)]
+  const items = [new Element(0), new Element(1, true), new Element(2), new Element(3), new Element(4, true)]
   const listeners = new Map(), frames = new Map(), properties = new Map()
   const nav = {
     dataset: {},
@@ -42,7 +42,7 @@ function harness(activeIndex = 0) {
       useEffect: effect => { cleanup = effect() },
     } : name === 'react/jsx-runtime' ? { jsx: () => null, jsxs: () => null } : {},
   })
-  exports.default({ isHome: activeIndex === 0, isNumbers: activeIndex === 3 })
+  exports.default({ isHome: activeIndex === 0, isNumbers: activeIndex === 3, isAI: activeIndex === 2 })
   return {
     items, document, listeners, cleanup: () => cleanup(),
     marker: () => properties.get('--nav-marker-x'),
@@ -52,7 +52,7 @@ function harness(activeIndex = 0) {
 }
 
 test('leaving or clicking a coming-soon item restores the current page marker despite retained focus', () => {
-  for (const activeIndex of [0, 3]) for (const unavailableIndex of [1, 2]) {
+  for (const activeIndex of [0, 2, 3]) for (const unavailableIndex of [1, 4]) {
     const h = harness(activeIndex)
     const activeX = `${activeIndex * 53}px`
     assert.equal(h.marker(), activeX)

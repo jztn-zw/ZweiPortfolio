@@ -4,7 +4,7 @@ import ThemeIcon from './ThemeIcon'
 import useTheme from '../hooks/useTheme'
 import './SiteHeader.css'
 
-export default function SiteHeader({ isHome = true, isNumbers = false }: { isHome?: boolean; isNumbers?: boolean }) {
+export default function SiteHeader({ isHome = true, isNumbers = false, isAI = false }: { isHome?: boolean; isNumbers?: boolean; isAI?: boolean }) {
   const { theme, toggleTheme } = useTheme()
   const themeAction = `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`
   return (
@@ -17,7 +17,7 @@ export default function SiteHeader({ isHome = true, isNumbers = false }: { isHom
           </a>
         </div>
         <div className="site-header-actions">
-          <FloatingNavbar isHome={isHome} isNumbers={isNumbers} />
+          <FloatingNavbar isHome={isHome} isNumbers={isNumbers} isAI={isAI} />
           <span className="side-nav-divider" aria-hidden="true" />
           <button type="button" data-guide="theme" className="side-nav-item theme-mode-button" aria-label={themeAction} onClick={event => {
             const bounds = event.currentTarget.getBoundingClientRect()

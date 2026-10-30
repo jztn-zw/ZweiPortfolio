@@ -16,16 +16,28 @@
 .theme-mode-button .theme-icon-frame { transition: opacity 180ms ease-out; }
 .theme-mode-button:is(:hover, :focus-visible) .theme-icon-frame { opacity: .7; }
 .site-header .wordmark { flex-shrink: 0; gap: 12px; font-size: 12px; letter-spacing: .7px; }
+.minimal-glyph-content { opacity: .85; }
+@media (max-width: 480px) {
+  .site-header:has(.view-mode-button) .site-header-name { display: none; }
+  .site-header:has(.view-mode-button) .site-header-inner { gap: 8px; }
+  .site-header:has(.view-mode-button) .brand-mark { width: 28px; height: 28px; }
+  .site-header:has(.view-mode-button) .site-header-actions { gap: 4px; }
+  .site-header:has(.view-mode-button) .side-nav { gap: 4px; }
+  .site-header:has(.view-mode-button) .side-nav-divider { margin: 0; }
+  .site-header:has(.view-mode-button) .side-nav-item { width: 36px; height: 36px; }
+  .site-header:has(.view-mode-button) .navbar-glyph { width: 24px; height: 24px; }
+}
 @media (max-width: 640px) {
   :root { --site-header-height: 72px; }
   .site-header-inner { gap: 14px; }
   .site-header .wordmark { gap: 9px; font-size: 11px; }
-  .site-header-actions { gap: 6px; }
+  .site-header-actions { gap: 4px; }
+  .site-header-actions > .side-nav-divider { display: none; }
 }
 @media (max-width: 380px) {
   .site-header-name { display: none; }
   .site-header-actions { gap: 4px; }
-  .site-header-actions .side-nav-item { width: 36px; }
+  .site-header-actions .side-nav-item { width: 36px; height: 36px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .theme-mode-button::before, .theme-mode-button::after, .theme-mode-button .navbar-glyph, .theme-mode-button .theme-icon-frame { transition: none; }

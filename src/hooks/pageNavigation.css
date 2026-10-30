@@ -7,6 +7,12 @@
   overflow: clip;
   contain: paint;
 }
+/* Keep the outgoing/incoming page's decorative CSS animations idle while covered. */
+:root[data-page-transition] #root main *,
+:root[data-page-transition] #root main *::before,
+:root[data-page-transition] #root main *::after {
+  animation-play-state: paused !important;
+}
 .page-shutter-panel {
   position: absolute;
   inset: -2px;
@@ -25,8 +31,7 @@
   z-index: 1;
   inset: 0;
   opacity: 0;
-  clip-path: polygon(0 0,0 0,0 100%,0 100%);
-  will-change: transform, clip-path, opacity;
+  will-change: transform, opacity;
   pointer-events: none;
 }
 .page-cut-in::before {
@@ -150,6 +155,21 @@
   border-color: #8a706c;
   background: repeating-linear-gradient(45deg, transparent 0 7px, #a55f6655 7px 8px), repeating-linear-gradient(-45deg, #e2bfc0 0 7px, #a55f6655 7px 8px);
 }
+/* Same composition and palette, with fewer raster surfaces on constrained devices. */
+:root .page-shutter[data-quality="lite"] :is(.page-cut-in-portrait, .page-logic-card, .page-logic-detail) {
+  filter: none;
+}
+.page-shutter[data-quality="lite"] :is(.page-cut-in-letter, .character-shoulder-accent, .character-sleeve-marks, .character-emblem, .page-puzzle-moving-tile, .page-logic-turn-marks),
+.page-shutter[data-quality="lite"] .page-cut-in::before,
+.page-shutter[data-quality="lite"] .page-logic-card--poker::before,
+.page-shutter[data-quality="lite"] .page-logic-card--poker::after {
+  animation: none;
+}
+.page-shutter[data-quality="lite"] .page-cut-in-nameplate { transform: rotate(-3deg); }
+.page-shutter[data-quality="lite"] .page-cut-in-letter { transform: translateY(var(--letter-y)) rotate(var(--letter-turn)) skewX(var(--letter-skew)); }
+.page-shutter[data-quality="lite"] .page-logic-card--poker::before { transform: translate(-7px,4px) rotate(-8deg); }
+.page-shutter[data-quality="lite"] .page-logic-card--poker::after { transform: translate(-13px,7px) rotate(-16deg); }
+.page-shutter[data-quality="lite"] .page-logic-details { display: none; }
 @keyframes page-logic-depth { from { transform: perspective(1200px) translateX(-20px) rotateY(-4deg) scale(1.08); } to { transform: perspective(1200px) translateX(0) rotateY(0) scale(1); } }
 @keyframes page-puzzle-slide { 0%,28% { transform: translateX(0); } 62%,100% { transform: translateX(26px); } }
 @keyframes page-poker-fan { from { opacity: 0; transform: translate(0,0) rotate(0); } to { opacity: 1; transform: translate(var(--fan-x),var(--fan-y)) rotate(var(--fan-turn)); } }

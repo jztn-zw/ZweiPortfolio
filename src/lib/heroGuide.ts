@@ -18,8 +18,9 @@ export const heroGuideSteps = [
   { target: '[data-guide="resume"]', question: 'View Resume', message: 'My resume will be available here soon, with my skills and experience.' },
   { target: '[data-guide="home"]', question: 'Home', message: 'This is Home. Your starting point for the portfolio.' },
   { target: '[data-guide="lab"]', question: 'The Lab', message: 'The Lab will hold experiments and side projects. Coming soon.' },
-  { target: '[data-guide="ai"]', question: 'Ask AI', message: 'Ask AI will answer questions about my work. Coming soon.' },
+  { target: '[data-guide="ai"]', question: 'Ask me anything', message: 'Curious about my work? Ask me anything about my work and projects here.' },
   { target: '[data-guide="numbers"]', question: 'By the Numbers', message: 'By the Numbers shows project stats and my GitHub activity.' },
+  { target: '[data-guide="minimal"]', question: 'Minimal view', message: 'Prefer a simpler layout? Minimal view is coming soon.' },
   { target: '[data-guide="theme"]', question: 'Make it yours', message: 'Switch between light and dark mode here.' },
   { target: '.portrait-reveal', question: 'Behind the illustration.', message: 'That’s the tour. Hover or click my illustration to reveal the real me.' },
 ] as const

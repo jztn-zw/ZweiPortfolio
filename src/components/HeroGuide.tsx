@@ -55,17 +55,18 @@ export default function HeroGuide() {
     const replayForPreview = import.meta.env.DEV
     if (!replayForPreview && hasSeenHeroGuide()) return
     let startedThisMount = false
+    let interrupted = Boolean(document.documentElement.dataset.pageTransition)
     let timer: ReturnType<typeof setTimeout> | undefined
     const start = () => {
       const hero = document.querySelector<HTMLElement>('.hero')
-      if (!hero || startedThisMount || (!replayForPreview && hasSeenHeroGuide()) || document.hidden) return
+      if (!hero || interrupted || startedThisMount || (!replayForPreview && hasSeenHeroGuide()) || document.hidden) return
       const bounds = hero.getBoundingClientRect()
       if (bounds.bottom < 160 || bounds.top > window.innerHeight) return
       startedThisMount = true
       markHeroGuideSeen()
       setVisible(true)
     }
-    const schedule = () => { timer = setTimeout(start, 450) }
+    const schedule = () => { if (!interrupted) timer = setTimeout(start, 450) }
     const onForeground = () => {
       if (!document.hidden && !document.getElementById('startup-screen')) {
         clearTimeout(timer)
@@ -75,13 +76,23 @@ export default function HeroGuide() {
     document.addEventListener('visibilitychange', onForeground)
     const startup = document.getElementById('startup-screen')
     let observer: MutationObserver | undefined
+    const navigationObserver = new MutationObserver(() => {
+      if (!document.documentElement.dataset.pageTransition) return
+      interrupted = true
+      clearTimeout(timer)
+      clearTimeout(closeTimer.current)
+      observer?.disconnect()
+      // Navigation takes priority over the tour, including a pending first step.
+      setVisible(false)
+    })
+    navigationObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-page-transition'] })
     if (startup) {
       observer = new MutationObserver(() => {
         if (!startup.isConnected) { observer?.disconnect(); schedule() }
       })
       observer.observe(document.body, { childList: true })
     } else schedule()
-    return () => { observer?.disconnect(); clearTimeout(timer); document.removeEventListener('visibilitychange', onForeground) }
+    return () => { observer?.disconnect(); navigationObserver.disconnect(); clearTimeout(timer); document.removeEventListener('visibilitychange', onForeground) }
   }, [])
 
   useEffect(() => () => clearTimeout(closeTimer.current), [])

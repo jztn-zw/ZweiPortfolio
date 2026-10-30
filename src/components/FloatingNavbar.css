@@ -88,7 +88,7 @@
 @media (max-width: 640px) {
   .side-nav { gap: 4px; }
   .side-nav-divider { margin-inline: 2px; height: 20px; }
-  .side-nav-item { width: 40px; height: 44px; }
+  .side-nav-item { width: 40px; height: 40px; }
   .navbar-glyph { width: 25px; height: 25px; }
   .side-nav-tooltip { font-size: 11px; padding: 9px 11px; }
 }

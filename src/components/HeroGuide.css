@@ -2,6 +2,8 @@
 :root[data-theme='light'] .hero-guide { --guide-bg: #fffefa; --guide-text: #24251f; --guide-muted: #797469; --guide-line: #d1cbc0; --guide-accent: #ad3039; }
 .hero-guide.is-positioned { opacity: 1; }
 .hero-guide.is-closing { opacity: 0; }
+/* The guide is portaled above the page; suppress it before React changes routes. */
+:root[data-page-transition] .hero-guide { opacity: 0; visibility: hidden; transition: none; }
 /* One moving origin keeps the cursor and its small message together. */
 .hero-guide-cursor { position: absolute; top: 0; left: 0; transition: transform 720ms cubic-bezier(.22, 1, .36, 1); }
 .hero-guide-pointer { color: var(--guide-text); filter: drop-shadow(0 1px 2px #0004); }

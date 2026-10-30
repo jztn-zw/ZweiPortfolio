@@ -34,6 +34,62 @@ test('storage restrictions keep an in-memory guard without breaking the page', (
   guide.markHeroGuideSeen()
   assert.equal(guide.hasSeenHeroGuide(), true)
 })
+
+test('page navigation dismisses an active or pending walkthrough and releases its observer', () => {
+  const component = ts.transpileModule(readFileSync(new URL('../src/components/HeroGuide.tsx', import.meta.url), 'utf8').replace('import.meta.env.DEV', 'false'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2023, jsx: ts.JsxEmit.ReactJSX },
+  }).outputText
+  for (const phase of ['visible', 'pending', 'already-navigating']) {
+    const states = [], effects = [], observers = [], timers = new Map(), listeners = new Map()
+    let timerId = 0
+    const root = { dataset: phase === 'already-navigating' ? { pageTransition: 'active' } : {} }
+    const document = {
+      hidden: false, documentElement: root,
+      getElementById: () => null,
+      querySelector: () => ({ getBoundingClientRect: () => ({ top: 0, bottom: 800 }) }),
+      addEventListener: (name, callback) => listeners.set(name, callback),
+      removeEventListener: name => listeners.delete(name),
+    }
+    const media = { matches: false, addEventListener() {}, removeEventListener() {} }
+    const exports = {}
+    vm.runInNewContext(component, {
+      exports, document, window: { innerHeight: 900, matchMedia: () => media },
+      setTimeout: callback => { timers.set(++timerId, callback); return timerId },
+      clearTimeout: id => timers.delete(id),
+      MutationObserver: class {
+        constructor(callback) { this.callback = callback; observers.push(this) }
+        observe(target) { this.target = target }
+        disconnect() { this.disconnected = true }
+      },
+      require: name => name === 'react' ? {
+        useState: initial => {
+          const index = states.length
+          states.push(typeof initial === 'function' ? initial() : initial)
+          return [states[index], value => { states[index] = typeof value === 'function' ? value(states[index]) : value }]
+        },
+        useRef: initial => ({ current: initial }),
+        useMemo: callback => callback(),
+        useEffect: effect => effects.push(effect),
+      } : name === '../lib/heroGuide' ? load() : {},
+    })
+    exports.default()
+    const cleanup = effects.map(effect => effect()).filter(Boolean)
+    const flushTimers = () => { const pending = [...timers.values()]; timers.clear(); pending.forEach(callback => callback()) }
+    if (phase === 'visible') { flushTimers(); assert.equal(states[0], true) }
+    const navigation = observers.find(observer => observer.target === root)
+    root.dataset.pageTransition = 'active'
+    navigation.callback()
+    assert.equal(states[0], false)
+    assert.equal(timers.size, 0)
+    delete root.dataset.pageTransition
+    navigation.callback()
+    listeners.get('visibilitychange')()
+    flushTimers()
+    assert.equal(states[0], false, 'a cancelled tour must not restart when navigation finishes')
+    cleanup.forEach(callback => callback())
+    assert.equal(navigation.disconnected, true)
+  }
+})
 test('the message and pointer stay inside narrow, short and desktop viewports', () => {
   const { placeHeroGuide } = load()
   for (const viewport of [{ width: 320, height: 568, top: 85 }, { width: 390, height: 720, top: 85 }, { width: 1440, height: 900, top: 100 }]) {

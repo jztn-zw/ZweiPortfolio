@@ -11,8 +11,10 @@ const routeSource = readFileSync(new URL('../src/lib/routes.ts', import.meta.url
 const routes = {}
 vm.runInNewContext(ts.transpileModule(routeSource, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: routes, URL })
 
-function harness({ reduced = false, supported = true, initial = '/' } = {}) {
+function harness({ reduced = false, supported = true, initial = '/', width = 1280, cores = 8, memory = 8, saveData = false, idle = false } = {}) {
   const animations = [], frames = [], listeners = new Map(), nodes = [], scrolls = [], anchors = new Map()
+  const idleCallbacks = new Map()
+  let createdNodes = 0, idleId = 0
   const entries = [new URL(initial, 'https://portfolio.test').href]
   let currentUrl = new URL(entries[0]), historyIndex = 0
   const motion = { matches: reduced, addEventListener: (_, callback) => listeners.set('motion', callback), removeEventListener: () => listeners.delete('motion') }
@@ -31,9 +33,10 @@ function harness({ reduced = false, supported = true, initial = '/' } = {}) {
     scrollIntoView(options) { scrolls.push(options) }
     append(...children) { this.children.push(...children) }
     remove() { const index = nodes.indexOf(this); if (index >= 0) nodes.splice(index, 1) }
-    animate() {
+    animate(keyframes, options) {
       let resolve, reject
       const animation = {
+        node: this, keyframes, options,
         finished: new Promise((yes, no) => { resolve = yes; reject = no }),
         finish: () => resolve(),
         cancel: () => reject(new Error('Animation cancelled')),
@@ -45,9 +48,11 @@ function harness({ reduced = false, supported = true, initial = '/' } = {}) {
     }
   }
   if (!supported) Element.prototype.animate = undefined
+  const main = new Element()
+  const createElement = () => { createdNodes++; return new Element() }
   const document = {
     documentElement: { dataset: {} }, body: { append: node => nodes.push(node) },
-    createElement: () => new Element(), createElementNS: () => new Element(), querySelector: () => new Element(),
+    createElement, createElementNS: createElement, querySelector: () => main,
     getElementById: id => { if (!anchors.has(id)) anchors.set(id, new Element()); return anchors.get(id) },
     addEventListener: (event, callback) => listeners.set(event, callback), removeEventListener: event => listeners.delete(event),
   }
@@ -60,7 +65,12 @@ function harness({ reduced = false, supported = true, initial = '/' } = {}) {
       back() { if (historyIndex > 0) { currentUrl = new URL(entries[--historyIndex]); listeners.get('popstate')() } },
       forward() { if (historyIndex < entries.length - 1) { currentUrl = new URL(entries[++historyIndex]); listeners.get('popstate')() } },
     },
-    scrollTo: options => scrolls.push(options), innerWidth: 1280, matchMedia: () => motion,
+    scrollTo: options => scrolls.push(options), innerWidth: width, matchMedia: () => motion,
+    navigator: { hardwareConcurrency: cores, deviceMemory: memory, connection: { saveData } },
+    ...(idle ? {
+      requestIdleCallback: callback => { idleCallbacks.set(++idleId, callback); return idleId },
+      cancelIdleCallback: id => idleCallbacks.delete(id),
+    } : {}),
     addEventListener: (event, callback) => listeners.set(event, callback), removeEventListener: event => listeners.delete(event),
   }
   const exports = {}
@@ -68,7 +78,9 @@ function harness({ reduced = false, supported = true, initial = '/' } = {}) {
   let notifications = 0
   const unsubscribe = exports.subscribeToNavigation(() => notifications++)
   return {
-    api: exports, animations, nodes, document, window, motion, unsubscribe, entries, scrolls, anchors, listeners,
+    api: exports, animations, nodes, document, window, motion, unsubscribe, entries, scrolls, anchors, listeners, main, idleCallbacks,
+    get createdNodes() { return createdNodes },
+    idle() { const callbacks = Array.from(idleCallbacks.values()); idleCallbacks.clear(); callbacks.forEach(callback => callback()) },
     get notifications() { return notifications },
     navigate(href, options = {}) {
       const link = new Element()
@@ -133,6 +145,71 @@ test('navigation during reveal reuses the curtain and does not apply stale clean
   await reveal(h)
   assert.equal(h.nodes.length, 0)
   h.unsubscribe()
+})
+
+test('small screens and constrained devices use lighter transforms and release the animation pause', async () => {
+  for (const options of [{ width: 390 }, { cores: 2 }, { memory: 2 }, { saveData: true }]) {
+    const h = harness(options)
+    h.document.documentElement.dataset.theme = 'light'
+    h.navigate('/numbers')
+    assert.equal(h.nodes[0].dataset.quality, 'lite')
+    assert.equal(h.document.documentElement.dataset.pageTransition, 'active')
+    await cover(h)
+    await reveal(h)
+    assert.ok(h.animations.every(animation => animation.node !== h.main), 'do not rasterize the entire incoming page')
+    for (const animation of h.animations) {
+      for (const frame of animation.keyframes) {
+        assert.ok(Object.keys(frame).every(key => ['transform', 'opacity', 'offset'].includes(key)))
+        assert.ok(!frame.transform?.includes('perspective'), 'lightweight props use flat transforms')
+      }
+    }
+    assert.equal(h.document.documentElement.dataset.pageTransition, undefined)
+    h.unsubscribe()
+  }
+})
+
+test('subsequent transitions reuse the scene, reset its transforms, and reassess device constraints', async () => {
+  const h = harness()
+  h.navigate('/numbers')
+  const curtain = h.nodes[0]
+  assert.equal(curtain.dataset.quality, 'full')
+  await cover(h)
+  await reveal(h)
+  assert.equal(h.document.documentElement.dataset.pageTransition, undefined)
+  const count = h.createdNodes
+  curtain.children[0].style.transform = 'stale'
+  h.window.innerWidth = 390
+  h.navigate('/')
+  assert.equal(h.nodes[0], curtain)
+  assert.equal(h.createdNodes, count, 'repeated navigation should not rebuild the SVG scene')
+  assert.equal(curtain.dataset.quality, 'lite')
+  assert.notEqual(h.animations.at(-9).keyframes[0].transform, 'stale')
+  h.api.cancelPageNavigation()
+  await settle()
+  assert.equal(h.api.getNavigationLocation(), '/')
+  assert.equal(h.document.documentElement.dataset.pageTransition, undefined)
+  assert.equal(h.nodes.length, 0)
+  h.unsubscribe()
+})
+
+test('idle preparation moves scene construction off the click path and cancels on unsubscribe', async () => {
+  const h = harness({ idle: true })
+  assert.equal(h.createdNodes, 0)
+  h.idle()
+  assert.ok(h.createdNodes > 0)
+  assert.equal(h.nodes.length, 0, 'preparing the scene must not display it')
+  const count = h.createdNodes
+  h.navigate('/skills')
+  assert.equal(h.createdNodes, count)
+  await cover(h)
+  await reveal(h)
+  h.unsubscribe()
+
+  const cancelled = harness({ idle: true })
+  cancelled.unsubscribe()
+  cancelled.idle()
+  assert.equal(cancelled.createdNodes, 0)
+  assert.equal(harness({ idle: true, reduced: true }).idleCallbacks.size, 0)
 })
 
 test('the new portrait and title finish their cut-in before the route swaps', async () => {
@@ -210,9 +287,9 @@ test('navigation during a theme reveal bypasses the curtain', () => {
 
 test('clean direct links and old hash bookmarks initialize without another history entry', () => {
   for (const [initial, expected] of [
-    ['/numbers', '/numbers'], ['/skills/', '/skills'],
+    ['/numbers', '/numbers'], ['/skills/', '/skills'], ['/ask-ai/', '/ask-ai'],
     ['/?ref=bookmark#/numbers', '/numbers?ref=bookmark'],
-    ['/#/projects/greenway/content', '/projects/greenway#greenway-content'],
+    ['/#/projects/greenway/content', '/projects/greenway#greenway-content'], ['/#/ask-ai/content', '/ask-ai#ai-content'],
   ]) {
     const h = harness({ initial })
     assert.equal(h.api.getNavigationLocation(), expected)
@@ -286,7 +363,7 @@ test('legacy hash navigation converts to a clean path and still uses the curtain
 
 test('Vercel rewrites cover app pages without capturing assets or API functions', () => {
   const config = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
-  for (const path of ['/numbers', '/skills', '/projects/greenway']) {
+  for (const path of ['/numbers', '/skills', '/projects/greenway', '/ask-ai']) {
     assert.equal(config.rewrites.find(rule => rule.source === path)?.destination, '/index.html')
   }
   assert.ok(config.rewrites.every(rule => routes.isPagePath(rule.source)))

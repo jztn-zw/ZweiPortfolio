@@ -4,10 +4,9 @@ import './FloatingNavbar.css'
 
 const items = [
   { label: 'The Lab', icon: 'lab' },
-  { label: 'Ask AI', icon: 'ai' },
 ] as const
 
-export default function FloatingNavbar({ isHome = true, isNumbers = false }: { isHome?: boolean; isNumbers?: boolean }) {
+export default function FloatingNavbar({ isHome = true, isNumbers = false, isAI = false }: { isHome?: boolean; isNumbers?: boolean; isAI?: boolean }) {
   const navRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -68,17 +67,21 @@ export default function FloatingNavbar({ isHome = true, isNumbers = false }: { i
       nav.removeEventListener('focusout', onFocusChange)
       delete nav.dataset.markerReady
     }
-  }, [isHome, isNumbers])
+  }, [isHome, isNumbers, isAI])
 
   return (
     <nav ref={navRef} className="side-nav" aria-label="Main navigation">
       <span className="side-nav-marker" aria-hidden="true" />
       <a href="/" data-guide="home" aria-label="Home" aria-current={isHome ? 'page' : undefined} className={`side-nav-item${isHome ? ' is-active' : ''}`}><NavbarGlyph name="home" /><span className="side-nav-tooltip">Home</span></a>
-      <span className="side-nav-divider" aria-hidden="true" />
       {items.map(({ label, icon }) => (
         <button type="button" key={label} data-guide={icon} className="side-nav-item" aria-label={`${label} — Coming soon`} aria-disabled="true"><NavbarGlyph name={icon} /><span className="side-nav-tooltip">{label}<span>Coming soon</span></span></button>
       ))}
+      <a href="/ask-ai" data-guide="ai" aria-label="Ask me anything" aria-current={isAI ? 'page' : undefined} className={`side-nav-item${isAI ? ' is-active' : ''}`}><NavbarGlyph name="ai" /><span className="side-nav-tooltip">Ask me anything</span></a>
       <a href="/numbers" data-guide="numbers" aria-label="By the Numbers" aria-current={isNumbers ? 'page' : undefined} className={`side-nav-item${isNumbers ? ' is-active' : ''}`}><NavbarGlyph name="numbers" /><span className="side-nav-tooltip">By the Numbers</span></a>
+      <button type="button" data-guide="minimal" className="side-nav-item view-mode-button" aria-disabled="true" aria-label="Minimal view — coming soon" aria-describedby="minimal-view-tooltip">
+        <NavbarGlyph name="minimal" />
+        <span className="side-nav-tooltip" id="minimal-view-tooltip" role="tooltip">Minimal view<span>Coming soon</span></span>
+      </button>
     </nav>
   )
 }

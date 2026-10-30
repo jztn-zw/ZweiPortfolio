@@ -14,12 +14,13 @@ import { navigationPage, type Page } from './lib/routes'
 const Skills = lazy(() => loadPage('skills'))
 const GreenWay = lazy(() => loadPage('greenway'))
 const Numbers = lazy(() => loadPage('numbers'))
+const AskAI = lazy(() => loadPage('ai'))
 
 // This mounts after a deferred page resolves, so focus and reveals find its content.
 function RenderedPage({ page }: { page: Page }) {
   useEffect(() => {
     finishStartup()
-    document.title = `${portfolio.name} — ${page === 'numbers' ? 'By the Numbers' : page === 'greenway' ? 'GreenWay' : page === 'skills' ? 'Stack & Skills' : portfolio.role}`
+    document.title = `${portfolio.name} — ${page === 'ai' ? 'Ask Me Anything' : page === 'numbers' ? 'By the Numbers' : page === 'greenway' ? 'GreenWay' : page === 'skills' ? 'Stack & Skills' : portfolio.role}`
     let anchor = window.location.hash.slice(1)
     try { anchor = decodeURIComponent(anchor) } catch { /* Keep malformed fragments literal. */ }
     if (anchor) {
@@ -34,7 +35,7 @@ function RenderedPage({ page }: { page: Page }) {
   useScrollReveal(page)
   useAnimationVisibility(page)
   useSurfaceHover(page)
-  return page === 'numbers' ? <Numbers /> : page === 'greenway' ? <GreenWay /> : page === 'skills' ? <Skills /> : <Home />
+  return page === 'ai' ? <AskAI /> : page === 'numbers' ? <Numbers /> : page === 'greenway' ? <GreenWay /> : page === 'skills' ? <Skills /> : <Home />
 }
 
 export default function App() {

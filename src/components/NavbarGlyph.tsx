@@ -1,4 +1,4 @@
-type NavbarGlyphProps = { name: 'home' | 'lab' | 'ai' | 'numbers' | 'theme' }
+type NavbarGlyphProps = { name: 'home' | 'lab' | 'ai' | 'numbers' | 'theme' | 'minimal' }
 
 // Original 48-unit emblems: a clear silhouette with inset technical details.
 export default function NavbarGlyph({ name }: NavbarGlyphProps) {
@@ -37,6 +37,15 @@ export default function NavbarGlyph({ name }: NavbarGlyphProps) {
         <path className="navbar-glyph-accent" d="m12 23 11-7 6 1 7-8" strokeWidth="1.7" />
         <g className="navbar-glyph-accent" fill="currentColor" stroke="none"><circle cx="12" cy="23" r="1.7" /><circle cx="23" cy="16" r="1.7" /><circle cx="29" cy="17" r="1.7" /></g>
         <path d="M11 8h2m3 0h2m3 0h2M9 32v3m30-17v3" strokeWidth="1.3" />
+      </>}
+      {name === 'minimal' && <>
+        <path d="M9 5h26l8 8v23l-7 7H12l-7-7V9Z" strokeWidth="2.1" />
+        <path d="M5 15h38M18 21v15" strokeWidth="1.3" opacity=".6" />
+        <g fill="currentColor" stroke="none" opacity=".7"><circle cx="11" cy="10" r="1.1" /><circle cx="16" cy="10" r="1.1" /><circle cx="21" cy="10" r="1.1" /></g>
+        <path d="M11 22h3v5h-3Z" fill="currentColor" fillOpacity=".2" strokeWidth="1.2" />
+        <path className="minimal-glyph-content" d="M24 23h12M24 29h9M24 35h6" strokeWidth="2.2" />
+        <path className="navbar-glyph-accent minimal-glyph-accent" d="M11 32v4h3M35 6v7h7" strokeWidth="1.8" />
+        <path d="M2 20v8m44-8v8M20 46h8" strokeWidth="1.1" opacity=".4" />
       </>}
       {name === 'theme' && <>
         <path d="M15 7h18l8 8v18l-8 8H15l-8-8V15Z" strokeWidth="1.3" opacity=".5" />

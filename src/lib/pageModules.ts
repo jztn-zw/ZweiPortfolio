@@ -4,6 +4,7 @@ const loaders = {
   skills: () => import('../pages/Skills'),
   greenway: () => import('../pages/GreenWay'),
   numbers: () => import('../pages/Numbers'),
+  ai: () => import('../pages/AskAI'),
 }
 type DeferredPage = keyof typeof loaders
 const pending: Partial<Record<DeferredPage, ReturnType<typeof loaders[DeferredPage]>>> = {}

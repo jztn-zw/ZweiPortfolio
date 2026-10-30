@@ -38,6 +38,19 @@ export const contactContent = {
   },
 } as const
 
+// Public personal facts shared by Jaztin for the portfolio chat.
+export const personalProfile = {
+  favoriteFood: ['Adobo', 'Giniling'],
+  hobbies: ['Basketball', 'Volleyball', 'Gaming', 'Playing instruments'],
+  instruments: ['Electric guitar', 'Bass', 'Acoustic guitar'],
+  games: { favorite: 'Mobile Legends', sometimes: 'Roblox', alsoPlays: ['Valorant'] },
+  musicTaste: 'My music taste is varied; I listen to whatever catches my ear rather than sticking to one genre.',
+  personality: 'I’m a little shy at first. Once I feel comfortable talking with someone, I become playful and makulit. I’m naturally curious and ask lots of questions about how things work.',
+  learningStyle: 'I learn best by trying things myself. Hands-on experience helps me understand and adapt more easily than explanations alone.',
+  basketball: { playingStyle: 'Midrange shooter', idol: 'LeBron James', nickname: 'The King', personalGoat: true },
+  favoriteVerse: contactContent.footerVerse,
+} as const
+
 export const aboutMe = {
   quote: 'Everything has a logic behind it. I just enjoy figuring out how it works.',
   introduction: "I'm a 4th-year Bachelor of Science in Computer Science student with an interest in understanding how things work and turning ideas into functional solutions.",
