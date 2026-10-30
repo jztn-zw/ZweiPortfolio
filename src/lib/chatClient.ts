@@ -71,9 +71,9 @@ export async function streamChat(messages: ChatMessage[], onEvent: (event: ChatE
 
 export function chatErrorMessage(code?: string) {
   if (code === 'rate_limit') return 'The free request limit has been reached. Please try again later, or read a portfolio note below.'
-  if (code === 'not_configured' || code === 'configuration') return 'AI is not ready yet. You can still explore the portfolio notes below.'
+  if (code === 'not_configured' || code === 'configuration') return 'Chat isn’t ready just yet. You can still explore the portfolio notes below.'
   if (code === 'blocked') return 'I couldn’t answer that request. Try asking about my projects, skills, or background.'
   if (code === 'invalid_request') return 'That message couldn’t be sent. Try a shorter question or start a new chat.'
   if (code === 'interrupted') return 'The connection ended before the answer finished. You can retry your question.'
-  return 'AI is temporarily unavailable. Please retry, or read a portfolio note below.'
+  return 'I couldn’t load a reply right now. Please try again, or read a portfolio note below.'
 }
