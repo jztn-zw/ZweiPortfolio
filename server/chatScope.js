@@ -1,5 +1,5 @@
 import { getPrivateReply, isPersonalQuestion } from '../src/lib/personalChat.ts'
-import { hasCurrentFocusTopic, isGarbledQuestion, normalizeChatQuestion } from '../src/lib/chatLanguage.ts'
+import { hasCurrentFocusTopic, isGarbledQuestion, mayNeedModelUnderstanding, normalizeChatQuestion } from '../src/lib/chatLanguage.ts'
 import { capabilities, projects } from '../src/data/portfolio.ts'
 import { getWorkInquiryReply } from '../src/lib/workInquiry.ts'
 
@@ -53,7 +53,7 @@ export function localPortfolioReply(messages) {
   for (const message of messages.slice(0, -1)) {
     if (message.role !== 'user') continue
     const previous = normalizeChatQuestion(message.content)
-    context = !isGarbledQuestion(previous) && (!task.test(previous) || profileSummary.test(previous)) && !unrelated.test(previous) && !getPrivateReply(previous) && relevant(previous, context)
+    context = !isGarbledQuestion(previous) && (!task.test(previous) || profileSummary.test(previous)) && !unrelated.test(previous) && !getPrivateReply(previous) && (relevant(previous, context) || mayNeedModelUnderstanding(previous))
   }
-  return relevant(text, context) ? null : redirect
+  return relevant(text, context) || mayNeedModelUnderstanding(text) ? null : redirect
 }

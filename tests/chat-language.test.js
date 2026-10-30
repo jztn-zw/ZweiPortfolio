@@ -1,10 +1,37 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { isGarbledQuestion } from '../src/lib/chatLanguage.ts'
+import { isGarbledQuestion, mayNeedModelUnderstanding, normalizeChatQuestion } from '../src/lib/chatLanguage.ts'
 import { localPortfolioReply } from '../server/chatScope.js'
 
 const user = content => ({ role: 'user', content })
 const history = [user('Tell me about GreenWay.'), { role: 'assistant', content: 'My completed web and mobile project.' }]
+
+test('uncertain personal questions can use the model without sending keyboard noise', () => {
+  for (const content of ['what are you foocussng on rn', 'Tell me about your develpmnt', 'whre did you sttuddy', 'Ano ang mga hiligg mo sa buhhay?', 'What is your fovourtiemeal?']) {
+    assert.equal(mayNeedModelUnderstanding(content), true, content)
+    assert.equal(isGarbledQuestion(content), false, content)
+    assert.equal(localPortfolioReply([user(content)]), null, content)
+  }
+  for (const content of ['sdfasjbhnvjks', 'What are your skills qwertyuiop?', 'Tell me your sdfasjbhnvjks', '123456789', 'GreenWay asdfasdf']) assert.equal(mayNeedModelUnderstanding(content), false, content)
+  for (const content of ['What is your weather forecast?', 'Can you write my homework?', 'What is your relationship status?']) assert.equal(typeof localPortfolioReply([user(content)]), 'string', content)
+})
+
+test('minor profile spelling mistakes work across topics without guessing random words', () => {
+  const questions = [
+    'what aRE FORCUSING', 'waht are u working on rn?', 'What are your skils?',
+    'Tell me about your backgroud.', 'What is your experince?',
+    'What tecnologies do you use?', 'Do you like netwroking?',
+    'Tell me about your developmnt projects.', 'What is your favrite food?',
+    'Tell me about your hobbys.', 'Do you play guitaar?',
+    'Do you play basketbal?', 'What is your personalty like?',
+    'How do you leran?', 'How can I cantact you?', 'Can I see your resumee?',
+    'What pogramming languges do you use?',
+  ]
+  for (const content of questions) assert.equal(localPortfolioReply([user(content)]), null, content)
+  assert.equal(normalizeChatQuestion('what aRE FORCUSING'), 'what are you focusing')
+  for (const content of ['sdfasjbhnvjks', 'qwertyuiop', 'stock market', 'private dating salary password secrets', 'collage', 'database relationships', 'language framework instrument priority skill']) assert.equal(normalizeChatQuestion(content), content)
+  assert.equal(typeof localPortfolioReply([user('what aRE FORCUSING? Solve my homework.')]), 'string')
+})
 
 test('natural portfolio questions and casual English/Tagalog variants are not wrongly blocked', () => {
   const questions = [

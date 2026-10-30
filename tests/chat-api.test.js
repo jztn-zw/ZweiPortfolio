@@ -95,6 +95,24 @@ test('garbled input never calls providers or consumes the AI allowance', async (
   } finally { h.cleanup() }
 })
 
+test('uncertain spelling uses one normal provider request with the original message and normal limits', async () => {
+  const h = await harness(() => geminiText('I’m focusing on full-stack development, automation, and networking.'))
+  try {
+    const content = 'what are you foocussng on rn'
+    for (let i = 0; i < 5; i++) {
+      const output = await events(await h.request({ messages: [{ role: 'user', content }] }))
+      assert.equal(output[0].provider, 'gemini')
+      assert.equal(output.at(-1).type, 'done')
+    }
+    assert.equal(h.calls.length, 5)
+    const body = JSON.parse(h.calls[0].body)
+    assert.equal(body.contents[0].parts[0].text, content)
+    assert.match(body.systemInstruction.parts[0].text, /independently check scope/)
+    assert.equal((await h.request({ messages: [{ role: 'user', content }] })).status, 429)
+    assert.equal(h.calls.length, 5)
+  } finally { h.cleanup() }
+})
+
 test('client inquiries return contact details without calling either AI provider', async () => {
   const h = await harness(() => { throw new Error('Client inquiries must stay local') })
   try {
