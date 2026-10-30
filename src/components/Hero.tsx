@@ -2,6 +2,7 @@ import { ArrowDown, FileText, Mail } from 'lucide-react'
 import { portfolio } from '../data/portfolio'
 import PortraitReveal from './PortraitReveal'
 import GraphicMark from './GraphicMark'
+import HeroGuide from './HeroGuide'
 import useDesktopPortrait from '../hooks/useDesktopPortrait'
 import './Hero.css'
 
@@ -24,7 +25,7 @@ export default function Hero() {
           <span className="hero-name-echo echo-above" aria-hidden="true">
             {portfolio.nameLines.map(line => <span key={line}>{line}</span>)}
           </span>
-          <h1 id="hero-title" className="hero-name" aria-label={portfolio.name}>
+          <h1 id="hero-title" className="hero-name" aria-label={portfolio.name} tabIndex={-1}>
             <span>{portfolio.nameLines[0]}</span>
             <span>{portfolio.nameLines[1]}<span className="red">.</span></span>
           </h1>
@@ -42,10 +43,10 @@ export default function Hero() {
         </div>
 
         <div className="hero-actions">
-          <a href="#contact" className="hero-button hero-button-primary">
+          <a href="#contact" data-guide="contact" className="hero-button hero-button-primary">
             <Mail size={16} /> Get in Touch
           </a>
-          <button type="button" className="hero-button hero-button-outline" aria-disabled="true" title="Resume coming soon" aria-label="View resume (coming soon)">
+          <button type="button" data-guide="resume" className="hero-button hero-button-outline" aria-disabled="true" title="Resume coming soon" aria-label="View resume (coming soon)">
             <FileText size={16} /> View Resume
           </button>
         </div>
@@ -71,6 +72,7 @@ export default function Hero() {
         <a href="#projects" className="eyebrow scroll-cue"><ArrowDown size={14} /> SCROLL TO EXPLORE</a>
         <span className="eyebrow hero-foot-right">THOUGHTFUL DESIGN <span className="red">✳</span> PURPOSEFUL CODE</span>
       </div>
+      <HeroGuide />
     </section>
   )
 }

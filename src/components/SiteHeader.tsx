@@ -19,7 +19,7 @@ export default function SiteHeader({ isHome = true, isNumbers = false }: { isHom
         <div className="site-header-actions">
           <FloatingNavbar isHome={isHome} isNumbers={isNumbers} />
           <span className="side-nav-divider" aria-hidden="true" />
-          <button type="button" className="side-nav-item theme-mode-button" aria-label={themeAction} onClick={event => {
+          <button type="button" data-guide="theme" className="side-nav-item theme-mode-button" aria-label={themeAction} onClick={event => {
             const bounds = event.currentTarget.getBoundingClientRect()
             toggleTheme({ x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 })
           }} aria-describedby="theme-mode-tooltip">
