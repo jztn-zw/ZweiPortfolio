@@ -73,4 +73,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .portrait-glitch { display: none; }
+  .portrait-reveal--lite .hero-portrait { transition: none; }
 }

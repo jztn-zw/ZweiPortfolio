@@ -7,7 +7,7 @@ import ts from 'typescript'
 const source = readFileSync(new URL('../src/hooks/useSurfaceHover.ts', import.meta.url), 'utf8')
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2023 } }).outputText
 
-function harness({ reduced = false } = {}) {
+function harness({ reduced = false, lite = false } = {}) {
   const events = new Map(), globalEvents = new Map(), documentEvents = new Map(), frames = new Map()
   let cleanup, nextFrame = 0, preferenceChanged
   const motion = { matches: reduced, addEventListener: (_, callback) => { preferenceChanged = callback }, removeEventListener: () => { preferenceChanged = undefined } }
@@ -24,7 +24,7 @@ function harness({ reduced = false } = {}) {
     addEventListener: (name, callback, options) => { assert.equal(options.passive, true); events.set(name, callback) },
     removeEventListener: name => events.delete(name),
   }
-  const document = { hidden: false, querySelector: () => root, addEventListener: (name, callback) => documentEvents.set(name, callback), removeEventListener: name => documentEvents.delete(name) }
+  const document = { documentElement: { dataset: { effects: lite ? 'lite' : 'full' } }, hidden: false, querySelector: () => root, addEventListener: (name, callback) => documentEvents.set(name, callback), removeEventListener: name => documentEvents.delete(name) }
   const exported = {}
   vm.runInNewContext(compiled, {
     exports: exported, Element, document,
@@ -37,10 +37,19 @@ function harness({ reduced = false } = {}) {
     first, second, child, events, globalEvents, documentEvents, frames, document,
     event(name, overrides = {}) { events.get(name)({ target: first, relatedTarget: null, clientX: 350, clientY: 300, button: 0, pointerType: 'mouse', isPrimary: true, ...overrides }) },
     paint() { const pending = [...frames.values()]; frames.clear(); pending.forEach(callback => callback()) },
-    cleanup: () => cleanup(),
+    cleanup: () => cleanup?.(),
     reduceMotion() { motion.matches = true; preferenceChanged() },
   }
 }
+
+test('lite devices install no pointer tracking listeners or animation frames', () => {
+  const h = harness({ lite: true })
+  assert.equal(h.events.size, 0)
+  assert.equal(h.globalEvents.size, 0)
+  assert.equal(h.documentEvents.size, 0)
+  assert.equal(h.frames.size, 0)
+  h.cleanup()
+})
 
 test('delegated hover coalesces updates and schedules no idle frames', () => {
   const h = harness()

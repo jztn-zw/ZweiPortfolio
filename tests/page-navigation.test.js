@@ -11,7 +11,7 @@ const routeSource = readFileSync(new URL('../src/lib/routes.ts', import.meta.url
 const routes = {}
 vm.runInNewContext(ts.transpileModule(routeSource, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: routes, URL })
 
-function harness({ reduced = false, supported = true, initial = '/', width = 1280, cores = 8, memory = 8, saveData = false, idle = false } = {}) {
+function harness({ reduced = false, supported = true, initial = '/', width = 1280, cores = 8, memory = 8, saveData = false, idle = false, lite = false } = {}) {
   const animations = [], frames = [], listeners = new Map(), nodes = [], scrolls = [], anchors = new Map()
   const idleCallbacks = new Map()
   let createdNodes = 0, idleId = 0
@@ -51,7 +51,7 @@ function harness({ reduced = false, supported = true, initial = '/', width = 128
   const main = new Element()
   const createElement = () => { createdNodes++; return new Element() }
   const document = {
-    documentElement: { dataset: {} }, body: { append: node => nodes.push(node) },
+    documentElement: { dataset: { effects: lite ? 'lite' : 'full' } }, body: { append: node => nodes.push(node) },
     createElement, createElementNS: createElement, querySelector: () => main,
     getElementById: id => { if (!anchors.has(id)) anchors.set(id, new Element()); return anchors.get(id) },
     addEventListener: (event, callback) => listeners.set(event, callback), removeEventListener: event => listeners.delete(event),
@@ -188,6 +188,19 @@ test('subsequent transitions reuse the scene, reset its transforms, and reassess
   await settle()
   assert.equal(h.api.getNavigationLocation(), '/')
   assert.equal(h.document.documentElement.dataset.pageTransition, undefined)
+  assert.equal(h.nodes.length, 0)
+  h.unsubscribe()
+})
+
+test('lite boot avoids speculative scene construction and still completes route changes', async () => {
+  const h = harness({ lite: true, idle: true })
+  h.idle()
+  assert.equal(h.createdNodes, 0)
+  h.navigate('/skills')
+  assert.equal(h.nodes[0].dataset.quality, 'lite')
+  await cover(h)
+  await reveal(h)
+  assert.equal(h.api.getNavigationLocation(), '/skills')
   assert.equal(h.nodes.length, 0)
   h.unsubscribe()
 })
