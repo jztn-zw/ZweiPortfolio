@@ -37,7 +37,7 @@
 :root[data-theme='light'] .capability-number-rule { background: var(--theme-line); }
 :root[data-theme='light'] .capability-tags li { background: #fffefa9c; border-color: #aaa69a; color: var(--theme-body); }
 :root[data-theme='light'] :is(.capability-visual-label, .capability-visual-caption) { color: var(--theme-body); }
-:root[data-theme='light'] :is(.capability-row, .skill-discipline):is(:hover, :focus-within) { background: #f2eee8; border-color: var(--theme-accent-line); }
+:root[data-theme='light'] .capability-row:is(:hover, :focus-within) { background: #f2eee8; border-color: var(--theme-accent-line); }
 :root[data-theme='light'] .journey-timeline { --journey-date-hover: #eee1dd; --journey-hover-wash: #ad30390b; --journey-node-halo: #ad30391a; }
 :root[data-theme='light'] .journey-entry-date { background: var(--theme-surface); }
 :root[data-theme='light'] .journey-date-main { color: var(--theme-body); }
@@ -114,13 +114,9 @@
 /* Detail pages share the same paper depth and contrast hierarchy. */
 :root[data-theme='light'] .skills-overview { background: var(--theme-panel); border-color: var(--theme-line); }
 :root[data-theme='light'] .skills-overview-counts { background: var(--theme-panel); }
-:root[data-theme='light'] .skill-discipline { background: var(--theme-panel); border-color: var(--theme-strong-line); }
-:root[data-theme='light'] .skill-discipline-icon { background: var(--theme-surface); color: var(--theme-body); }
 :root[data-theme='light'] .numbers-metric { background: var(--theme-panel); }
 @media (hover: hover) and (pointer: fine) { :root[data-theme='light'] .numbers-metric:hover { background: #f1ece6; } }
 :root[data-theme='light'] .greenway-product-stage { background: linear-gradient(135deg, #fffefa, #e8eee4); }
-:root[data-theme='light'] .greenway-stack-board { background: var(--theme-panel); }
-:root[data-theme='light'] .greenway-stack-board-top { background: var(--theme-surface); }
 :root[data-theme='light'] .greenway-film-control { background: #fffefae8; color: var(--theme-text); border-color: var(--theme-strong-line); }
 :root[data-theme='light'] .greenway-film-control:is(:hover, :focus-visible) { color: var(--interaction-outline-text); border-color: var(--theme-accent); background: var(--theme-accent-soft); }
 

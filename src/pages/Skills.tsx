@@ -1,6 +1,5 @@
 import { ArrowDown, ArrowLeft, CodeXml, Database, Workflow } from 'lucide-react'
-import CapabilityArtwork from '../components/CapabilityArtwork'
-import SurfaceSignal from '../components/SurfaceSignal'
+import { useState } from 'react'
 import StackIllustration from '../components/StackIllustration'
 import SiteHeader from '../components/SiteHeader'
 import Footer from '../components/Footer'
@@ -11,6 +10,56 @@ import '../components/GraphicDetails.css'
 import './Skills.css'
 
 const icons = { web: CodeXml, fullstack: Database, automation: Workflow }
+const categoryLabels = { web: 'INTERFACE', fullstack: 'SYSTEMS', automation: 'WORKFLOW' }
+
+function SkillDiscipline({ capability }: { capability: (typeof capabilities)[number] }) {
+  const [activeTechnology, setActiveTechnology] = useState<string | null>(null)
+  const Icon = icons[capability.artwork]
+  const insightId = `skill-insight-${capability.id}`
+
+  return (
+    <article className={`skill-discipline skill-discipline--${capability.artwork}`} aria-labelledby={`skill-${capability.id}`}>
+      <div className="skill-discipline-summary">
+        <div className="skill-discipline-top">
+          <span className="eyebrow"><span className="red">{capability.id}</span> / {categoryLabels[capability.artwork]}</span>
+          <span className="skill-discipline-icon" aria-hidden="true"><Icon size={18} strokeWidth={1.5} /></span>
+        </div>
+        <h2 id={`skill-${capability.id}`}>{capability.title}</h2>
+        <p>{capability.description}</p>
+      </div>
+
+      <div className="skill-discipline-details">
+        <ul className="skill-tag-list" aria-label={`${capability.title} stack`}>
+          {capability.technologies.map((technology, index) => {
+            const descriptionId = `skill-description-${capability.id}-${index}`
+            return <li key={technology}>
+              <button type="button" className="skill-technology-tag"
+                aria-expanded={activeTechnology === technology}
+                aria-controls={insightId}
+                aria-describedby={descriptionId}
+                onPointerEnter={event => { if (event.pointerType !== 'touch') setActiveTechnology(technology) }}
+                onPointerLeave={event => { if (event.pointerType !== 'touch') setActiveTechnology(null) }}
+                onFocus={() => setActiveTechnology(technology)}
+                onBlur={() => setActiveTechnology(null)}
+                onClick={() => setActiveTechnology(technology)}
+                onKeyDown={event => { if (event.key === 'Escape') setActiveTechnology(null) }}
+              >
+                <span className="skill-tag-node" aria-hidden="true" /><span>{technology}</span>
+              </button>
+              <span id={descriptionId} className="sr-only">{technologyDescriptions[technology]}</span>
+            </li>
+          })}
+        </ul>
+        <div className="skill-tech-insight" id={insightId} data-active={activeTechnology !== null}>
+          {activeTechnology ? <p className="skill-tech-explanation" key={activeTechnology}>
+            <span className="skill-insight-mark" />
+            <span><strong>{activeTechnology}</strong><span>{technologyDescriptions[activeTechnology]}</span></span>
+          </p> : <p className="skill-discipline-count eyebrow">{String(capability.technologies.length).padStart(2, '0')} {capability.artwork === 'automation' ? 'WORKFLOW TOOLS' : 'TECHNOLOGIES'}<GraphicMark variant="modules" /></p>}
+        </div>
+      </div>
+    </article>
+  )
+}
 
 export default function Skills() {
   const technologyCount = new Set(capabilities.flatMap(capability => [...capability.technologies])).size
@@ -48,35 +97,7 @@ export default function Skills() {
           </div>
 
           <section className="skills-grid" aria-label="Technical skills by discipline">
-            {capabilities.map(capability => {
-              const Icon = icons[capability.artwork]
-              return (
-                <article className={`skill-discipline skill-discipline--${capability.artwork}`} data-hover-surface="arsenal" key={capability.id} aria-labelledby={`skill-${capability.id}`}>
-                  <SurfaceSignal kind="arsenal" />
-                  <div className="skill-discipline-summary">
-                    <div className="skill-discipline-top">
-                      <span className="eyebrow"><span className="red">{capability.id}</span> / ARSENAL</span>
-                      <span className="skill-discipline-icon" aria-hidden="true"><Icon size={19} strokeWidth={1.5} /></span>
-                    </div>
-                    <h2 id={`skill-${capability.id}`}>{capability.title}</h2>
-                    <p>{capability.description}</p>
-                    {capability.artwork === 'automation' && <div className="skill-system-art" aria-hidden="true"><CapabilityArtwork variant="automation" /></div>}
-                  </div>
-
-                  <div className="skill-discipline-details">
-                    <ul className="skill-technology-list" aria-label={`${capability.title} stack`}>
-                      {capability.technologies.map((technology, index) => (
-                        <li key={technology}>
-                          <span className="skill-technology-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                          <div><h3>{technology}</h3><p>{technologyDescriptions[technology]}</p></div>
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="skill-discipline-count eyebrow">{capability.technologies.length} {capability.artwork === 'automation' ? 'WORKFLOW TOOLS' : 'CORE TECHNOLOGIES'} <GraphicMark variant="modules" /></p>
-                  </div>
-                </article>
-              )
-            })}
+            {capabilities.map(capability => <SkillDiscipline key={capability.id} capability={capability} />)}
           </section>
 
         </div>

@@ -30,7 +30,7 @@ export const contactContent = {
     "I'm always open to exploring new ideas, collaborating on meaningful projects, and learning through new challenges.",
     "Whether it's web development, automation, networking, or something entirely new, feel free to reach out.",
   ],
-  primaryLabel: 'Get in Touch',
+  primaryLabel: 'Send an Email',
   footerVerse: {
     reference: 'Philippians 4:13',
     text: 'I can do all things through Christ which strengtheneth me.',

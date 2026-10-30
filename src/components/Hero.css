@@ -80,7 +80,7 @@
 .hero-button-primary:hover { background: #d1363a; border-color: #d1363a; color: #fff; transform: translateY(-2px); }
 .hero-button-outline { background: transparent; border-color: #4a4a43; color: #e2e1d7; }
 a.hero-button-outline:hover { border-color: #d1363a; color: #f5f4e9; background: #211818; transform: translateY(-2px); }
-.hero-github-soon { color: #8f8f84; font-size: 11px; letter-spacing: .2px; }
+.hero-button[aria-disabled="true"] { cursor: default; }
 .hero-signature { display: flex; align-items: center; gap: 12px; margin-top: 36px; color: #92928a; font-size: 11px; letter-spacing: 1.1px; }
 .hero-signature > span { font-size: 22px; line-height: 1; }
 

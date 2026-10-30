@@ -4,6 +4,7 @@ import SiteHeader from '../components/SiteHeader'
 import Footer from '../components/Footer'
 import GraphicMark from '../components/GraphicMark'
 import SurfaceSignal from '../components/SurfaceSignal'
+import GreenWayStackSignal from '../components/GreenWayStackSignal'
 import { projects } from '../data/portfolio'
 import './GreenWay.css'
 
@@ -74,6 +75,7 @@ function ShowcaseFilm() {
       <video ref={videoRef} src={requested ? '/videos/greenway-showcase.mp4' : undefined} loop muted={muted} controls={false} playsInline disablePictureInPicture preload="none" poster="/images/greenway-showcase-poster.jpg" width="1920" height="1080" aria-label="GreenWay project showcase" aria-describedby="greenway-film-summary" onPlay={() => setPlaying(true)} onPlaying={() => { setPlaying(true); setBuffering(false); setFailed(false) }} onWaiting={() => setBuffering(true)} onPause={() => { setPlaying(false); setBuffering(false) }} onError={() => { if (requested) { setFailed(true); setBuffering(false) } }}>
         Your browser cannot play this video. Open the film using the link below.
       </video>
+      <svg className="greenway-film-edge" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true" focusable="false"><rect x=".5" y=".5" width="99" height="99" pathLength="1" vectorEffect="non-scaling-stroke" /></svg>
       {requested && buffering && !failed && <span className="greenway-film-buffering eyebrow" role="status">Buffering video…</span>}
         <div className="greenway-film-controls"><button className="greenway-film-control" type="button" onClick={() => { void togglePlayback() }} aria-label={playing ? 'Pause GreenWay showcase' : 'Play GreenWay showcase'} title={playing ? 'Pause' : 'Play'}>{playing ? <Pause size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}</button><button className="greenway-film-control" type="button" onClick={() => setMuted(value => !value)} aria-label={muted ? 'Unmute GreenWay showcase' : 'Mute GreenWay showcase'} title={muted ? 'Sound off' : 'Sound on'}>{muted ? <VolumeX size={17} aria-hidden="true" /> : <Volume2 size={17} aria-hidden="true" />}</button></div>
     </div>
@@ -112,8 +114,6 @@ export default function GreenWay() {
         </div>
       </section>
 
-      <ShowcaseFilm />
-
       <dl className="greenway-case-facts">
         <div><dt>MY ROLE</dt><dd>Full-Stack Developer</dd></div>
         <div><dt>PLATFORMS</dt><dd>Web &amp; Mobile</dd></div>
@@ -121,10 +121,13 @@ export default function GreenWay() {
         <div><dt>PROJECT STATUS</dt><dd className="greenway-case-status"><i aria-hidden="true" />{project.status}</dd></div>
       </dl>
 
-      <section className="greenway-case-overview" aria-labelledby="greenway-overview-title">
-        <div><p className="eyebrow greenway-case-kicker"><span className="greenway-section-index">01 /</span> THE IDEA</p><h2 id="greenway-overview-title">LESS GUESSWORK.<br />MORE CONNECTION<span>.</span></h2></div>
-        <div className="greenway-case-prose"><p className="greenway-case-lead">The right information.<br />Right when it matters.</p><p>Residents shouldn’t have to guess when collection happens or where to raise a concern. GreenWay brings the collection routine into one connected web and mobile platform.</p><p>Built for Candelaria, Quezon, it connects everyday resident needs with schedules, collection updates, and the Municipal Environment and Natural Resources Office.</p></div>
-      </section>
+      <div className="greenway-case-brief">
+        <ShowcaseFilm />
+        <section className="greenway-case-overview" aria-labelledby="greenway-overview-title">
+          <div><p className="eyebrow greenway-case-kicker"><span className="greenway-section-index">01 /</span> THE IDEA</p><h2 id="greenway-overview-title">LESS GUESSWORK.<br />MORE CONNECTION<span>.</span></h2></div>
+          <div className="greenway-case-prose"><p className="greenway-case-lead">The right information.<br />Right when it matters.</p><p>Residents shouldn’t have to guess when collection happens or where to raise a concern. GreenWay brings the collection routine into one connected web and mobile platform.</p><p>Built for Candelaria, Quezon, it connects everyday resident needs with schedules, collection updates, and the Municipal Environment and Natural Resources Office.</p></div>
+        </section>
+      </div>
 
       <section className="greenway-case-features" aria-labelledby="greenway-features-title">
         <div>
@@ -156,9 +159,9 @@ export default function GreenWay() {
           {stackLayers.map(layer => {
             const tools = project.technologies.filter(tech => layer.tools.some(tool => tool === tech))
             if (!tools.length) return null
-            return <section className="greenway-stack-layer" data-hover-surface="system" key={layer.id} aria-labelledby={`greenway-stack-${layer.id}`}><SurfaceSignal kind="system" /><div className="greenway-stack-layer-label"><GraphicMark variant={layer.mark} /><h3 id={`greenway-stack-${layer.id}`}>{layer.title}</h3></div><ul aria-label={`${layer.title} technologies`}>{tools.map(tech => <li key={tech}>{tech}</li>)}</ul></section>
+            return <section className="greenway-stack-layer" key={layer.id} aria-labelledby={`greenway-stack-${layer.id}`}><div className="greenway-stack-layer-label"><GraphicMark variant={layer.mark} /><h3 id={`greenway-stack-${layer.id}`}>{layer.title}</h3></div><ul aria-label={`${layer.title} technologies`}>{tools.map(tech => <li key={tech}>{tech}</li>)}</ul><GreenWayStackSignal kind={layer.id} /></section>
           })}
-          {additionalTools.length > 0 && <section className="greenway-stack-layer" data-hover-surface="system" aria-labelledby="greenway-stack-additional"><SurfaceSignal kind="system" /><div className="greenway-stack-layer-label"><GraphicMark variant="chevrons" /><h3 id="greenway-stack-additional">Additional tools</h3></div><ul aria-label="Additional technologies">{additionalTools.map(tech => <li key={tech}>{tech}</li>)}</ul></section>}
+          {additionalTools.length > 0 && <section className="greenway-stack-layer" aria-labelledby="greenway-stack-additional"><div className="greenway-stack-layer-label"><GraphicMark variant="chevrons" /><h3 id="greenway-stack-additional">Additional tools</h3></div><ul aria-label="Additional technologies">{additionalTools.map(tech => <li key={tech}>{tech}</li>)}</ul><GreenWayStackSignal kind="additional" /></section>}
         </div>
       </section>
 

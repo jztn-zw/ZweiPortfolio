@@ -116,7 +116,7 @@
   .contact-finale-copy > p.contact-finale-lead, .contact-availability p, .site-footer-identity,
   .about-profile-nameplate p, .about-me-detail dd, .journey-introduction .eyebrow,
   .journey-entry-context, .journey-entry--current .journey-date-main,
-  .skills-overview-counts strong, .skill-technology-list h3, .skill-discipline-icon) { color: var(--theme-text); }
+  .skills-overview-counts strong) { color: var(--theme-text); }
 :root[data-theme="light"] .section-kicker-number { color: #a12a31; background: #efddda; border-color: #cc9c96; }
 :root[data-theme="light"] :is(.discipline-divider, .capability-visual-diamonds) { filter: invert(1); }
 :root[data-theme="light"] .hero-name-echo { -webkit-text-stroke-color: #7d7c6c; }
@@ -124,7 +124,7 @@
 :root[data-theme="light"] :is(.hero--portrait .hero-description, .section-note, .discipline-strip span,
   .capabilities-intro > p:not(.eyebrow), .capability-copy > p, .journey-introduction > p:last-child,
   .journey-entry-description, .about-me-biography p, .contact-finale-copy > p,
-  .skills-intro-description, .skill-discipline-summary > p, .skill-technology-list p,
+  .skills-intro-description, .skill-discipline-summary > p,
   .skills-next-step h2 + p, .dialog-content > p:not(.eyebrow)) { color: var(--theme-body); }
 :root[data-theme="light"] :is(.hero-signature, .hero-foot, .portrait-index, .portrait-serial,
   .portrait-data, .portrait-caption .eyebrow, .portrait-cross, .projects-count,
@@ -161,10 +161,10 @@
   .about-profile-poster, .about-profile-nameplate, .about-me-details-heading, .about-me-detail,
   .site-footer, .site-footer-bottom, .portrait-caption, .skills-overview,
   .skills-overview-counts, .skills-overview-counts > div + div, .skills-section-divider,
-  .skill-discipline, .skill-discipline-icon, .skill-technology-list, .skill-technology-list li,
+  .skill-discipline,
   .placeholder-notice) { border-color: var(--theme-line); }
 @media (hover: hover) and (pointer: fine) { :root[data-theme="light"] .capability-row:hover { background: #e7e3d8; } }
-:root[data-theme="light"] :is(.capability-tags li, .skill-discipline-icon) { border-color: var(--theme-strong-line); color: #4c5045; }
+:root[data-theme="light"] .capability-tags li { border-color: var(--theme-strong-line); color: #4c5045; }
 :root[data-theme="light"] :is(.capability-title-line svg, .journey-entry-icon) { color: #77786b; }
 :root[data-theme="light"] :is(.capability-visual, .skills-overview-art) { background: var(--theme-surface); border-color: var(--theme-strong-line); }
 :root[data-theme="light"] :is(.capability-visual-label, .capability-visual-caption) { color: #52564a; border-color: var(--theme-line); }
@@ -182,8 +182,6 @@
 :root[data-theme="light"] .about-profile-nameplate { background: #e2dfd4; }
 :root[data-theme="light"] .about-profile-echo { -webkit-text-stroke-color: #8a8878; }
 :root[data-theme="light"] .about-profile-artwork::after { background: linear-gradient(90deg, #f4f2eb11, transparent 45%, #f4f2eb55), linear-gradient(180deg, transparent 65%, #eae7df99); }
-:root[data-theme="light"] .skill-discipline { background: var(--theme-panel); }
-@media (hover: hover) and (pointer: fine) { :root[data-theme="light"] .skill-discipline:hover { border-color: var(--theme-strong-line); } }
 
 /* Artwork keeps its native raster colors. Placeholder posters use lighter surfaces. */
 :root[data-theme="light"] .project-tile--showcase:not(.project-tile--greenway) { background: var(--theme-surface); --project-hover-text: var(--interaction-accent); }
@@ -210,7 +208,7 @@
 :root[data-theme="light"] .project-live-link:hover { background: #c6d9c0; border-color: #6f9466; }
 
 /* Each button role keeps its own hover treatment, using the same palette for keyboard focus. */
-:root[data-theme] :is(.capability-row, .skill-discipline):is(:hover, :focus-within) {
+:root[data-theme] .capability-row:is(:hover, :focus-within) {
   background: var(--interaction-surface);
   border-color: var(--interaction-border);
 }

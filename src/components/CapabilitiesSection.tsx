@@ -4,7 +4,8 @@ import { capabilities } from '../data/portfolio'
 import CapabilityArtwork from './CapabilityArtwork'
 import SectionHeading from './SectionHeading'
 import GraphicMark from './GraphicMark'
-import SurfaceSignal from './SurfaceSignal'
+import CapabilityHoverDetail from './CapabilityHoverDetail'
+import './SurfaceSignal.css'
 import './CapabilitiesSection.css'
 
 const capabilityIcons = { web: Monitor, fullstack: Database, automation: Workflow }
@@ -35,7 +36,7 @@ export default function CapabilitiesSection() {
             const Icon = capabilityIcons[capability.artwork]
             return (
               <article className="capability-row" data-hover-surface="compile" key={capability.id} aria-labelledby={`capability-${capability.id}`}>
-                <SurfaceSignal kind="compile" />
+                <CapabilityHoverDetail variant={capability.artwork} />
                 <div className="capability-backdrop" aria-hidden="true">
                   <CapabilityArtwork variant={capability.artwork} />
                 </div>
@@ -61,6 +62,7 @@ export default function CapabilitiesSection() {
                 >
                   <span className="capability-visual-label eyebrow" aria-hidden="true">{capability.id} / {artworkLabels[capability.artwork][0]}</span>
                   <CapabilityArtwork variant={capability.artwork} />
+                  <span className="capability-visual-scan" aria-hidden="true" />
                   <span className="capability-visual-caption eyebrow" aria-hidden="true">{artworkLabels[capability.artwork][1]}<span className="capability-visual-diamonds" /></span>
                 </button>
               </article>

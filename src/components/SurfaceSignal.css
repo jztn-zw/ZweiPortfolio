@@ -26,10 +26,30 @@
 [data-hover-surface]:focus-within > .surface-signal--product .surface-signal-sweep { animation: surface-glass-scan 850ms cubic-bezier(.16,1,.3,1) both; }
 [data-hover-surface='compile'] .capability-visual { transition: transform 420ms cubic-bezier(.16,1,.3,1), border-color 280ms ease; transform: perspective(900px) rotateX(var(--surface-rx, 0deg)) rotateY(var(--surface-ry, 0deg)); }
 
-/* Timeline: a compact chronology rail, away from the date and paragraphs. */
-.surface-signal--timeline .surface-signal-route { width: 150px; height: 24px; bottom: 4px; }
-.journey-entry[data-hover-active='true'] .journey-entry-date::after { animation: surface-node-lock 600ms cubic-bezier(.16,1,.3,1) both; }
+/* Timeline: a live chronology signal in the lower margin, with anchored text. */
+.surface-signal--timeline { --timeline-play: paused; }
+.surface-signal--timeline .surface-signal-route { width: 184px; height: 28px; bottom: 2px; }
+.surface-signal--timeline .surface-signal-wire { opacity: .4; }
+.surface-signal--timeline .surface-hud-guide { opacity: .32; }
+.surface-timeline-traveler { animation: surface-timeline-travel 3.4s linear infinite; animation-play-state: var(--timeline-play); }
+.surface-timeline-tick { transform-box: fill-box; transform-origin: center; animation: surface-timeline-tick 3.4s ease-in-out infinite; animation-play-state: var(--timeline-play); }
+.surface-timeline-tick:nth-child(4n + 2) { animation-delay: 180ms; }
+.surface-timeline-tick:nth-child(4n + 3) { animation-delay: 360ms; }
+.surface-timeline-tick:nth-child(4n) { animation-delay: 540ms; }
+.surface-timeline-end { animation: surface-timeline-end 3.4s ease-in-out infinite; animation-play-state: var(--timeline-play); }
+.surface-timeline-end:last-child { animation-delay: 1.7s; }
+.journey-entry:is([data-hover-active='true'], :focus-within) > .surface-signal--timeline { --timeline-play: running; }
+.journey-entry:is([data-hover-active='true'], :focus-within) .journey-entry-date::after { animation: surface-timeline-node 3.4s ease-in-out infinite; }
+.journey-entry:is([data-hover-active='true'], :focus-within) .journey-status-dot { animation: surface-timeline-status 3.4s ease-in-out infinite; }
 .journey-timeline .journey-entry[data-hover-surface]:hover :is(.journey-date-main, .journey-date-detail, .journey-entry-copy) { translate: none; }
+@keyframes surface-timeline-travel { 0% { transform: translateX(8px); opacity: 0; } 8%, 88% { opacity: 1; } 100% { transform: translateX(232px); opacity: 0; } }
+@keyframes surface-timeline-tick { 0%, 70%, 100% { opacity: .4; transform: scaleY(.7); } 32% { opacity: 1; transform: scaleY(1); } }
+@keyframes surface-timeline-end { 0%, 70%, 100% { opacity: .45; } 35% { opacity: 1; } }
+@keyframes surface-timeline-node { 0%, 100% { box-shadow: 0 0 0 3px var(--journey-node-halo); } 45% { box-shadow: 0 0 0 7px transparent; } }
+@keyframes surface-timeline-status { 0%, 100% { opacity: .6; } 45% { opacity: 1; } }
+:root[data-tab-hidden] .surface-signal--timeline { --timeline-play: paused !important; }
+:root[data-tab-hidden] .journey-entry .journey-entry-date::after,
+:root[data-tab-hidden] .journey-entry .journey-status-dot { animation-play-state: paused; }
 
 /* Statistics: a small diagnostic gauge, with room left for the actual count. */
 .surface-signal--metric .surface-signal-route { width: 94px; height: 30px; bottom: 6px; right: 12px; }
@@ -61,7 +81,6 @@
 
 @keyframes surface-packet-travel { 0% { stroke-dashoffset: 1; opacity: 0; } 15% { opacity: .85; } 85% { opacity: .85; } 100% { stroke-dashoffset: -.05; opacity: 0; } }
 @keyframes surface-glass-scan { 0% { opacity: 0; transform: translateX(-85px) skewX(-14deg); } 25% { opacity: 1; } 100% { opacity: 0; transform: translateX(85px) skewX(-14deg); } }
-@keyframes surface-node-lock { 0% { box-shadow: 0 0 0 0 transparent; } 45% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--signal-color) 18%, transparent); } 100% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--signal-color) 10%, transparent); } }
 
 
 @media (max-width: 640px), (hover: none), (pointer: coarse) {
@@ -77,7 +96,8 @@
 @media (max-width: 640px) { .surface-signal--metric .surface-signal-route { display: none; } }
 @media (prefers-reduced-motion: reduce) {
   .surface-signal { display: none; }
-  .surface-signal *, .journey-entry[data-hover-active='true'] .journey-entry-date::after { animation: none !important; transition: none; }
+  .surface-signal *, .journey-entry:is([data-hover-active='true'], :focus-within) .journey-entry-date::after,
+  .journey-entry:is([data-hover-active='true'], :focus-within) .journey-status-dot { animation: none !important; transition: none; }
   [data-hover-surface='compile'] .capability-visual,
   [data-hover-surface='metric'] .numbers-metric-art,
   [data-hover-surface='system'] .greenway-stack-layer-label .graphic-mark,

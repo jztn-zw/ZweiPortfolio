@@ -1,4 +1,4 @@
-import { ArrowDown, CodeXml, FolderOpen, Mail } from 'lucide-react'
+import { ArrowDown, FileText, Mail } from 'lucide-react'
 import { portfolio } from '../data/portfolio'
 import PortraitReveal from './PortraitReveal'
 import GraphicMark from './GraphicMark'
@@ -7,7 +7,6 @@ import './Hero.css'
 
 export default function Hero() {
   const desktopPortrait = useDesktopPortrait()
-  const github = portfolio.contacts.find(contact => contact.label === 'GitHub')
 
   return (
     <section className="hero hero--portrait page-width" aria-labelledby="hero-title">
@@ -43,22 +42,12 @@ export default function Hero() {
         </div>
 
         <div className="hero-actions">
-          <a href="#projects" className="hero-button hero-button-primary">
-            <FolderOpen size={16} /> View Projects
-          </a>
-          <a href="#contact" className="hero-button hero-button-outline">
+          <a href="#contact" className="hero-button hero-button-primary">
             <Mail size={16} /> Get in Touch
           </a>
-          {github?.url ? (
-            <a href={github.url} className="hero-button hero-button-outline">
-              <CodeXml size={16} /> GitHub
-            </a>
-          ) : (
-            <button type="button" className="hero-button hero-button-outline" disabled title="GitHub profile coming soon">
-              <CodeXml size={16} /> GitHub
-              <span className="hero-github-soon">SOON</span>
-            </button>
-          )}
+          <button type="button" className="hero-button hero-button-outline" aria-disabled="true" title="Resume coming soon" aria-label="View resume (coming soon)">
+            <FileText size={16} /> View Resume
+          </button>
         </div>
 
         <div className="hero-signature eyebrow" aria-hidden="true">

@@ -22,10 +22,21 @@ function RailDetails({ kind }: { kind: SignalKind }) {
     </g>
     <g className="surface-hud-nodes"><circle cx="5" cy="27" r="2.5" /><circle cx="473" cy="27" r="2.5" /><path d="M19 12h26m381 0h27m-27 4h16" /></g>
   </>
-  if (kind === 'timeline') return <g className="surface-hud-nodes">
-    <path d="M32 20v10m12-10v5m12-5v5m12-5v10m12-10v5m12-5v5m12-5v10m12-10v5m12-5v5m12-5v10m12-10v5m12-5v5m12-5v10m12-10v5m12-5v5m12-5v10" />
-    <circle cx="8" cy="25" r="3" /><circle cx="232" cy="25" r="3" fill="currentColor" />
-  </g>
+  if (kind === 'timeline') return <>
+    <path className="surface-hud-guide" d="M24 33h70l8 4h42l8-4h64M6 17v-5h15m198 0h15v5" />
+    <g className="surface-hud-nodes surface-timeline-ticks">
+      {Array.from({ length: 17 }, (_, index) => {
+        const x = 24 + index * 12
+        return <path className="surface-timeline-tick" key={x} d={`M${x} ${index % 4 === 0 ? 17 : 21}V29`} />
+      })}
+      <circle className="surface-timeline-end" cx="8" cy="25" r="3" />
+      <circle className="surface-timeline-end" cx="232" cy="25" r="3" />
+    </g>
+    <g className="surface-timeline-traveler">
+      <path d="m0 21 4 4-4 4-4-4Z" fill="currentColor" strokeWidth=".6" />
+      <circle cy="25" r="1" fill="var(--theme-text, #eae7da)" stroke="none" />
+    </g>
+  </>
   if (kind === 'metric') return <>
     <path className="surface-hud-guide" d="M3 29a20 20 0 1 1 36 0M47 12h18m-18 9h30m-30 9h48" />
     <path className="surface-hud-plates" d="m19 22 8-11-3 13Z" fill="currentColor" stroke="none" />
@@ -41,7 +52,7 @@ function RailDetails({ kind }: { kind: SignalKind }) {
   return <g className="surface-hud-plates" fill="currentColor" stroke="none"><path d="m59 4 7 7-7 7h-5l7-7-7-7Zm15 0 7 7-7 7h-5l7-7-7-7ZM119 23h4v4h-4Zm7 0h4v4h-4Z" /></g>
 }
 
-// Purely decorative and drawn once per entry. No canvas or particle timers.
+// Purely decorative. Timeline loops only while active; other routes draw once per entry.
 export default function SurfaceSignal({ kind }: { kind: SignalKind }) {
   return <span className={`surface-signal surface-signal--${kind}`} aria-hidden="true">
     {kind === 'arsenal' && <svg className="surface-signal-frame" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" focusable="false">

@@ -4,6 +4,7 @@ import PageLoading, { PageLoadBoundary } from './components/PageLoading'
 import { loadPage, preloadRoutePage, preloadLinkPage } from './lib/pageModules'
 import { portfolio } from './data/portfolio'
 import { getVisitorCount } from './lib/visitorCount'
+import { finishStartup } from './lib/startupScreen'
 import useScrollReveal from './hooks/useScrollReveal'
 import useAnimationVisibility from './hooks/useAnimationVisibility'
 import useSurfaceHover from './hooks/useSurfaceHover'
@@ -17,6 +18,7 @@ const Numbers = lazy(() => loadPage('numbers'))
 // This mounts after a deferred page resolves, so focus and reveals find its content.
 function RenderedPage({ page }: { page: Page }) {
   useEffect(() => {
+    finishStartup()
     document.title = `${portfolio.name} — ${page === 'numbers' ? 'By the Numbers' : page === 'greenway' ? 'GreenWay' : page === 'skills' ? 'Stack & Skills' : portfolio.role}`
     let anchor = window.location.hash.slice(1)
     try { anchor = decodeURIComponent(anchor) } catch { /* Keep malformed fragments literal. */ }

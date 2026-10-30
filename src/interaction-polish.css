@@ -23,14 +23,6 @@
 .capabilities-list .capability-title-line > svg { transition: rotate 420ms var(--hover-ease), translate 420ms var(--hover-ease), color 240ms ease; }
 .capabilities-list .capability-tags li { transition: border-color 220ms ease, background-color 220ms ease; }
 
-/* Skills: individual rows read like a selected terminal entry. */
-.skills-page .skill-discipline { transition: border-color 320ms ease; }
-.skills-page .skill-discipline-icon { transition: border-color 280ms ease, color 280ms ease; }
-.skills-page .skill-discipline-icon > svg { transition: rotate 420ms var(--hover-ease); }
-.skills-page .skill-technology-list li { position: relative; transition: background-color 240ms ease; }
-.skills-page .skill-technology-list li::before { content: ''; position: absolute; top: 23px; left: -9px; width: 2px; height: 12px; background: var(--interaction-primary); transform: scaleY(0); transform-origin: top; transition: transform 300ms var(--hover-ease); pointer-events: none; }
-.skills-page .skill-technology-index { transition: color 220ms ease, translate 340ms var(--hover-ease); }
-
 /* Statistics: the little gauge calibrates without shifting the count itself. */
 .numbers-page .numbers-metric-tick { transition: translate 420ms var(--hover-ease); }
 .numbers-page .numbers-metric-ruler { transition: color 240ms ease, opacity 240ms ease; }
@@ -40,7 +32,6 @@
 .greenway-case-page .greenway-case-feature-list li::after { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--greenway-accent), transparent); transform: scaleX(0); transform-origin: left; transition: transform 480ms var(--hover-ease); pointer-events: none; }
 .greenway-case-page .greenway-case-feature-list li > svg { transition: translate 380ms var(--hover-ease), rotate 380ms var(--hover-ease); }
 .greenway-case-page .greenway-case-feature-index { transition: color 240ms ease; }
-.greenway-case-page .greenway-stack-layer-label > .graphic-mark { transition: translate 380ms var(--hover-ease); }
 .greenway-case-page .greenway-stack-layer li { transition: border-color 240ms ease; }
 
 /* Keyboard interactions apply to genuine controls; informational rows do not
@@ -77,12 +68,6 @@
   .capabilities-list .capability-row:hover .capability-title-line > svg { translate: 0 -2px; rotate: -6deg; color: var(--interaction-accent); }
   .capabilities-list .capability-tags li:hover { border-color: var(--interaction-border); background-color: color-mix(in srgb, var(--interaction-primary) 7%, transparent); }
 
-  .skills-page .skill-discipline:hover .skill-discipline-icon { color: var(--interaction-accent); border-color: var(--interaction-border); }
-  .skills-page .skill-discipline:hover .skill-discipline-icon > svg { rotate: -6deg; }
-  .skills-page .skill-technology-list li:hover { background-color: color-mix(in srgb, var(--interaction-primary) 5%, transparent); }
-  .skills-page .skill-technology-list li:hover::before { transform: scaleY(1); }
-  .skills-page .skill-technology-list li:hover .skill-technology-index { color: var(--interaction-accent); }
-
   .numbers-page .numbers-metric:hover .numbers-metric-tick { translate: 5px 0; }
   .numbers-page .numbers-metric:hover .numbers-metric-ruler { opacity: 1; }
 
@@ -90,7 +75,6 @@
   .greenway-case-page .greenway-case-feature-list li:hover > svg { translate: 0 -2px; rotate: -6deg; }
   .greenway-case-page .greenway-case-feature-list li:nth-child(2):hover > svg { rotate: 7deg; }
   .greenway-case-page .greenway-case-feature-list li:hover .greenway-case-feature-index { color: var(--greenway-accent); }
-  .greenway-case-page .greenway-stack-layer:hover .greenway-stack-layer-label > .graphic-mark { translate: 3px 0; }
   .greenway-case-page .greenway-stack-layer li:hover { border-color: var(--greenway-accent); }
 }
 
@@ -105,18 +89,13 @@
   .page-back-button > svg, .site-footer-back > svg, .capabilities-full-link > svg,
   .project-tile-bottom :is(a, button) > svg,
   .capabilities-list .capability-title-line > svg,
-  .skills-page .skill-discipline-icon > svg,
-  .skills-page .skill-technology-index,
   .numbers-page .numbers-metric-tick,
   .greenway-case-page .greenway-case-feature-list li > svg,
   .greenway-case-page .greenway-stack-layer-label > .graphic-mark { transition: none; translate: none !important; rotate: none !important; scale: none !important; }
   .capabilities-list .capability-number-rule { transition: none; scale: none !important; }
-  .skills-page .skill-technology-list li::before,
   .greenway-case-page .greenway-case-feature-list li::after,
   .contact-finale a.contact-social-link::after,
   .project-tile-bottom :is(a, button)::after,
-  .skills-page .skill-discipline, .skills-page .skill-discipline-icon,
-  .skills-page .skill-technology-list li,
   .capabilities-list .capability-tags li,
   .numbers-page .numbers-metric-ruler,
   .greenway-case-page .greenway-case-feature-index,
