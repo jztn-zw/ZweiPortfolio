@@ -1,3 +1,5 @@
 /* Resume the same animation timeline when the artwork returns to view. */
 [data-animation-paused], [data-animation-paused] *,
+[data-animation-paused]::before, [data-animation-paused]::after,
+[data-animation-paused] *::before, [data-animation-paused] *::after,
 :root[data-tab-hidden] *, :root[data-tab-hidden] *::before, :root[data-tab-hidden] *::after { animation-play-state: paused !important; }

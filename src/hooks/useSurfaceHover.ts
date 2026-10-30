@@ -5,6 +5,7 @@ export default function useSurfaceHover(page: string) {
   useEffect(() => {
     const root = document.querySelector('main')
     if (!root) return
+    if (document.documentElement?.dataset?.effects === 'lite') return
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
     const touched = new Set<HTMLElement>()
     let active: HTMLElement | null = null

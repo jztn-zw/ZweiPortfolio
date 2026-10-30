@@ -3,7 +3,7 @@ import './animationVisibility.css'
 
 export default function useAnimationVisibility(page: string) {
   useEffect(() => {
-    const targets = document.querySelectorAll('.capability-artwork, .stack-illustration, .numbers-metric-art, .discipline-strip-track')
+    const targets = document.querySelectorAll('.capability-artwork, .stack-illustration, .numbers-metric-art, .discipline-strip-track, .journey-aside, .about-me-details, .greenway-artwork, .contact-finale, .ask-poster')
     const syncDocument = () => document.documentElement.toggleAttribute('data-tab-hidden', document.hidden)
     syncDocument()
     document.addEventListener('visibilitychange', syncDocument)

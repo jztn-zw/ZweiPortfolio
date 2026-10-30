@@ -46,13 +46,14 @@ function toggleTheme(origin?: ThemeOrigin) {
   cancelTransition()
   const version = transitionVersion
   const root = document.documentElement
+  const lightweight = root.dataset.effects === 'lite'
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     applyTheme(nextTheme)
     return
   }
 
-  if (typeof document.startViewTransition !== 'function' || !CSS.supports('mask-composite', 'intersect')) {
+  if (typeof document.startViewTransition !== 'function' || (!lightweight && !CSS.supports('mask-composite', 'intersect'))) {
     root.dataset.themeTransition = 'fade'
     applyTheme(nextTheme)
     fallbackTimer = window.setTimeout(() => {
@@ -67,7 +68,7 @@ function toggleTheme(origin?: ThemeOrigin) {
   const y = Math.max(0, Math.min(origin?.y ?? window.innerHeight / 2, window.innerHeight))
   root.style.setProperty('--theme-reveal-x', `${x}px`)
   root.style.setProperty('--theme-reveal-y', `${y}px`)
-  root.dataset.themeTransition = 'reveal'
+  root.dataset.themeTransition = lightweight ? 'circle' : 'reveal'
 
   try {
     const transition = document.startViewTransition(() => {
@@ -76,8 +77,10 @@ function toggleTheme(origin?: ThemeOrigin) {
     activeTransition = transition
     void transition.ready.then(() => {
       if (version !== transitionVersion) return
-      activeAnimation = root.animate(createThemeReveal(window.innerWidth, window.innerHeight, { x, y }), {
-        duration: themeRevealDuration,
+      const radius = Math.ceil(Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y)))
+      const frames = lightweight ? [{ clipPath: `circle(0px at ${x}px ${y}px)` }, { clipPath: `circle(${radius}px at ${x}px ${y}px)` }] : createThemeReveal(window.innerWidth, window.innerHeight, { x, y })
+      activeAnimation = root.animate(frames, {
+        duration: lightweight ? 480 : themeRevealDuration,
         easing: 'cubic-bezier(.4, 0, .2, 1)',
         fill: 'both',
         pseudoElement: '::view-transition-new(root)',

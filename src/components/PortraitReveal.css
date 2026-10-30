@@ -30,6 +30,12 @@
   object-fit: contain;
 }
 .portrait-reveal-preload { display: none; }
+.portrait-reveal--lite .portrait-reveal-illustration,
+.portrait-reveal--lite .portrait-reveal-photo { visibility: visible !important; transition: opacity 420ms ease; }
+.portrait-reveal--lite .portrait-reveal-illustration { opacity: 1; }
+.portrait-reveal--lite .portrait-reveal-photo { opacity: 0; }
+.portrait-reveal--lite.is-revealed .portrait-reveal-illustration { opacity: 0; }
+.portrait-reveal--lite.is-revealed .portrait-reveal-photo { opacity: 1; }
 .portrait-pixel { opacity: clamp(0, calc((var(--portrait-progress) - var(--pixel-start)) * 6.363636), 1); shape-rendering: crispEdges; }
 .portrait-reveal:not(.is-transitioning):not(.is-revealed) .portrait-reveal-illustration > image { mask: none; }
 .portrait-reveal:not(.is-transitioning):not(.is-revealed) .portrait-reveal-photo { visibility: hidden; }

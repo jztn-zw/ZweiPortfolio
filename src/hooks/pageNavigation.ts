@@ -245,7 +245,7 @@ export function cancelPageNavigation() {
 
 function lightweightTransition() {
   const device = window.navigator as (Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } }) | undefined
-  return window.innerWidth <= 640 || (device?.hardwareConcurrency ?? 8) <= 4 || (device?.deviceMemory ?? 8) <= 4 || device?.connection?.saveData === true
+  return document.documentElement.dataset.effects === 'lite' || window.innerWidth <= 640 || (device?.hardwareConcurrency ?? 8) <= 4 || (device?.deviceMemory ?? 8) <= 4 || device?.connection?.saveData === true
 }
 
 function cacheNavigationScene({ curtain, panels, artwork, portrait, caption, title, cards }: NavigationScene) {
@@ -433,7 +433,7 @@ export function subscribeToNavigation(onChange: () => void) {
   }
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
   // Build the SVG scene off the click path when the browser has idle time.
-  const preparation = !motion.matches && !preparedScene && typeof window.requestIdleCallback === 'function'
+  const preparation = !lightweightTransition() && !motion.matches && !preparedScene && typeof window.requestIdleCallback === 'function'
     ? window.requestIdleCallback(() => { if (!active && !preparedScene) preparedScene = createNavigationScene() })
     : undefined
   let requestedRoute = browserRoute()

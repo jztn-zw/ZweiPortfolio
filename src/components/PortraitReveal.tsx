@@ -21,6 +21,7 @@ const fragments = Array.from({ length: 84 }, (_, index) => {
 const pixelTiles = pixels.map(pixel => <rect key={`${pixel.x}-${pixel.y}`} className="portrait-pixel" x={pixel.x} y={pixel.y} width={pixelSize} height={pixelSize} style={{ '--pixel-start': pixel.delay / transitionDuration } as CSSProperties} />)
 
 export default function PortraitReveal() {
+  const [lightweight] = useState(() => document.documentElement.dataset.effects === 'lite' || window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const [pinned, setPinned] = useState(false)
   const [previewing, setPreviewing] = useState(false)
   const [photoReady, setPhotoReady] = useState(false)
@@ -43,6 +44,7 @@ export default function PortraitReveal() {
   useEffect(() => {
     const button = buttonRef.current
     if (!button) return
+    if (lightweight) return
     // Every tile and fragment follows one reversible clock, including interrupted hovers.
     const timeline = button.animate([
       { '--portrait-progress': '0' },
@@ -66,7 +68,7 @@ export default function PortraitReveal() {
       timeline.cancel()
       timelineRef.current = null
     }
-  }, [])
+  }, [lightweight])
 
   function changePortrait(nextPinned: boolean, nextPreviewing: boolean) {
     if (photoReady && (nextPinned || nextPreviewing) !== showingPhoto) {
@@ -94,7 +96,7 @@ export default function PortraitReveal() {
     <button
       ref={buttonRef}
       type="button"
-      className={`portrait-reveal${showingPhoto ? ' is-revealed' : ''}${transitioning ? ' is-transitioning' : ''}`}
+      className={`portrait-reveal${lightweight ? ' portrait-reveal--lite' : ''}${showingPhoto ? ' is-revealed' : ''}${transitioning ? ' is-transitioning' : ''}`}
       aria-label="Real portrait of Jaztin Abram Contreras"
       aria-pressed={pinned}
       aria-describedby={hintId}
@@ -105,7 +107,7 @@ export default function PortraitReveal() {
       onPointerLeave={() => changePortrait(pinned, false)}
       onClick={() => changePortrait(!pinned, false)}
     >
-      <svg className="portrait-reveal-defs" width="0" height="0" aria-hidden="true" focusable="false">
+      {!lightweight && <svg className="portrait-reveal-defs" width="0" height="0" aria-hidden="true" focusable="false">
         <defs>
           <mask id={pixelPhotoId} maskUnits="userSpaceOnUse" x="0" y="0" width="941" height="1672" style={{ maskType: 'alpha' }}><g fill="white">{pixelTiles}</g></mask>
           <mask id={pixelIllustrationId} maskUnits="userSpaceOnUse" x="0" y="0" width="941" height="1672" style={{ maskType: 'luminance' }}>
@@ -113,7 +115,7 @@ export default function PortraitReveal() {
             <g fill="black">{pixelTiles}</g>
           </mask>
         </defs>
-      </svg>
+      </svg>}
       <span className="portrait-reveal-images" aria-hidden="true">
         <svg className="hero-portrait portrait-reveal-backdrop" viewBox="0 0 941 1672" focusable="false">
           <defs>
@@ -129,7 +131,7 @@ export default function PortraitReveal() {
           <image href="/images/jaztin-portrait.webp" width="941" height="1672" mask={`url(#${backdropMaskId})`} />
         </svg>
         <svg className="hero-portrait portrait-reveal-illustration" viewBox="0 0 941 1672" focusable="false">
-          <image href="/images/jaztin-portrait.webp" width="941" height="1672" mask={`url(#${pixelIllustrationId})`} />
+          <image href="/images/jaztin-portrait.webp" width="941" height="1672" mask={lightweight ? undefined : `url(#${pixelIllustrationId})`} />
         </svg>
         <img
           src="/images/jaztin-portrait-real-matched.webp"
@@ -154,11 +156,11 @@ export default function PortraitReveal() {
               <image href="/images/jaztin-portrait-real-matched.webp" width="941" height="1672" filter={`url(#${subjectFilterId})`} />
             </mask>
           </defs>
-          <g mask={`url(#${pixelPhotoId})`}>
+          <g mask={lightweight ? undefined : `url(#${pixelPhotoId})`}>
             <image href="/images/jaztin-portrait-real-matched.webp" width="941" height="1672" mask={`url(#${subjectMaskId})`} style={{ filter: 'grayscale(1)' }} />
           </g>
         </svg>
-        <svg className="hero-portrait portrait-glitch" viewBox="0 0 941 1672" focusable="false">
+        {!lightweight && <svg className="hero-portrait portrait-glitch" viewBox="0 0 941 1672" focusable="false">
           <defs>
             <pattern id={fragmentOutgoingId} patternUnits="userSpaceOnUse" width="941" height="1672"><image href="/images/jaztin-portrait.webp" width="941" height="1672" /></pattern>
             <pattern id={fragmentIncomingId} patternUnits="userSpaceOnUse" width="941" height="1672"><image href="/images/jaztin-portrait-real-matched.webp" width="941" height="1672" /></pattern>
@@ -169,7 +171,7 @@ export default function PortraitReveal() {
             <rect className="portrait-body-fragment portrait-body-fragment--in" x={fragment.x} y={fragment.y} width={fragment.size} height={fragment.size} fill={`url(#${fragmentIncomingId})`} />
             {index % 2 === 0 && <rect className={`portrait-glitch-pixel portrait-glitch-pixel--${index % 3}`} x={fragment.x + fragment.size} y={fragment.y} width={5 + index % 8} height={5 + index % 8} />}
           </g>)}
-        </svg>
+        </svg>}
       </span>
       <span id={hintId} className="sr-only">
         {photoUnavailable ? 'Portrait unavailable' : pinned ? 'Tap to return to illustration' : 'Hover or tap to reveal'}
