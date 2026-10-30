@@ -3,12 +3,7 @@
   "trailingSlash": false,
   "functions": {
     "api/chat.js": {
-      "includeFiles": [
-        "src/data/portfolio.ts",
-        "src/lib/chatLanguage.ts",
-        "src/lib/personalChat.ts",
-        "src/lib/workInquiry.ts"
-      ]
+      "includeFiles": "src/{data/portfolio,lib/chatLanguage,lib/personalChat,lib/workInquiry}.ts"
     }
   },
   "rewrites": [

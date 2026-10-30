@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { copyFileSync, existsSync, globSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -8,9 +8,12 @@ import { test } from 'node:test'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const config = JSON.parse(readFileSync(join(root, 'vercel.json'), 'utf8'))
-const included = config.functions['api/chat.js'].includeFiles
+const includePattern = config.functions['api/chat.js'].includeFiles
+assert.equal(typeof includePattern, 'string', 'Vercel requires includeFiles to be a single glob string')
+const included = globSync(includePattern, { cwd: root }).map(path => path.replaceAll('\\', '/'))
 
 test('the function package explicitly preserves every raw TypeScript import', () => {
+  assert.equal(included.length, 4)
   const seen = new Set()
   function visit(relative) {
     if (seen.has(relative)) return
