@@ -6,7 +6,7 @@ export function chooseEffectsMode(hints: DeviceHints): 'lite' | 'full' {
   return hints.reducedMotion || hints.saveData || limitedHardware || compactTouchScreen ? 'lite' : 'full'
 }
 
-// Decide before React mounts so costly effects are never constructed on lite devices.
+// A scheduling hint only. Hardware detection never removes artwork or interactions.
 export function initializeEffectsMode() {
   const device = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } }
   document.documentElement.dataset.effects = chooseEffectsMode({

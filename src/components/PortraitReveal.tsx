@@ -1,5 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
+import { groupMaskTiles } from '../lib/portraitMask'
+import { observePageCover } from '../lib/pageVisibility'
 import './PortraitReveal.css'
 
 const pixelSize = 56
@@ -18,10 +20,11 @@ const fragments = Array.from({ length: 84 }, (_, index) => {
   return { x: 168 + column * 84 + (row * 11 + column * 7) % 17, y, size: 18 + (index % 3) * 12, delay: sweepDelay(y), dx: (column < 3 ? -1 : 1) * (30 + index % 42), dy: -(24 + index % 36) }
 })
 // Shared, pixel-aligned edges avoid overlapping translucent cells and dark grid seams.
-const pixelTiles = pixels.map(pixel => <rect key={`${pixel.x}-${pixel.y}`} className="portrait-pixel" x={pixel.x} y={pixel.y} width={pixelSize} height={pixelSize} style={{ '--pixel-start': pixel.delay / transitionDuration } as CSSProperties} />)
+const pixelTiles = groupMaskTiles(pixels, pixelSize).map(group => <path key={group.delay} className="portrait-pixel" d={group.path} style={{ '--pixel-start': group.delay / transitionDuration } as CSSProperties} />)
 
 export default function PortraitReveal() {
-  const [lightweight] = useState(() => document.documentElement.dataset.effects === 'lite' || window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  // Only an explicit reduced-motion preference uses a crossfade, never device power.
+  const [lightweight] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const [pinned, setPinned] = useState(false)
   const [previewing, setPreviewing] = useState(false)
   const [photoReady, setPhotoReady] = useState(false)
@@ -30,6 +33,7 @@ export default function PortraitReveal() {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const timelineRef = useRef<Animation | null>(null)
   const targetRef = useRef(false)
+  const coveredRef = useRef(false)
   const hintId = useId()
   const subjectMaskId = useId()
   const subjectFilterId = useId()
@@ -55,6 +59,14 @@ export default function PortraitReveal() {
     timeline.onfinish = () => setTransitioning(false)
     timelineRef.current = timeline
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const stopWatchingCover = observePageCover(covered => {
+      coveredRef.current = covered
+      if (covered) timeline.pause()
+      else if (!reducedMotion.matches && Number(timeline.currentTime) !== (targetRef.current ? transitionDuration : 0)) {
+        timeline.updatePlaybackRate(targetRef.current ? 1 : -1)
+        timeline.play()
+      }
+    })
     const settle = () => {
       if (!reducedMotion.matches) return
       timeline.pause()
@@ -64,6 +76,7 @@ export default function PortraitReveal() {
     reducedMotion.addEventListener('change', settle)
     return () => {
       reducedMotion.removeEventListener('change', settle)
+      stopWatchingCover()
       timeline.onfinish = null
       timeline.cancel()
       timelineRef.current = null
@@ -84,7 +97,7 @@ export default function PortraitReveal() {
         } else {
           setTransitioning(true)
           timeline.updatePlaybackRate(reveal ? 1 : -1)
-          timeline.play()
+          if (!coveredRef.current) timeline.play()
         }
       }
     }

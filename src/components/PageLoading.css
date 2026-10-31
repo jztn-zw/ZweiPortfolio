@@ -5,3 +5,10 @@
 .page-loading h1 { font-size: clamp(32px, 6vw, 64px); }
 .page-loading p { margin-block: 20px; line-height: 1.7; }
 .page-loading .page-back-button { display: inline-flex; margin-right: 12px; }
+.minimal-loading { width: min(100%, 1056px); min-height: 65dvh; margin-inline: auto; padding: 48px 32px; color: var(--theme-text, #edece3); font: 14px/1.7 'Helvetica Neue', Arial, sans-serif; }
+.minimal-loading > span { font-size: 18px; font-weight: 700; }
+.minimal-loading > span > span { color: var(--theme-accent, #dd7478); }
+.minimal-loading p { margin: 48px 0 16px; color: var(--theme-muted, #a7a69e); }
+.minimal-loading a { display: inline-block; padding-block: 10px; font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
+.minimal-loading h1 { font: 600 clamp(26px, 4vw, 38px)/1.3 'Helvetica Neue', Arial, sans-serif; letter-spacing: -.8px; }
+.minimal-loading button { margin-right: 18px; padding: 8px 13px; border: 1px solid currentColor; border-radius: 6px; background: transparent; font-size: 12px; }

@@ -84,7 +84,7 @@ export default function GitHubCalendar() {
           </svg>
         </div>
         {calendar ? <>
-          {document.documentElement.dataset.effects !== 'lite' && <CalendarSpider />}
+          <CalendarSpider />
           <div className="github-calendar-summary">
             <p className="github-calendar-kicker eyebrow"><CodeXml size={15} aria-hidden="true" /> CONTRIBUTION LOG <span className="github-calendar-kicker-rule" aria-hidden="true" /></p>
             <p className="github-calendar-total">

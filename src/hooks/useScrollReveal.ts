@@ -33,6 +33,7 @@ const revealGroups = [
 
 export default function useScrollReveal(page: string) {
   useEffect(() => {
+    if (page === 'minimal') return
     if (!('IntersectionObserver' in window)) return
 
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)')

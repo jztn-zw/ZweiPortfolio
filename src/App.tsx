@@ -1,5 +1,4 @@
 import { lazy, Suspense, useEffect, useSyncExternalStore } from 'react'
-import Home from './pages/Home'
 import PageLoading, { PageLoadBoundary } from './components/PageLoading'
 import { loadPage, preloadRoutePage, preloadLinkPage } from './lib/pageModules'
 import { portfolio } from './data/portfolio'
@@ -12,6 +11,8 @@ import { getNavigationLocation, subscribeToNavigation } from './hooks/pageNaviga
 import { navigationPage, type Page } from './lib/routes'
 
 const Skills = lazy(() => loadPage('skills'))
+const Home = lazy(() => loadPage('home'))
+const Minimal = lazy(() => loadPage('minimal'))
 const GreenWay = lazy(() => loadPage('greenway'))
 const Numbers = lazy(() => loadPage('numbers'))
 const AskAI = lazy(() => loadPage('ai'))
@@ -19,8 +20,9 @@ const AskAI = lazy(() => loadPage('ai'))
 // This mounts after a deferred page resolves, so focus and reveals find its content.
 function RenderedPage({ page }: { page: Page }) {
   useEffect(() => {
+    document.documentElement.dataset.view = page
     finishStartup()
-    document.title = `${portfolio.name} — ${page === 'ai' ? 'Ask Me Anything' : page === 'numbers' ? 'By the Numbers' : page === 'greenway' ? 'GreenWay' : page === 'skills' ? 'Stack & Skills' : portfolio.role}`
+    document.title = `${portfolio.name} — ${page === 'minimal' ? 'Minimal Portfolio' : page === 'ai' ? 'Ask Me Anything' : page === 'numbers' ? 'By the Numbers' : page === 'greenway' ? 'GreenWay' : page === 'skills' ? 'Stack & Skills' : portfolio.role}`
     let anchor = window.location.hash.slice(1)
     try { anchor = decodeURIComponent(anchor) } catch { /* Keep malformed fragments literal. */ }
     if (anchor) {
@@ -35,7 +37,7 @@ function RenderedPage({ page }: { page: Page }) {
   useScrollReveal(page)
   useAnimationVisibility(page)
   useSurfaceHover(page)
-  return page === 'ai' ? <AskAI /> : page === 'numbers' ? <Numbers /> : page === 'greenway' ? <GreenWay /> : page === 'skills' ? <Skills /> : <Home />
+  return page === 'minimal' ? <Minimal /> : page === 'ai' ? <AskAI /> : page === 'numbers' ? <Numbers /> : page === 'greenway' ? <GreenWay /> : page === 'skills' ? <Skills /> : <Home />
 }
 
 export default function App() {
@@ -65,5 +67,5 @@ export default function App() {
     }
   }, [])
 
-  return <PageLoadBoundary key={page}><Suspense fallback={<PageLoading />}><RenderedPage page={page} /></Suspense></PageLoadBoundary>
+  return <PageLoadBoundary key={page} minimal={page === 'minimal'}><Suspense fallback={<PageLoading minimal={page === 'minimal'} />}><RenderedPage page={page} /></Suspense></PageLoadBoundary>
 }

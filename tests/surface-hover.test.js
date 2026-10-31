@@ -7,12 +7,12 @@ import ts from 'typescript'
 const source = readFileSync(new URL('../src/hooks/useSurfaceHover.ts', import.meta.url), 'utf8')
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2023 } }).outputText
 
-function harness({ reduced = false, lite = false } = {}) {
+function harness({ reduced = false, lite = false, page = 'home' } = {}) {
   const events = new Map(), globalEvents = new Map(), documentEvents = new Map(), frames = new Map()
-  let cleanup, nextFrame = 0, preferenceChanged
+  let cleanup, nextFrame = 0, preferenceChanged, propertyWrites = 0
   const motion = { matches: reduced, addEventListener: (_, callback) => { preferenceChanged = callback }, removeEventListener: () => { preferenceChanged = undefined } }
   class Element {
-    constructor(surface = null) { this.surface = surface; this.dataset = {}; this.properties = new Map(); this.style = { setProperty: (name, value) => this.properties.set(name, value), removeProperty: name => this.properties.delete(name) }; this.width = 500 }
+    constructor(surface = null) { this.surface = surface; this.dataset = {}; this.properties = new Map(); this.style = { setProperty: (name, value) => { propertyWrites++; this.properties.set(name, value) }, removeProperty: name => this.properties.delete(name) }; this.width = 500 }
     closest() { return this.surface }
     getBoundingClientRect() { return { left: 100, top: 200, width: this.width, height: 200 } }
   }
@@ -32,9 +32,10 @@ function harness({ reduced = false, lite = false } = {}) {
     requestAnimationFrame: callback => { frames.set(++nextFrame, callback); return nextFrame }, cancelAnimationFrame: id => frames.delete(id),
     require: () => ({ useEffect: effect => { cleanup = effect() } }),
   })
-  exported.default('home')
+  exported.default(page)
   return {
     first, second, child, events, globalEvents, documentEvents, frames, document,
+    get propertyWrites() { return propertyWrites },
     event(name, overrides = {}) { events.get(name)({ target: first, relatedTarget: null, clientX: 350, clientY: 300, button: 0, pointerType: 'mouse', isPrimary: true, ...overrides }) },
     paint() { const pending = [...frames.values()]; frames.clear(); pending.forEach(callback => callback()) },
     cleanup: () => cleanup?.(),
@@ -42,11 +43,24 @@ function harness({ reduced = false, lite = false } = {}) {
   }
 }
 
-test('lite devices install no pointer tracking listeners or animation frames', () => {
-  const h = harness({ lite: true })
+test('only Minimal View skips decorative pointer tracking', () => {
+  const h = harness({ page: 'minimal' })
   assert.equal(h.events.size, 0)
   assert.equal(h.globalEvents.size, 0)
   assert.equal(h.documentEvents.size, 0)
+  assert.equal(h.frames.size, 0)
+  h.cleanup()
+})
+
+test('constrained devices keep full hover feedback without rewriting unchanged coordinates', () => {
+  const h = harness({ lite: true })
+  h.event('pointerover'); h.paint()
+  assert.equal(h.first.dataset.hoverActive, 'true')
+  assert.equal(h.propertyWrites, 6)
+  h.event('pointermove'); h.paint()
+  assert.equal(h.propertyWrites, 6, 'unchanged coordinates should not invalidate styles again')
+  h.event('pointermove', { clientX: 420 }); h.paint()
+  assert.ok(h.propertyWrites > 6)
   assert.equal(h.frames.size, 0)
   h.cleanup()
 })

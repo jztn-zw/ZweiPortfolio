@@ -33,7 +33,7 @@ export function finishStartup() {
     // Let the committed page paint before lifting the loading curtain.
     requestAnimationFrame(() => requestAnimationFrame(() => {
       document.getElementById('root')?.removeAttribute('inert')
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (document.documentElement?.dataset?.view === 'minimal' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         screen.remove()
         return
       }

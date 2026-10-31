@@ -80,7 +80,8 @@ function harness({ reduced = false, supported = true, initial = '/', width = 128
   return {
     api: exports, animations, nodes, document, window, motion, unsubscribe, entries, scrolls, anchors, listeners, main, idleCallbacks,
     get createdNodes() { return createdNodes },
-    idle() { const callbacks = Array.from(idleCallbacks.values()); idleCallbacks.clear(); callbacks.forEach(callback => callback()) },
+    idleStep() { const callbacks = Array.from(idleCallbacks.values()); idleCallbacks.clear(); callbacks.forEach(callback => callback()) },
+    idle() { while (idleCallbacks.size) { const callbacks = Array.from(idleCallbacks.values()); idleCallbacks.clear(); callbacks.forEach(callback => callback()) } },
     get notifications() { return notifications },
     navigate(href, options = {}) {
       const link = new Element()
@@ -147,25 +148,39 @@ test('navigation during reveal reuses the curtain and does not apply stale clean
   h.unsubscribe()
 })
 
-test('small screens and constrained devices use lighter transforms and release the animation pause', async () => {
+test('small screens and constrained devices retain every illustration and the original cut-in motion', async () => {
+  const reference = harness()
+  reference.navigate('/numbers'); await cover(reference); await reveal(reference)
+  const cutInFrames = h => JSON.stringify(h.animations.filter(animation => /page-character-stage|page-logic-card/.test(animation.node.className ?? '')).map(animation => animation.keyframes))
+  const expectedFrames = cutInFrames(reference)
+  reference.unsubscribe()
   for (const options of [{ width: 390 }, { cores: 2 }, { memory: 2 }, { saveData: true }]) {
     const h = harness(options)
     h.document.documentElement.dataset.theme = 'light'
     h.navigate('/numbers')
     assert.equal(h.nodes[0].dataset.quality, 'lite')
     assert.equal(h.document.documentElement.dataset.pageTransition, 'active')
+    const descendants = node => [node, ...node.children.flatMap(descendants)]
+    const classes = new Set(descendants(h.nodes[0]).flatMap(node => String(node.className ?? node.attributes.class ?? '').split(/\s+/)))
+    for (const name of ['page-logic-card--cube', 'page-logic-card--puzzle', 'page-logic-card--poker', 'page-logic-detail--jigsaw', 'page-logic-detail--knight', 'character-emblem--logic', 'character-emblem--tiles']) assert.ok(classes.has(name), name)
     await cover(h)
     await reveal(h)
     assert.ok(h.animations.every(animation => animation.node !== h.main), 'do not rasterize the entire incoming page')
+    assert.equal(cutInFrames(h), expectedFrames, 'the artwork follows the same arrival and exit poses on every device')
     for (const animation of h.animations) {
       for (const frame of animation.keyframes) {
         assert.ok(Object.keys(frame).every(key => ['transform', 'opacity', 'offset'].includes(key)))
-        assert.ok(!frame.transform?.includes('perspective'), 'lightweight props use flat transforms')
       }
     }
     assert.equal(h.document.documentElement.dataset.pageTransition, undefined)
     h.unsubscribe()
   }
+})
+
+test('transition styles never conceal illustrations or strip their styling based on hardware', () => {
+  const css = readFileSync(new URL('../src/hooks/pageNavigation.css', import.meta.url), 'utf8')
+  assert.doesNotMatch(css, /\[data-quality=["']lite["']\]/, 'device scheduling hints must not change artwork styling')
+  assert.doesNotMatch(css, /\.page-logic-(?:details|detail--knight)\s*\{[^}]*display:\s*none/, 'resize the smaller illustrations instead of hiding them')
 })
 
 test('subsequent transitions reuse the scene, reset its transforms, and reassess device constraints', async () => {
@@ -192,12 +207,21 @@ test('subsequent transitions reuse the scene, reset its transforms, and reassess
   h.unsubscribe()
 })
 
-test('lite boot avoids speculative scene construction and still completes route changes', async () => {
-  const h = harness({ lite: true, idle: true })
-  h.idle()
+test('constrained devices prepare in small idle stages and a click reuses partial work', async () => {
+  const baseline = harness()
+  baseline.navigate('/skills')
+  const completeNodeCount = baseline.createdNodes
+  baseline.unsubscribe()
+  const h = harness({ cores: 2, idle: true })
   assert.equal(h.createdNodes, 0)
+  h.idleStep()
+  assert.ok(h.createdNodes > 0 && h.createdNodes < completeNodeCount, 'one idle callback must not build the whole scene')
+  assert.equal(h.nodes.length, 0, 'partial preparation stays off-screen')
   h.navigate('/skills')
   assert.equal(h.nodes[0].dataset.quality, 'lite')
+  assert.equal(h.createdNodes, completeNodeCount, 'finish the partial builder without duplicating its nodes')
+  h.idle()
+  assert.equal(h.createdNodes, completeNodeCount, 'a queued idle callback must not build a second active scene')
   await cover(h)
   await reveal(h)
   assert.equal(h.api.getNavigationLocation(), '/skills')
@@ -223,6 +247,11 @@ test('idle preparation moves scene construction off the click path and cancels o
   cancelled.idle()
   assert.equal(cancelled.createdNodes, 0)
   assert.equal(harness({ idle: true, reduced: true }).idleCallbacks.size, 0)
+  const partial = harness({ idle: true })
+  partial.idleStep()
+  const partialCount = partial.createdNodes
+  partial.unsubscribe(); partial.idle()
+  assert.equal(partial.createdNodes, partialCount, 'unmount cancels partially completed preparation')
 })
 
 test('the new portrait and title finish their cut-in before the route swaps', async () => {
@@ -376,9 +405,42 @@ test('legacy hash navigation converts to a clean path and still uses the curtain
 
 test('Vercel rewrites cover app pages without capturing assets or API functions', () => {
   const config = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
-  for (const path of ['/numbers', '/skills', '/projects/greenway', '/ask-ai']) {
+  for (const path of ['/numbers', '/skills', '/projects/greenway', '/ask-ai', '/minimal']) {
     assert.equal(config.rewrites.find(rule => rule.source === path)?.destination, '/index.html')
   }
   assert.ok(config.rewrites.every(rule => routes.isPagePath(rule.source)))
   assert.equal(config.trailingSlash, false)
+})
+
+test('minimal view enters, exits, and restores browser history without a cinematic curtain', () => {
+  const h = harness()
+  h.navigate('/minimal')
+  assert.equal(h.api.getNavigationLocation(), '/minimal')
+  assert.equal(h.nodes.length, 0)
+  assert.equal(h.animations.length, 0)
+  h.window.history.back()
+  assert.equal(h.api.getNavigationLocation(), '/')
+  h.window.history.forward()
+  assert.equal(h.api.getNavigationLocation(), '/minimal')
+  h.navigate('/skills')
+  assert.equal(h.api.getNavigationLocation(), '/skills')
+  assert.equal(h.animations.length, 0)
+  h.unsubscribe()
+})
+
+test('direct minimal visits avoid scene preparation and can cancel an unfinished full-page transition', async () => {
+  const direct = harness({ initial: '/minimal', idle: true })
+  direct.idle()
+  assert.equal(direct.createdNodes, 0)
+  assert.equal(direct.api.getNavigationLocation(), '/minimal')
+  direct.unsubscribe()
+  const h = harness()
+  h.navigate('/numbers')
+  assert.equal(h.nodes.length, 1)
+  h.navigate('/minimal')
+  await settle()
+  assert.equal(h.api.getNavigationLocation(), '/minimal')
+  assert.equal(h.nodes.length, 0)
+  assert.equal(h.document.documentElement.dataset.pageTransition, undefined)
+  h.unsubscribe()
 })

@@ -8,7 +8,7 @@ const compiled = ts.transpileModule(readFileSync(new URL('../src/lib/devicePerfo
 const api = {}
 vm.runInNewContext(compiled, { exports: api })
 
-test('constrained hardware, data saving, compact touch and reduced motion select lighter effects', () => {
+test('constrained hardware, data saving, compact touch and reduced motion select conservative scheduling', () => {
   for (const hints of [{ cores: 4 }, { memory: 2 }, { saveData: true }, { reducedMotion: true }, { coarsePointer: true, width: 390 }]) {
     assert.equal(api.chooseEffectsMode(hints), 'lite', JSON.stringify(hints))
   }

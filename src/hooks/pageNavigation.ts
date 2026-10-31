@@ -29,12 +29,13 @@ let displayedRoute = browserRoute()
 let active: NavigationRun | undefined
 let preloadedArtwork: HTMLImageElement | undefined
 let preparedScene: NavigationScene | undefined
+let preparingScene: Generator<void, NavigationScene> | undefined
 const artworkUrl = '/images/jaztin-transition-character-v3.webp'
 
 export function getNavigationLocation() { return displayedRoute }
 
 function destinationTitle() {
-  const titles = { home: 'BACK\nHOME', numbers: 'BY THE\nNUMBERS', skills: 'STACK &\nSKILLS', greenway: 'GREENWAY', ai: 'ASK\nAI' }
+  const titles = { home: 'BACK\nHOME', minimal: 'MINIMAL\nVIEW', numbers: 'BY THE\nNUMBERS', skills: 'STACK &\nSKILLS', greenway: 'GREENWAY', ai: 'ASK\nAI' }
   return titles[navigationPage(browserRoute())]
 }
 
@@ -245,7 +246,7 @@ export function cancelPageNavigation() {
 
 function lightweightTransition() {
   const device = window.navigator as (Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } }) | undefined
-  return document.documentElement.dataset.effects === 'lite' || window.innerWidth <= 640 || (device?.hardwareConcurrency ?? 8) <= 4 || (device?.deviceMemory ?? 8) <= 4 || device?.connection?.saveData === true
+  return window.innerWidth <= 640 || (device?.hardwareConcurrency ?? 8) <= 4 || (device?.deviceMemory ?? 8) <= 4 || device?.connection?.saveData === true
 }
 
 function cacheNavigationScene({ curtain, panels, artwork, portrait, caption, title, cards }: NavigationScene) {
@@ -253,7 +254,7 @@ function cacheNavigationScene({ curtain, panels, artwork, portrait, caption, tit
   preparedScene = { curtain, panels, artwork, portrait, caption, title, cards }
 }
 
-function createNavigationScene(): NavigationScene {
+function* buildNavigationScene(): Generator<void, NavigationScene> {
   const curtain = document.createElement('div')
   curtain.className = 'page-shutter'
   curtain.setAttribute('aria-hidden', 'true')
@@ -263,9 +264,11 @@ function createNavigationScene(): NavigationScene {
     curtain.append(panel)
     return panel
   })
+  yield
   const artwork = document.createElement('div')
   artwork.className = 'page-cut-in'
   const portrait = createCharacterStage()
+  yield
   const caption = document.createElement('div')
   caption.className = 'page-cut-in-caption'
   const byline = document.createElement('span')
@@ -285,10 +288,24 @@ function createNavigationScene(): NavigationScene {
   title.className = 'page-cut-in-title'
   caption.append(byline, nameplate, title)
   artwork.append(portrait, caption)
-  const cards = (['cube', 'puzzle', 'poker'] as const).map(createLogicCard)
+  yield
+  const cards: HTMLElement[] = []
+  for (const kind of ['cube', 'puzzle', 'poker'] as const) {
+    cards.push(createLogicCard(kind))
+    yield
+  }
   artwork.append(...cards, createLogicDetails())
   curtain.append(artwork)
   return { curtain, panels, artwork, portrait, caption, title, cards }
+}
+
+function createNavigationScene(): NavigationScene {
+  // A click finishes any partially prepared scene rather than rebuilding it.
+  const builder = preparingScene ?? buildNavigationScene()
+  preparingScene = undefined
+  let step = builder.next()
+  while (!step.done) step = builder.next()
+  return step.value
 }
 
 async function animateNavigation(commit: () => void) {
@@ -341,6 +358,7 @@ async function animateNavigation(commit: () => void) {
   active = run
   document.documentElement.dataset.pageTransition = 'active'
   const lightweight = lightweightTransition()
+  // The budget skips covered-page rasterization, never the cut-in's illustrations.
   curtain.dataset.quality = lightweight ? 'lite' : 'full'
   const compact = window.innerWidth <= 640
   const coverDuration = compact ? 230 : 290
@@ -361,7 +379,7 @@ async function animateNavigation(commit: () => void) {
       { opacity: 1, transform: 'translate3d(0,0,0)' },
     ], { duration: compact ? 660 : 760, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' })
     const portraitArrival = portrait.animate([
-      { opacity: portrait.style.opacity || 0, transform: portrait.style.transform || (lightweight ? `translate3d(${-direction * 18}%,5%,0)` : `translate(${-direction * 18}%,5%) rotate(-7deg) scale(1.06)`) },
+      { opacity: portrait.style.opacity || 0, transform: portrait.style.transform || `translate(${-direction * 18}%,5%) rotate(-7deg) scale(1.06)` },
       { opacity: 1, transform: 'translate(0,0) rotate(0deg) scale(1)' },
     ], { duration: compact ? 410 : 470, delay: 70, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' })
     const captionArrival = caption.animate([
@@ -369,8 +387,8 @@ async function animateNavigation(commit: () => void) {
       { opacity: 1, transform: 'translateX(0) rotate(-4deg)' },
     ], { duration: compact ? 330 : 390, delay: 150, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' })
     const cardArrival = cards.map((card, index) => card.animate([
-      { opacity: card.style.opacity || 0, transform: card.style.transform || (lightweight ? `translateY(24px) rotate(${[-19, -8, 17][index]}deg)` : `perspective(700px) translateY(45px) rotate(${[-19, -8, 17][index] + 16}deg) rotateY(-25deg) scale(.7)`) },
-      { opacity: 1, transform: lightweight ? `translateY(0) rotate(${[-19, -8, 17][index]}deg)` : `perspective(700px) translateY(-6px) rotate(${[-19, -8, 17][index] - 3}deg) rotateY(-4deg) scale(1.02)`, offset: .78 },
+      { opacity: card.style.opacity || 0, transform: card.style.transform || `perspective(700px) translateY(45px) rotate(${[-19, -8, 17][index] + 16}deg) rotateY(-25deg) scale(.7)` },
+      { opacity: 1, transform: `perspective(700px) translateY(-6px) rotate(${[-19, -8, 17][index] - 3}deg) rotateY(-4deg) scale(1.02)`, offset: .78 },
       { opacity: 1, transform: `translateY(0) rotate(${[-19, -8, 17][index]}deg)` },
     ], { duration: compact ? 360 : 440, delay: 110 + index * 45, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' }))
     const arrival = [...cover, boardArrival, portraitArrival, captionArrival, ...cardArrival]
@@ -400,7 +418,7 @@ async function animateNavigation(commit: () => void) {
     ], { duration: compact ? 330 : 390, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'both' })
     const portraitExit = portrait.animate([
       { opacity: 1, transform: 'translate(0,0) rotate(0deg)' },
-      { opacity: 0, transform: lightweight ? `translate3d(${-direction * 18}%,3%,0)` : `translate(${-direction * 18}%,3%) rotate(-5deg)` },
+      { opacity: 0, transform: `translate(${-direction * 18}%,3%) rotate(-5deg)` },
     ], { duration: compact ? 270 : 330, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'both' })
     const captionExit = caption.animate([
       { opacity: 1, transform: 'translateX(0) rotate(-4deg)' },
@@ -408,7 +426,7 @@ async function animateNavigation(commit: () => void) {
     ], { duration: compact ? 260 : 320, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'both' })
     const cardExit = cards.map((card, index) => card.animate([
       { opacity: 1, transform: `translateY(0) rotate(${[-19, -8, 17][index]}deg)` },
-      { opacity: 0, transform: lightweight ? `translate(${direction * 25}px,-20px) rotate(${[-19, -8, 17][index]}deg)` : `perspective(700px) translate(${direction * (25 + index * 12)}px,-35px) rotate(${[-19, -8, 17][index] - 20}deg) rotateY(30deg) scale(.85)` },
+      { opacity: 0, transform: `perspective(700px) translate(${direction * (25 + index * 12)}px,-35px) rotate(${[-19, -8, 17][index] - 20}deg) rotateY(30deg) scale(.85)` },
     ], { duration: compact ? 220 : 280, delay: index * 25, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'both' }))
     run.animations.push(...reveal, boardExit, portraitExit, captionExit, ...cardExit)
     await Promise.all(reveal.map(animation => animation.finished))
@@ -425,17 +443,27 @@ async function animateNavigation(commit: () => void) {
 }
 
 export function subscribeToNavigation(onChange: () => void) {
-  if (!preloadedArtwork && typeof window.Image === 'function') {
+  const minimalStart = navigationPage(browserRoute()) === 'minimal'
+  if (!minimalStart && !preloadedArtwork && typeof window.Image === 'function') {
     preloadedArtwork = new window.Image()
     preloadedArtwork.decoding = 'async'
     preloadedArtwork.src = artworkUrl
     void preloadedArtwork.decode().catch(() => { /* The geometric curtain still works if the artwork cannot load. */ })
   }
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
-  // Build the SVG scene off the click path when the browser has idle time.
-  const preparation = !lightweightTransition() && !motion.matches && !preparedScene && typeof window.requestIdleCallback === 'function'
-    ? window.requestIdleCallback(() => { if (!active && !preparedScene) preparedScene = createNavigationScene() })
-    : undefined
+  // Prepare one small off-DOM stage per idle callback, including on slower devices.
+  // A busy browser may defer this work; a click can safely finish the same builder.
+  let preparation: number | undefined
+  let disposed = false
+  const prepare = () => {
+    preparation = undefined
+    if (disposed || active || preparedScene) return
+    const builder = preparingScene ??= buildNavigationScene()
+    const step = builder.next()
+    if (step.done) { preparedScene = step.value; preparingScene = undefined }
+    else preparation = window.requestIdleCallback(prepare)
+  }
+  if (!minimalStart && !motion.matches && !preparedScene && typeof window.requestIdleCallback === 'function') preparation = window.requestIdleCallback(prepare)
   let requestedRoute = browserRoute()
   const scrollWithinPage = () => {
     const hash = window.location.hash.slice(1)
@@ -464,7 +492,8 @@ export function subscribeToNavigation(onChange: () => void) {
     if (next === requestedRoute) return
     requestedRoute = next
     const changedPage = navigationPage(displayedRoute) !== navigationPage(next)
-    if ((!changedPage && !active) || motion.matches || document.documentElement.dataset.themeTransition || typeof Element.prototype.animate !== 'function') {
+    const minimalNavigation = navigationPage(displayedRoute) === 'minimal' || navigationPage(next) === 'minimal'
+    if (minimalNavigation || (!changedPage && !active) || motion.matches || document.documentElement.dataset.themeTransition || typeof Element.prototype.animate !== 'function') {
       cancelPageNavigation()
       commit()
       return
@@ -489,6 +518,7 @@ export function subscribeToNavigation(onChange: () => void) {
   window.addEventListener('hashchange', onLocationChange)
   motion.addEventListener('change', onMotionChange)
   return () => {
+    disposed = true
     if (preparation !== undefined) window.cancelIdleCallback(preparation)
     document.removeEventListener('click', onClick)
     window.removeEventListener('popstate', onLocationChange)
@@ -496,5 +526,6 @@ export function subscribeToNavigation(onChange: () => void) {
     motion.removeEventListener('change', onMotionChange)
     cancelPageNavigation()
     preparedScene = undefined
+    preparingScene = undefined
   }
 }

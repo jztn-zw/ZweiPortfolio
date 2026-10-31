@@ -1,6 +1,8 @@
 import { isPagePath, navigationPage } from './routes'
 
 const loaders = {
+  home: () => import('../pages/Home'),
+  minimal: () => import('../pages/Minimal'),
   skills: () => import('../pages/Skills'),
   greenway: () => import('../pages/GreenWay'),
   numbers: () => import('../pages/Numbers'),
@@ -27,5 +29,5 @@ export function preloadLinkPage(target: EventTarget | null) {
 
 export function preloadRoutePage(href: string) {
   const page = navigationPage(href)
-  if (page !== 'home') void loadPage(page).catch(() => { /* Navigation shows a retry if the connection fails. */ })
+  void loadPage(page).catch(() => { /* Navigation shows a retry if the connection fails. */ })
 }

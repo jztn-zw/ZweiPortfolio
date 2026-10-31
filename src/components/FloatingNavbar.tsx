@@ -78,10 +78,10 @@ export default function FloatingNavbar({ isHome = true, isNumbers = false, isAI 
       ))}
       <a href="/ask-ai" data-guide="ai" aria-label="Ask me anything" aria-current={isAI ? 'page' : undefined} className={`side-nav-item${isAI ? ' is-active' : ''}`}><NavbarGlyph name="ai" /><span className="side-nav-tooltip">Ask me anything</span></a>
       <a href="/numbers" data-guide="numbers" aria-label="By the Numbers" aria-current={isNumbers ? 'page' : undefined} className={`side-nav-item${isNumbers ? ' is-active' : ''}`}><NavbarGlyph name="numbers" /><span className="side-nav-tooltip">By the Numbers</span></a>
-      <button type="button" data-guide="minimal" className="side-nav-item view-mode-button" aria-disabled="true" aria-label="Minimal view — coming soon" aria-describedby="minimal-view-tooltip">
+      <a href="/minimal" data-guide="minimal" className="side-nav-item view-mode-button" aria-label="Minimal view" aria-describedby="minimal-view-tooltip">
         <NavbarGlyph name="minimal" />
-        <span className="side-nav-tooltip" id="minimal-view-tooltip" role="tooltip">Minimal view<span>Coming soon</span></span>
-      </button>
+        <span className="side-nav-tooltip" id="minimal-view-tooltip" role="tooltip">Minimal view</span>
+      </a>
     </nav>
   )
 }

@@ -72,7 +72,7 @@ export default function Hero() {
         <a href="#projects" className="eyebrow scroll-cue"><ArrowDown size={14} /> SCROLL TO EXPLORE</a>
         <span className="eyebrow hero-foot-right">THOUGHTFUL DESIGN <span className="red">✳</span> PURPOSEFUL CODE</span>
       </div>
-      {desktopPortrait && document.documentElement.dataset.effects !== 'lite' && <HeroGuide />}
+      {desktopPortrait && <HeroGuide />}
     </section>
   )
 }

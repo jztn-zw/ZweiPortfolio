@@ -155,21 +155,7 @@
   border-color: #8a706c;
   background: repeating-linear-gradient(45deg, transparent 0 7px, #a55f6655 7px 8px), repeating-linear-gradient(-45deg, #e2bfc0 0 7px, #a55f6655 7px 8px);
 }
-/* Same composition and palette, with fewer raster surfaces on constrained devices. */
-:root .page-shutter[data-quality="lite"] :is(.page-cut-in-portrait, .page-logic-card, .page-logic-detail) {
-  filter: none;
-}
-.page-shutter[data-quality="lite"] :is(.page-cut-in-letter, .character-shoulder-accent, .character-sleeve-marks, .character-emblem, .page-puzzle-moving-tile, .page-logic-turn-marks),
-.page-shutter[data-quality="lite"] .page-cut-in::before,
-.page-shutter[data-quality="lite"] .page-logic-card--poker::before,
-.page-shutter[data-quality="lite"] .page-logic-card--poker::after {
-  animation: none;
-}
-.page-shutter[data-quality="lite"] .page-cut-in-nameplate { transform: rotate(-3deg); }
-.page-shutter[data-quality="lite"] .page-cut-in-letter { transform: translateY(var(--letter-y)) rotate(var(--letter-turn)) skewX(var(--letter-skew)); }
-.page-shutter[data-quality="lite"] .page-logic-card--poker::before { transform: translate(-7px,4px) rotate(-8deg); }
-.page-shutter[data-quality="lite"] .page-logic-card--poker::after { transform: translate(-13px,7px) rotate(-16deg); }
-.page-shutter[data-quality="lite"] .page-logic-details { display: none; }
+/* Device budgets affect background work only; every cut-in keeps its full artwork. */
 @keyframes page-logic-depth { from { transform: perspective(1200px) translateX(-20px) rotateY(-4deg) scale(1.08); } to { transform: perspective(1200px) translateX(0) rotateY(0) scale(1); } }
 @keyframes page-puzzle-slide { 0%,28% { transform: translateX(0); } 62%,100% { transform: translateX(26px); } }
 @keyframes page-poker-fan { from { opacity: 0; transform: translate(0,0) rotate(0); } to { opacity: 1; transform: translate(var(--fan-x),var(--fan-y)) rotate(var(--fan-turn)); } }
@@ -197,7 +183,7 @@
   .page-logic-card--puzzle { right: 25%; top: 18%; width: 56px; }
   .page-logic-card--poker { right: 5%; top: 12%; }
   .page-logic-detail--jigsaw { left: 3%; top: 43%; width: 72px; }
-  .page-logic-detail--knight { display: none; }
+  .page-logic-detail--knight { left: 7%; top: 5%; width: 42px; }
 }
-@media (max-height: 520px) and (min-width: 641px) { .page-logic-detail--knight { display: none; } .page-logic-detail--jigsaw { top: 54%; width: 86px; } }
+@media (max-height: 520px) and (min-width: 641px) { .page-logic-detail--knight { left: 20%; top: 4%; width: 46px; } .page-logic-detail--jigsaw { top: 54%; width: 86px; } }
 @media (prefers-reduced-motion: reduce) { .page-shutter { display: none; } .page-cut-in-letter, .page-cut-in::before, .page-puzzle-moving-tile, .page-logic-turn-marks, .page-logic-detail, .page-jigsaw-piece, .page-logic-card--poker::before, .page-logic-card--poker::after, .character-shoulder-accent, .character-sleeve-marks, .character-emblem { animation: none; } }

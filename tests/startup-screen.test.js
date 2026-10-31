@@ -8,7 +8,7 @@ const compiled = ts.transpileModule(readFileSync(new URL('../src/lib/startupScre
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2023 },
 }).outputText
 
-function harness({ reduced = false, decode = () => Promise.resolve(), fonts = Promise.resolve(), imageCount = 1 } = {}) {
+function harness({ reduced = false, decode = () => Promise.resolve(), fonts = Promise.resolve(), imageCount = 1, minimal = false } = {}) {
   const timers = new Map(), frames = [], listeners = new Map()
   const attributes = new Map(), properties = new Map(), status = { textContent: '' }
   const progress = { style: { setProperty: (name, value) => properties.set(name, value) }, setAttribute: (name, value) => attributes.set(name, value) }
@@ -22,6 +22,7 @@ function harness({ reduced = false, decode = () => Promise.resolve(), fonts = Pr
   vm.runInNewContext(compiled, {
     exports,
     document: {
+      documentElement: { dataset: { view: minimal ? 'minimal' : 'home' } },
       getElementById: id => id === 'root' ? { removeAttribute: () => { inert = false } } : screen,
       querySelectorAll: () => Array.from({ length: imageCount }, () => ({ decode })), fonts: { ready: fonts },
     },
@@ -39,6 +40,18 @@ function harness({ reduced = false, decode = () => Promise.resolve(), fonts = Pr
   }
 }
 const microtasks = async () => { for (let i = 0; i < 10; i++) await Promise.resolve() }
+
+test('minimal startup waits for real readiness and removes the loader without the cinematic exit', async () => {
+  const h = harness({ minimal: true })
+  h.start()
+  assert.equal(h.state().inert, true)
+  await microtasks()
+  h.paint()
+  assert.equal(h.state().inert, false)
+  assert.equal(h.state().removed, 1)
+  assert.equal(h.state().leaving, false)
+  assert.equal(h.timers.size, 0)
+})
 
 test('a ready page reveals without a minimum countdown and duplicate mounts do not restart it', async () => {
   const h = harness()

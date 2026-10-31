@@ -1,25 +1,5 @@
-/* Keep the same artwork and palette with fewer animated/rasterized surfaces. */
-:root[data-effects='lite'] .site-header {
-  background: var(--theme-canvas);
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-:root[data-effects='lite'] .discipline-strip-track,
-:root[data-effects='lite'] :is(.capability-artwork, .stack-illustration, .numbers-metric-art, .journey-aside, .about-me-details) * { animation: none !important; }
-:root[data-effects='lite'] :is(.greenway-device-glow, .greenway-device-shadow) { filter: none; }
-:root[data-effects='lite'] [data-scroll-reveal] {
-  --scroll-animation: scroll-enter-content;
-  --scroll-distance: 10px;
-  --scroll-duration: 360ms;
-  --scroll-x: 0px;
-  --scroll-angle: 0deg;
-  --scroll-scale: 1;
-}
-:root[data-effects='lite'] [data-scroll-state='visible'] { animation: none !important; }
-:root[data-effects='lite'] [data-scroll-state='entering'] :is(h1, h2, .project-tile, .graphic-mark, .capability-copy, .journey-entry-copy, .skill-discipline-details, .capability-number-rule, .capabilities-intro, .journey-introduction, .about-me-who, .skills-intro-description) { animation: none !important; }
-:root[data-effects='lite'] .ask-response-word { animation: none; }
-:root[data-effects='lite'] .project-dialog::backdrop { backdrop-filter: none; }
-/* A simple circular reveal avoids five full-viewport composited grid masks. */
+/* Minimal View alone uses this simpler circle. Full Experience keeps its artwork,
+   shadows, blur, hovers, and pixel-fragment transitions on every device. */
 :root[data-theme-transition='circle']::view-transition-old(root),
 :root[data-theme-transition='circle']::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 :root[data-theme-transition='circle']::view-transition-old(root) { z-index: 1; }

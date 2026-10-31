@@ -1,4 +1,4 @@
-export const pagePaths = { home: '/', skills: '/skills', greenway: '/projects/greenway', numbers: '/numbers', ai: '/ask-ai' } as const
+export const pagePaths = { home: '/', minimal: '/minimal', skills: '/skills', greenway: '/projects/greenway', numbers: '/numbers', ai: '/ask-ai' } as const
 export type Page = keyof typeof pagePaths
 
 export function normalizeRoute(route: string) {

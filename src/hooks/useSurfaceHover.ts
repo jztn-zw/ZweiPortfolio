@@ -3,11 +3,12 @@ import { useEffect } from 'react'
 // One delegated controller per page. One frame per pointer update, no idle loop.
 export default function useSurfaceHover(page: string) {
   useEffect(() => {
+    if (page === 'minimal') return
     const root = document.querySelector('main')
     if (!root) return
-    if (document.documentElement?.dataset?.effects === 'lite') return
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
     const touched = new Set<HTMLElement>()
+    const paintedValues = new Map<string, string>()
     let active: HTMLElement | null = null
     let frame: number | undefined
     let clientX = 0, clientY = 0
@@ -22,6 +23,7 @@ export default function useSurfaceHover(page: string) {
       }
       active = null
       touchStart = undefined
+      paintedValues.clear()
     }
     const surface = (target: EventTarget | null) => target instanceof Element ? target.closest<HTMLElement>('[data-hover-surface]') : null
     const paint = () => {
@@ -32,13 +34,18 @@ export default function useSurfaceHover(page: string) {
       const x = Math.max(0, Math.min(bounds.width, clientX - bounds.left))
       const y = Math.max(0, Math.min(bounds.height, clientY - bounds.top))
       const nx = x / bounds.width * 2 - 1, ny = y / bounds.height * 2 - 1
-      active.style.setProperty('--surface-x', `${x.toFixed(1)}px`)
-      active.style.setProperty('--surface-y', `${y.toFixed(1)}px`)
-      active.style.setProperty('--surface-dx', `${(nx * 4).toFixed(2)}px`)
-      active.style.setProperty('--surface-dy', `${(ny * 3).toFixed(2)}px`)
-      active.style.setProperty('--surface-rx', `${(-ny * 2).toFixed(2)}deg`)
-      active.style.setProperty('--surface-ry', `${(nx * 2).toFixed(2)}deg`)
-      active.dataset.hoverActive = 'true'
+      const values = [
+        ['--surface-x', `${x.toFixed(1)}px`], ['--surface-y', `${y.toFixed(1)}px`],
+        ['--surface-dx', `${(nx * 4).toFixed(2)}px`], ['--surface-dy', `${(ny * 3).toFixed(2)}px`],
+        ['--surface-rx', `${(-ny * 2).toFixed(2)}deg`], ['--surface-ry', `${(nx * 2).toFixed(2)}deg`],
+      ]
+      // Repeated pointer events at the same coordinates need no style writes.
+      for (const [name, value] of values) {
+        if (paintedValues.get(name) === value) continue
+        active.style.setProperty(name, value)
+        paintedValues.set(name, value)
+      }
+      if (active.dataset.hoverActive !== 'true') active.dataset.hoverActive = 'true'
     }
     const track = (event: PointerEvent) => {
       if (motion.matches || document.hidden || event.isPrimary === false) return

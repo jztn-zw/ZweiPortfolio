@@ -1,4 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
+import { advanceFrameDeadline, createFrameTask } from '../lib/frameTask'
+import { observePageCover } from '../lib/pageVisibility'
 import { solveSpatialLeg, solveSpiderLeg, spiderFeet, spiderStepOffsets, spiderSwing, spiderClimb, spiderClimbDuration, spiderEnterRate, spiderExitRate, spiderPanicExitRate, spiderPanicSpeed, spiderPatrolLayout, spiderTempo, turnTowards } from './spiderKinematics'
 import './CalendarSpider.css'
 
@@ -153,6 +155,11 @@ export default function CalendarSpider() {
     let impactIndex = 0
     let frame = 0
     let visible = false
+    let covered = false
+    // Avoid computing this complex SVG more than 60 times/second on constrained
+    // devices with high-refresh displays. The pose, gait and elapsed time stay intact.
+    const frameInterval = document.documentElement.dataset.effects === 'lite' ? 1000 / 60 : 0
+    let nextPaint = 0
     const footprints = impacts.map(() => ({ born: -1000, x: 0, y: 0 }))
 
     const measureCells = () => {
@@ -207,7 +214,9 @@ export default function CalendarSpider() {
     }
     const tick = (now: number) => {
       frame = 0
-      if (!visible || motion.matches || document.hidden) return
+      if (!visible || covered || motion.matches || document.hidden) return
+      if (frameInterval && now + .5 < nextPaint) { frame = requestAnimationFrame(tick); return }
+      nextPaint = advanceFrameDeadline(now, nextPaint, frameInterval)
       // Show every first step after the section's own scroll entrance has finished.
       if (entering && section?.dataset.scrollState && section.dataset.scrollState !== 'visible') {
         currentClimbTime = 0
@@ -520,7 +529,8 @@ export default function CalendarSpider() {
     const sync = () => {
       cancelAnimationFrame(frame)
       previousTime = 0
-      if (visible && !motion.matches && !document.hidden) frame = requestAnimationFrame(tick)
+      nextPaint = 0
+      if (visible && !covered && !motion.matches && !document.hidden) frame = requestAnimationFrame(tick)
       else {
         animations.forEach(animation => animation.cancel())
         animations.clear()
@@ -562,20 +572,24 @@ export default function CalendarSpider() {
       overlay.dataset.mode = 'fleeing'
     }
     measure()
-    const resize = new ResizeObserver(measure)
+    const resizeTask = createFrameTask(measure)
+    const cellsTask = createFrameTask(measureCells)
+    const resize = new ResizeObserver(resizeTask.schedule)
     resize.observe(panel)
     const observer = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; sync() }, { threshold: .15 })
     observer.observe(panel)
-    graph.addEventListener('scroll', measureCells, { passive: true })
-    document.addEventListener('visibilitychange', sync)
+    graph.addEventListener('scroll', cellsTask.schedule, { passive: true })
+    const stopWatchingCover = observePageCover(value => { covered = value; sync() })
     motion.addEventListener('change', sync)
     return () => {
       scareRef.current = null
       cancelAnimationFrame(frame)
+      resizeTask.cancel()
+      cellsTask.cancel()
       resize.disconnect()
       observer.disconnect()
-      graph.removeEventListener('scroll', measureCells)
-      document.removeEventListener('visibilitychange', sync)
+      graph.removeEventListener('scroll', cellsTask.schedule)
+      stopWatchingCover()
       motion.removeEventListener('change', sync)
       animations.forEach(animation => animation.cancel())
     }

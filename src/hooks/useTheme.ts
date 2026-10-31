@@ -46,7 +46,7 @@ function toggleTheme(origin?: ThemeOrigin) {
   cancelTransition()
   const version = transitionVersion
   const root = document.documentElement
-  const lightweight = root.dataset.effects === 'lite'
+  const lightweight = root.dataset.view === 'minimal'
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     applyTheme(nextTheme)

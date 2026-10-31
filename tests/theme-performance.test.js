@@ -30,7 +30,7 @@ function harness({ lite = true, reduced = false, supported = true } = {}) {
   const exports = {}
   vm.runInNewContext(compiled, {
     exports, document, Event: class {}, localStorage: { setItem() {} },
-    CSS: { supports: () => !lite },
+    CSS: { supports: () => true },
     window: { innerWidth: 1200, innerHeight: 800, matchMedia: () => ({ matches: reduced }), dispatchEvent() {}, setTimeout: () => 1, clearTimeout() {} },
     require: name => name === 'react' ? { useSyncExternalStore: (_, snapshot) => snapshot() }
       : name === 'react-dom' ? { flushSync: callback => callback() }
@@ -41,8 +41,9 @@ function harness({ lite = true, reduced = false, supported = true } = {}) {
 }
 const settle = async () => { await Promise.resolve(); await Promise.resolve() }
 
-test('lite themes reveal the entire viewport with one circle and clean up after completion', async () => {
+test('minimal themes reveal the entire viewport with one circle and clean up after completion', async () => {
   const h = harness()
+  h.root.dataset.view = 'minimal'
   h.toggle({ x: 1190, y: 10 })
   await settle()
   assert.equal(h.root.dataset.theme, 'light')
@@ -59,8 +60,9 @@ test('lite themes reveal the entire viewport with one circle and clean up after 
   assert.equal(h.animations[0].cancelled, true)
 })
 
-test('rapid lite theme toggles cancel the old animation and preserve the latest transition', async () => {
+test('rapid minimal theme toggles cancel the old animation and preserve the latest transition', async () => {
   const h = harness()
+  h.root.dataset.view = 'minimal'
   h.toggle(); await settle()
   h.toggle(); await settle()
   assert.equal(h.animations[0].cancelled, true)
@@ -68,6 +70,24 @@ test('rapid lite theme toggles cancel the old animation and preserve the latest 
   assert.equal(h.root.dataset.themeTransition, 'circle')
   assert.equal(h.animations[1].cancelled, false)
   h.transitions[1].finish(); await settle()
+})
+
+test('minimal view uses the simple circular theme reveal even on powerful devices', async () => {
+  const h = harness({ lite: false })
+  h.root.dataset.view = 'minimal'
+  h.toggle(); await settle()
+  assert.equal(h.gridReveals, 0)
+  assert.equal(h.root.dataset.themeTransition, 'circle')
+  h.transitions[0].finish(); await settle()
+})
+
+test('full experience retains its pixel reveal on devices using lighter rendering elsewhere', async () => {
+  const h = harness({ lite: true })
+  h.root.dataset.view = 'home'
+  h.toggle(); await settle()
+  assert.equal(h.gridReveals, 1)
+  assert.equal(h.root.dataset.themeTransition, 'reveal')
+  h.transitions[0].finish(); await settle()
 })
 
 test('full devices keep the pixel reveal; reduced motion and unsupported browsers remain functional', async () => {
