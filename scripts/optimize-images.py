@@ -1,6 +1,7 @@
 """Create pixel-identical WebP assets for PNGs referenced by the portfolio.
 
-Requires Pillow with WebP support. Originals stay available for future editing.
+Requires Pillow with WebP support. Missing PNG originals are skipped; existing
+originals are not deleted by this script.
 Run from the project root with: python scripts/optimize-images.py
 """
 from concurrent.futures import ThreadPoolExecutor

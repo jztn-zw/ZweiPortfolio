@@ -10,7 +10,7 @@
         let theme = 'dark';
         try { if (localStorage.getItem('jaztin-portfolio-theme') === 'light') theme = 'light'; } catch {}
         document.documentElement.dataset.theme = theme;
-        if (location.pathname.replace(/\/+$/, '') === '/minimal') {
+        if (/^\/minimal(?:\/skills|\/projects\/greenway)?\/?$/.test(location.pathname)) {
           document.documentElement.dataset.view = 'minimal';
         } else {
           for (const href of ['/theme-pixels-dense.svg', '/theme-pixels-sparse.svg', '/images/jaztin-portrait.webp']) {
@@ -21,7 +21,7 @@
             document.head.appendChild(link);
           }
         }
-        document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#f4f3ef' : '#111111';
+        document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? document.documentElement.dataset.view === 'minimal' ? '#fafafa' : '#f4f3ef' : '#111111';
       })();
     </script>
     <meta name="description" content="Jaztin Abram Contreras — Full-stack developer building modern web and mobile applications, driven by curiosity, logical thinking, and the possibilities of AI." />
@@ -76,7 +76,10 @@
       @media (max-width: 400px) { .startup-top, .startup-bottom { letter-spacing: .6px; } .startup-bottom span:first-child { max-width: 150px; } }
       @media (max-height: 520px) { .startup-center { gap: 12px; } .startup-emblem { width: 80px; height: 80px; } .startup-logo { width: 50px; height: 50px; } .startup-fragment { display: none; } .startup-title { margin: 0; font-size: 30px; } }
       @media (prefers-reduced-motion: reduce) { .startup-screen, .startup-screen * { animation: none !important; transition: none !important; } .startup-screen::before, .startup-screen::after, .startup-emblem::before, .startup-track::after { animation: none; transition: none; } }
-      html[data-view="minimal"] .startup-screen { grid-template-rows: 1fr; font-family: 'Helvetica Neue', Arial, sans-serif; letter-spacing: .1px; transition: none; }
+      html[data-view="minimal"] { background: #111111; color: #eeeeee; }
+      html[data-view="minimal"][data-theme="light"] { background: #fafafa; color: #222222; }
+      html[data-view="minimal"] .startup-screen { --boot-bg: #111111; --boot-ink: #eeeeee; --boot-muted: #999999; --boot-line: #333333; --boot-red: #eeeeee; grid-template-rows: 1fr; font-family: 'Helvetica Neue', Arial, sans-serif; letter-spacing: .1px; transition: none; }
+      html[data-view="minimal"][data-theme="light"] .startup-screen { --boot-bg: #fafafa; --boot-ink: #222222; --boot-muted: #707070; --boot-line: #dddddd; --boot-red: #222222; }
       html[data-view="minimal"] .startup-screen::before, html[data-view="minimal"] .startup-screen :is(.startup-top, .startup-bottom, .startup-emblem, .startup-title, .startup-caption, .startup-dots) { display: none; }
       html[data-view="minimal"] .startup-track::after { animation: none; }
     </style>

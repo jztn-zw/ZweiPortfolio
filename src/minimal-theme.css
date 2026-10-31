@@ -1,0 +1,39 @@
+/* These tokens apply only while Minimal View is active, including shared UI. */
+:root[data-view='minimal'] {
+  --theme-canvas: #111111;
+  --theme-surface: #202020;
+  --theme-panel: #171717;
+  --theme-text: #eeeeee;
+  --theme-body: #bbbbbb;
+  --theme-muted: #969696;
+  --theme-line: #303030;
+  --theme-strong-line: #777777;
+  --theme-accent: #dddddd;
+  --interaction-primary: #dddddd;
+  --interaction-accent: #dddddd;
+  --interaction-text: #eeeeee;
+  --interaction-border: #555555;
+  --interaction-tooltip: #171717;
+  background: var(--theme-canvas);
+  color: var(--theme-text);
+  scrollbar-color: #777777 var(--theme-canvas);
+}
+:root[data-view='minimal'][data-theme='light'] {
+  --theme-canvas: #fafafa;
+  --theme-surface: #efefef;
+  --theme-panel: #ffffff;
+  --theme-text: #222222;
+  --theme-body: #555555;
+  --theme-muted: #707070;
+  --theme-line: #dddddd;
+  --theme-strong-line: #999999;
+  --theme-accent: #333333;
+  --interaction-primary: #333333;
+  --interaction-accent: #333333;
+  --interaction-text: #222222;
+  --interaction-border: #cccccc;
+  --interaction-tooltip: #ffffff;
+}
+:root[data-view='minimal']::selection,
+:root[data-view='minimal'] ::selection { background: #555555; color: #ffffff; }
+:root[data-view='minimal'] :focus-visible { outline-color: var(--theme-text); }

@@ -1,5 +1,5 @@
 import { flushSync } from 'react-dom'
-import { isPagePath, navigationPage, normalizeRoute } from '../lib/routes'
+import { isMinimalPage, isPagePath, navigationPage, normalizeRoute } from '../lib/routes'
 import './pageNavigation.css'
 
 type NavigationScene = {
@@ -35,7 +35,7 @@ const artworkUrl = '/images/jaztin-transition-character-v3.webp'
 export function getNavigationLocation() { return displayedRoute }
 
 function destinationTitle() {
-  const titles = { home: 'BACK\nHOME', minimal: 'MINIMAL\nVIEW', numbers: 'BY THE\nNUMBERS', skills: 'STACK &\nSKILLS', greenway: 'GREENWAY', ai: 'ASK\nAI' }
+  const titles = { home: 'BACK\nHOME', minimal: 'MINIMAL\nVIEW', minimalSkills: 'STACK &\nSKILLS', minimalGreenway: 'GREENWAY', numbers: 'BY THE\nNUMBERS', skills: 'STACK &\nSKILLS', greenway: 'GREENWAY', ai: 'ASK\nAI' }
   return titles[navigationPage(browserRoute())]
 }
 
@@ -443,7 +443,7 @@ async function animateNavigation(commit: () => void) {
 }
 
 export function subscribeToNavigation(onChange: () => void) {
-  const minimalStart = navigationPage(browserRoute()) === 'minimal'
+  const minimalStart = isMinimalPage(navigationPage(browserRoute()))
   if (!minimalStart && !preloadedArtwork && typeof window.Image === 'function') {
     preloadedArtwork = new window.Image()
     preloadedArtwork.decoding = 'async'
@@ -492,7 +492,7 @@ export function subscribeToNavigation(onChange: () => void) {
     if (next === requestedRoute) return
     requestedRoute = next
     const changedPage = navigationPage(displayedRoute) !== navigationPage(next)
-    const minimalNavigation = navigationPage(displayedRoute) === 'minimal' || navigationPage(next) === 'minimal'
+    const minimalNavigation = isMinimalPage(navigationPage(displayedRoute)) || isMinimalPage(navigationPage(next))
     if (minimalNavigation || (!changedPage && !active) || motion.matches || document.documentElement.dataset.themeTransition || typeof Element.prototype.animate !== 'function') {
       cancelPageNavigation()
       commit()

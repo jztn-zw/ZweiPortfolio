@@ -405,7 +405,7 @@ test('legacy hash navigation converts to a clean path and still uses the curtain
 
 test('Vercel rewrites cover app pages without capturing assets or API functions', () => {
   const config = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
-  for (const path of ['/numbers', '/skills', '/projects/greenway', '/ask-ai', '/minimal']) {
+  for (const path of ['/numbers', '/skills', '/projects/greenway', '/ask-ai', '/minimal', '/minimal/skills', '/minimal/projects/greenway']) {
     assert.equal(config.rewrites.find(rule => rule.source === path)?.destination, '/index.html')
   }
   assert.ok(config.rewrites.every(rule => routes.isPagePath(rule.source)))
@@ -443,4 +443,24 @@ test('direct minimal visits avoid scene preparation and can cancel an unfinished
   assert.equal(h.nodes.length, 0)
   assert.equal(h.document.documentElement.dataset.pageTransition, undefined)
   h.unsubscribe()
+})
+
+test('minimal detail routes support direct visits, trailing slashes and history without cinematic artwork', () => {
+  for (const initial of ['/minimal/skills', '/minimal/projects/greenway/']) {
+    const h = harness({ initial, idle: true })
+    h.idle()
+    assert.equal(h.createdNodes, 0)
+    assert.equal(h.api.getNavigationLocation(), initial.replace(/\/$/, ''))
+    assert.ok(routes.isMinimalPage(routes.navigationPage(initial)))
+    h.navigate('/minimal')
+    h.navigate('/minimal/skills')
+    h.navigate('/minimal/projects/greenway')
+    h.window.history.back()
+    assert.equal(h.api.getNavigationLocation(), '/minimal/skills')
+    h.window.history.forward()
+    assert.equal(h.api.getNavigationLocation(), '/minimal/projects/greenway')
+    assert.equal(h.animations.length, 0)
+    assert.equal(h.nodes.length, 0)
+    h.unsubscribe()
+  }
 })

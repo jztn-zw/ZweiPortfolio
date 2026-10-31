@@ -1,6 +1,6 @@
 # Page transition artwork, version 3
 
-Current asset: `public/images/jaztin-transition-character-v3.png`.
+Current asset: `public/images/jaztin-transition-character-v3.webp` (lossless). The unused PNG export and obsolete version 2 image were removed during asset cleanup.
 
 Created with the built-in image-generation tool from **Moody Editorial Portrait in Plaid Cardigan.png** as the sole identity and clothing reference. The supplied character-introduction screenshot informs the pose and layered composition. The photo, hero artwork, and About photograph remain untouched.
 
@@ -18,7 +18,7 @@ Generation prompt (built-in image generation, transparent output):
 
 ## Previous version 2
 
-Asset: `public/images/jaztin-transition-cutout-v2.png`.
+Historical asset: `jaztin-transition-cutout-v2.png` (removed; no longer used).
 
 Created with the built-in image-generation tool, using the supplied **Gritty Anime Portrait in Crimson Slash (1).png** as an identity reference. The source remains untouched. This new image is an isolated illustrated portrait with alpha transparency; its red fields, cream slash, halftone panel, and destination typography are separate animated HTML/CSS layers.
 

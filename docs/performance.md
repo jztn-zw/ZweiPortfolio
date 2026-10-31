@@ -1,6 +1,6 @@
 # Loading and rendering
 
-- Active PNG artwork is served as lossless WebP at the original dimensions. Run `python scripts/optimize-images.py` with Pillow to regenerate it. The script verifies every RGBA pixel and records file sizes in `output/media-optimization.json`. Original images remain available for editing.
+- Active artwork is served as lossless WebP at the original dimensions. Unused PNG exports, obsolete portrait versions and starter graphics were removed from the project (25 files, 28,064,707 bytes). The active artwork remains unchanged. To convert future PNG originals, run `python scripts/optimize-images.py` with Pillow; it skips originals that are no longer present and verifies every RGBA pixel of new conversions.
 - The hero illustration is preloaded at high priority. The secondary real portrait has low priority. Mobile does not mount the hidden desktop portrait's masks, fragment layers or photo request. Resizing back to desktop restores the effect.
 - Skills, Numbers and GreenWay JavaScript/CSS load on demand. Link hover, keyboard focus, touch and hash changes start their downloads during the existing page transition. Slow downloads show a themed loading state; failed chunk downloads offer a retry.
 - Initial HTML contains a lightweight branded preview until React takes over. This is informational, introduces no artificial wait and works while JavaScript downloads.

@@ -1,24 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeft, ArrowUpRight, CalendarDays, MapPinned, MessageSquareText, Pause, Play, Volume2, VolumeX } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Pause, Play, Volume2, VolumeX } from 'lucide-react'
 import SiteHeader from '../components/SiteHeader'
 import Footer from '../components/Footer'
 import GraphicMark from '../components/GraphicMark'
 import SurfaceSignal from '../components/SurfaceSignal'
 import GreenWayStackSignal from '../components/GreenWayStackSignal'
 import { projects } from '../data/portfolio'
+import { greenwayFeatures as features, greenwayStackLayers as stackLayers } from '../data/greenway'
 import './GreenWay.css'
-
-const features = [
-  { title: 'Know your collection day.', icon: CalendarDays, description: 'A weekly guide and collection calendar make it easier to prepare the right waste for pickup.' },
-  { title: 'See where the truck is.', icon: MapPinned, description: 'Map-based tracking helps residents follow collection progress in their community.' },
-  { title: 'Keep the conversation going.', icon: MessageSquareText, description: 'Report waste concerns, follow their progress, and find local announcements in one place.' },
-]
-
-const stackLayers = [
-  { id: 'interface', title: 'Web & mobile', mark: 'modules', tools: ['React', 'React Native', 'TypeScript', 'Tailwind CSS', 'Expo'] },
-  { id: 'services', title: 'Services & data', mark: 'connection', tools: ['Node.js', 'Express', 'MySQL', 'Socket.IO'] },
-  { id: 'media', title: 'Maps & media', mark: 'globe', tools: ['Leaflet', 'MapLibre', 'Cloudinary'] },
-] as const
 
 function ShowcaseFilm() {
   const videoRef = useRef<HTMLVideoElement>(null)

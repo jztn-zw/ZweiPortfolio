@@ -3,6 +3,8 @@ import { isPagePath, navigationPage } from './routes'
 const loaders = {
   home: () => import('../pages/Home'),
   minimal: () => import('../pages/Minimal'),
+  minimalSkills: () => import('../pages/MinimalSkills'),
+  minimalGreenway: () => import('../pages/MinimalGreenWay'),
   skills: () => import('../pages/Skills'),
   greenway: () => import('../pages/GreenWay'),
   numbers: () => import('../pages/Numbers'),

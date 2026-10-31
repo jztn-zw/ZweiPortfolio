@@ -1,5 +1,7 @@
-export const pagePaths = { home: '/', minimal: '/minimal', skills: '/skills', greenway: '/projects/greenway', numbers: '/numbers', ai: '/ask-ai' } as const
+export const pagePaths = { home: '/', minimal: '/minimal', minimalSkills: '/minimal/skills', minimalGreenway: '/minimal/projects/greenway', skills: '/skills', greenway: '/projects/greenway', numbers: '/numbers', ai: '/ask-ai' } as const
 export type Page = keyof typeof pagePaths
+
+export function isMinimalPage(page: string) { return page === 'minimal' || page === 'minimalSkills' || page === 'minimalGreenway' }
 
 export function normalizeRoute(route: string) {
   const url = new URL(route, 'https://portfolio.local/')

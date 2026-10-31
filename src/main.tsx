@@ -6,6 +6,7 @@ import './theme.css'
 import './theme-light.css'
 import './interaction-polish.css'
 import './performance.css'
+import './minimal-theme.css'
 import { initializeEffectsMode } from './lib/devicePerformance'
 
 initializeEffectsMode()

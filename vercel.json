@@ -8,6 +8,8 @@
   },
   "rewrites": [
     { "source": "/minimal", "destination": "/index.html" },
+    { "source": "/minimal/skills", "destination": "/index.html" },
+    { "source": "/minimal/projects/greenway", "destination": "/index.html" },
     { "source": "/ask-ai", "destination": "/index.html" },
     { "source": "/numbers", "destination": "/index.html" },
     { "source": "/skills", "destination": "/index.html" },

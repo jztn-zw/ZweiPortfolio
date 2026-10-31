@@ -1,13 +1,12 @@
 # About portrait artwork
 
-The main portrait uses Jaztin's exact original photograph, without regenerating his face, pose, clothing or accessories. The file `public/images/jaztin-about-editorial.png` has the same SHA-256 hash as the supplied `Moody Editorial Portrait in Plaid Cardigan.png`. A code-defined silhouette crop and CSS monochrome treatment place it over the poster lettering.
+The main portrait uses Jaztin's exact original photograph, without regenerating his face, pose, clothing or accessories. The deployed `public/images/jaztin-about-editorial.webp` is a lossless conversion of the supplied `Moody Editorial Portrait in Plaid Cardigan.png`. A code-defined silhouette crop and CSS monochrome treatment place it over the poster lettering. Unused source exports were removed from the project during asset cleanup; the supplied photograph outside the project was not changed.
 
 The three smaller illustrated studies were generated with the built-in image generation tool, using Jaztin's existing portrait as the identity reference and the user-supplied monochrome poster images as style references.
 
 Assets:
-- `public/images/jaztin-about-editorial.png`: original main photograph, 1024 × 1536.
-- `public/images/jaztin-profile-ink.png`: earlier generated portrait study, retained but no longer displayed.
-- `public/images/jaztin-profile-studies.png`: three-view portrait strip, 2172 × 724.
+- `public/images/jaztin-about-editorial.webp`: lossless main photograph, 1024 × 1536.
+- `public/images/jaztin-profile-studies.webp`: lossless three-view portrait strip, 2172 × 724.
 
 The square composition, name typography, frame, theme colors and hover transitions are implemented in `AboutProfilePoster.tsx` and `AboutProfilePoster.css`.
 

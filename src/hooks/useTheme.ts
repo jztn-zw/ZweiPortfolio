@@ -19,7 +19,7 @@ function getTheme(): Theme {
 
 function applyTheme(theme: Theme, persist = true) {
   document.documentElement.dataset.theme = theme
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#f4f3ef' : '#111111')
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? document.documentElement.dataset.view === 'minimal' ? '#fafafa' : '#f4f3ef' : '#111111')
   if (persist) {
     try { localStorage.setItem(storageKey, theme) } catch { /* The toggle still works when storage is unavailable. */ }
   }
