@@ -10,7 +10,6 @@
 :root[data-theme="light"] .greenway-case-page { --greenway-accent: #346b47; }
 .greenway-case { color: var(--greenway-ink); padding-bottom: 90px; }
 .greenway-case :is(h1, h2) { font-family: Impact, "Arial Narrow", sans-serif; font-weight: 400; letter-spacing: -.4px; text-transform: uppercase; text-wrap: balance; }
-.greenway-case :is(h1, h2) > span { display: inline; color: var(--greenway-crimson); }
 .greenway-case :is(h1, main):focus, .greenway-case:focus { outline: none; }
 .greenway-case :is(a, button):focus-visible { outline: 2px solid var(--greenway-crimson); outline-offset: 5px; }
 .greenway-case-breadcrumb { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 28px; }

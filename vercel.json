@@ -9,10 +9,19 @@
   "rewrites": [
     { "source": "/minimal", "destination": "/index.html" },
     { "source": "/minimal/skills", "destination": "/index.html" },
+    { "source": "/minimal/projects", "destination": "/index.html" },
+    { "source": "/minimal/projects/web-mobile", "destination": "/index.html" },
+    { "source": "/minimal/projects/automation", "destination": "/index.html" },
+    { "source": "/minimal/projects/tools", "destination": "/index.html" },
     { "source": "/minimal/projects/greenway", "destination": "/index.html" },
+    { "source": "/minimal/projects/vyora", "destination": "/index.html" },
     { "source": "/ask-ai", "destination": "/index.html" },
     { "source": "/numbers", "destination": "/index.html" },
     { "source": "/skills", "destination": "/index.html" },
+    { "source": "/projects", "destination": "/index.html" },
+    { "source": "/projects/web-mobile", "destination": "/index.html" },
+    { "source": "/projects/automation", "destination": "/index.html" },
+    { "source": "/projects/tools", "destination": "/index.html" },
     { "source": "/projects/greenway", "destination": "/index.html" }
   ]
 }

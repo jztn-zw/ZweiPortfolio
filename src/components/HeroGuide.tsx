@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { X } from 'lucide-react'
+import { RotateCcw, X } from 'lucide-react'
 import { hasSeenHeroGuide, heroGuidePortraitAim, heroGuidePortraitBounds, heroGuideSteps, heroGuideTargetPoint, markHeroGuideSeen, placeHeroGuide } from '../lib/heroGuide'
 import './HeroGuide.css'
 
 type Anchor = { left: number; top: number; width: number; height: number; pointerX: number; pointerY: number; panelLeft: number; panelTop: number; tailX: number }
 
-export default function HeroGuide() {
+export default function HeroGuide({ autoStart }: { autoStart: boolean }) {
   const [visible, setVisible] = useState(false)
   const [closing, setClosing] = useState(false)
   const [stepIndex, setStepIndex] = useState(0)
@@ -17,12 +17,33 @@ export default function HeroGuide() {
   const [anchor, setAnchor] = useState<Anchor | null>(null)
   const [reduced, setReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const [foreground, setForeground] = useState(() => !document.hidden)
+  const [heroInView, setHeroInView] = useState(false)
   const panelRef = useRef<HTMLElement>(null)
+  const startedThisMount = useRef(false)
   const firstPlacement = useRef(true)
   const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const step = heroGuideSteps[stepIndex]
   const fullyTyped = reduced || characters >= step.message.length
   const travelling = moving && !reduced
+  const startGuide = useCallback(() => {
+    startedThisMount.current = true
+    markHeroGuideSeen()
+    firstPlacement.current = true
+    setStepIndex(0)
+    setCharacters(0)
+    setAnchor(null)
+    setMoving(true)
+    setDeparting(false)
+    setClosing(false)
+    setVisible(true)
+  }, [])
+
+  const replayGuide = () => {
+    if (visible || document.documentElement.dataset.pageTransition) return
+    document.querySelector('.hero')?.scrollIntoView({ behavior: 'instant', block: 'start' })
+    document.getElementById('hero-title')?.focus({ preventScroll: true })
+    startGuide()
+  }
   const nextIndex = useMemo(() => {
     if (!anchor) return -1
     const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 64
@@ -51,22 +72,40 @@ export default function HeroGuide() {
   }, [])
 
   useEffect(() => {
+    const hero = document.querySelector('.hero')
+    if (!hero || typeof IntersectionObserver !== 'function') return
+    let observer: IntersectionObserver
+    const observe = () => {
+      observer?.disconnect()
+      // Follow the section in the middle of the viewport, ignoring its edges.
+      const inset = Math.round(window.innerHeight * .35)
+      observer = new IntersectionObserver(([entry]) => setHeroInView(entry.isIntersecting), {
+        rootMargin: `-${inset}px 0px -${inset}px`,
+      })
+      observer.observe(hero)
+    }
+    observe()
+    window.addEventListener('resize', observe)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', observe)
+    }
+  }, [])
+
+  useEffect(() => {
     // Replay locally while reviewing the animation; production stays once per session.
     const replayForPreview = import.meta.env.DEV
-    if (!replayForPreview && hasSeenHeroGuide()) return
-    let startedThisMount = false
     let interrupted = Boolean(document.documentElement.dataset.pageTransition)
     let timer: ReturnType<typeof setTimeout> | undefined
+    const canAutoStart = () => autoStart && !interrupted && !startedThisMount.current && (replayForPreview || !hasSeenHeroGuide())
     const start = () => {
       const hero = document.querySelector<HTMLElement>('.hero')
-      if (!hero || interrupted || startedThisMount || (!replayForPreview && hasSeenHeroGuide()) || document.hidden) return
+      if (!hero || !canAutoStart() || document.hidden) return
       const bounds = hero.getBoundingClientRect()
       if (bounds.bottom < 160 || bounds.top > window.innerHeight) return
-      startedThisMount = true
-      markHeroGuideSeen()
-      setVisible(true)
+      startGuide()
     }
-    const schedule = () => { if (!interrupted) timer = setTimeout(start, 450) }
+    const schedule = () => { if (canAutoStart()) timer = setTimeout(start, 450) }
     const onForeground = () => {
       if (!document.hidden && !document.getElementById('startup-screen')) {
         clearTimeout(timer)
@@ -86,14 +125,14 @@ export default function HeroGuide() {
       setVisible(false)
     })
     navigationObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-page-transition'] })
-    if (startup) {
+    if (startup && canAutoStart()) {
       observer = new MutationObserver(() => {
         if (!startup.isConnected) { observer?.disconnect(); schedule() }
       })
       observer.observe(document.body, { childList: true })
     } else schedule()
     return () => { observer?.disconnect(); navigationObserver.disconnect(); clearTimeout(timer); document.removeEventListener('visibilitychange', onForeground) }
-  }, [])
+  }, [autoStart, startGuide])
 
   useEffect(() => () => clearTimeout(closeTimer.current), [])
 
@@ -215,8 +254,7 @@ export default function HeroGuide() {
     return () => clearTimeout(timer)
   }, [departing, closing, foreground, nextIndex, reduced])
 
-  if (!visible) return null
-  return createPortal(
+  const guide = visible ? createPortal(
     <div className={`hero-guide${closing ? ' is-closing' : ''}${anchor ? ' is-positioned' : ''}${travelling ? ' is-moving' : ''}${departing ? ' is-departing' : ''}`}>
       {anchor && <>
         <div className="hero-guide-highlight" aria-hidden="true" style={{ width: anchor.width, height: anchor.height, transform: `translate3d(${anchor.left}px, ${anchor.top}px, 0)` }}><i /><i /><i /><i /></div>
@@ -237,5 +275,16 @@ export default function HeroGuide() {
         </aside>
       </div>
     </div>, document.body,
-  )
+  ) : null
+
+  return <>
+    {createPortal(
+      <button type="button" className="hero-guide-replay" disabled={visible || !heroInView} onClick={replayGuide}>
+        <RotateCcw size={14} aria-hidden="true" />
+        Replay walkthrough
+      </button>,
+      document.body,
+    )}
+    {guide}
+  </>
 }

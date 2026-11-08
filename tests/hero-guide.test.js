@@ -39,43 +39,81 @@ test('page navigation dismisses an active or pending walkthrough and releases it
   const component = ts.transpileModule(readFileSync(new URL('../src/components/HeroGuide.tsx', import.meta.url), 'utf8').replace('import.meta.env.DEV', 'false'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2023, jsx: ts.JsxEmit.ReactJSX },
   }).outputText
-  for (const phase of ['visible', 'pending', 'already-navigating']) {
+  for (const phase of ['visible', 'pending', 'already-navigating', 'manual-replay']) {
     const states = [], effects = [], observers = [], timers = new Map(), listeners = new Map()
     let timerId = 0
+    let stateIndex = 0
+    let heroObserver
+    let scrolledToHero = false
+    let focusedHeroTitle = false
     const root = { dataset: phase === 'already-navigating' ? { pageTransition: 'active' } : {} }
     const document = {
-      hidden: false, documentElement: root,
-      getElementById: () => null,
-      querySelector: () => ({ getBoundingClientRect: () => ({ top: 0, bottom: 800 }) }),
+      hidden: false, documentElement: root, body: {},
+      getElementById: id => id === 'hero-title' ? { focus: () => { focusedHeroTitle = true } } : null,
+      querySelector: () => ({
+        getBoundingClientRect: () => ({ top: 0, bottom: 800 }),
+        scrollIntoView: () => { scrolledToHero = true },
+      }),
       addEventListener: (name, callback) => listeners.set(name, callback),
       removeEventListener: name => listeners.delete(name),
     }
     const media = { matches: false, addEventListener() {}, removeEventListener() {} }
+    const guide = load()
+    if (phase === 'manual-replay') guide.markHeroGuideSeen()
     const exports = {}
     vm.runInNewContext(component, {
-      exports, document, window: { innerHeight: 900, matchMedia: () => media },
+      exports, document,
+      window: { innerHeight: 900, matchMedia: () => media, addEventListener() {}, removeEventListener() {} },
       setTimeout: callback => { timers.set(++timerId, callback); return timerId },
       clearTimeout: id => timers.delete(id),
+      IntersectionObserver: class {
+        constructor(callback) { this.callback = callback; heroObserver = this }
+        observe() {}
+        disconnect() { this.disconnected = true }
+      },
       MutationObserver: class {
         constructor(callback) { this.callback = callback; observers.push(this) }
         observe(target) { this.target = target }
         disconnect() { this.disconnected = true }
       },
       require: name => name === 'react' ? {
+        useCallback: callback => callback,
         useState: initial => {
-          const index = states.length
-          states.push(typeof initial === 'function' ? initial() : initial)
+          const index = stateIndex++
+          if (index >= states.length) states.push(typeof initial === 'function' ? initial() : initial)
           return [states[index], value => { states[index] = typeof value === 'function' ? value(states[index]) : value }]
         },
         useRef: initial => ({ current: initial }),
         useMemo: callback => callback(),
         useEffect: effect => effects.push(effect),
-      } : name === '../lib/heroGuide' ? load() : {},
+      } : name === 'react-dom' ? { createPortal: element => element } : name === 'react/jsx-runtime' ? {
+        jsx: (type, props) => ({ type, props }),
+        jsxs: (type, props) => ({ type, props }),
+      } : name === '../lib/heroGuide' ? guide : {},
     })
-    exports.default()
+    const render = () => {
+      stateIndex = 0
+      return exports.default({ autoStart: phase !== 'manual-replay' })
+    }
+    render()
     const cleanup = effects.map(effect => effect()).filter(Boolean)
     const flushTimers = () => { const pending = [...timers.values()]; timers.clear(); pending.forEach(callback => callback()) }
     if (phase === 'visible') { flushTimers(); assert.equal(states[0], true) }
+    if (phase === 'manual-replay') {
+      assert.equal(timers.size, 0)
+      assert.equal(render().props.children[0].props.disabled, true)
+      heroObserver.callback([{ isIntersecting: true }])
+      assert.equal(render().props.children[0].props.disabled, false)
+      heroObserver.callback([{ isIntersecting: false }])
+      assert.equal(render().props.children[0].props.disabled, true)
+      heroObserver.callback([{ isIntersecting: true }])
+      const replayButton = render().props.children[0]
+      assert.equal(replayButton.type, 'button')
+      replayButton.props.onClick()
+      assert.equal(states[0], true)
+      assert.equal(scrolledToHero, true)
+      assert.equal(focusedHeroTitle, true)
+    }
     const navigation = observers.find(observer => observer.target === root)
     root.dataset.pageTransition = 'active'
     navigation.callback()
@@ -88,6 +126,7 @@ test('page navigation dismisses an active or pending walkthrough and releases it
     assert.equal(states[0], false, 'a cancelled tour must not restart when navigation finishes')
     cleanup.forEach(callback => callback())
     assert.equal(navigation.disconnected, true)
+    assert.equal(heroObserver.disconnected, true)
   }
 })
 test('the message and pointer stay inside narrow, short and desktop viewports', () => {

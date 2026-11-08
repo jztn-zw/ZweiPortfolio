@@ -5,7 +5,7 @@ import { finishStartup } from '../lib/startupScreen'
 import './PageLoading.css'
 
 export default function PageLoading({ minimal = false }: { minimal?: boolean }) {
-  if (minimal) return <main className="minimal-loading" aria-busy="true"><span>Jaztin<span aria-hidden="true">.</span></span><p role="status">Loading minimal portfolio…</p><a href="/">Full experience</a></main>
+  if (minimal) return <main className="minimal-loading" aria-busy="true"><span>Jaztin</span><p role="status">Loading minimal portfolio…</p><a href="/">Full experience</a></main>
   return <><SiteHeader isHome={false} /><main className="page-loading page-width" aria-busy="true"><span className="eyebrow" role="status">Loading page…</span><span className="page-loading-rule" aria-hidden="true" /></main></>
 }
 

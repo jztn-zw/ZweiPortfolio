@@ -105,7 +105,7 @@ export default function AskAI() {
       <div className="ask-layout">
         <section className="ask-intro" aria-labelledby="ai-title">
           <p className="ask-kicker eyebrow"><span className="ask-kicker-index">03</span> ASK ME ANYTHING <GraphicMark variant="chevrons" /></p>
-          <h1 id="ai-title" tabIndex={-1}>CURIOSITY<br />STARTS<br /><span>HERE<span className="ask-period">.</span></span></h1>
+<h1 id="ai-title" tabIndex={-1}>CURIOSITY<br />STARTS<br /><span>HERE</span></h1>
           <p className="ask-intro-copy">The person. The projects. The process.<br />Get to know the mind behind the code.</p>
 
           <figure className="ask-poster" aria-label="Jaztin’s illustrated portrait">

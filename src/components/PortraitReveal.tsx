@@ -22,7 +22,7 @@ const fragments = Array.from({ length: 84 }, (_, index) => {
 // Shared, pixel-aligned edges avoid overlapping translucent cells and dark grid seams.
 const pixelTiles = groupMaskTiles(pixels, pixelSize).map(group => <path key={group.delay} className="portrait-pixel" d={group.path} style={{ '--pixel-start': group.delay / transitionDuration } as CSSProperties} />)
 
-export default function PortraitReveal() {
+export default function PortraitReveal({ loadPhoto = true }: { loadPhoto?: boolean }) {
   // Only an explicit reduced-motion preference uses a crossfade, never device power.
   const [lightweight] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const [pinned, setPinned] = useState(false)
@@ -44,6 +44,7 @@ export default function PortraitReveal() {
   const fragmentOutgoingId = useId()
   const fragmentIncomingId = useId()
   const showingPhoto = photoReady && (pinned || previewing)
+  const photoUrl = loadPhoto ? '/images/jaztin-portrait-real-matched.webp' : undefined
 
   useEffect(() => {
     const button = buttonRef.current
@@ -147,13 +148,14 @@ export default function PortraitReveal() {
           <image href="/images/jaztin-portrait.webp" width="941" height="1672" mask={lightweight ? undefined : `url(#${pixelIllustrationId})`} />
         </svg>
         <img
-          src="/images/jaztin-portrait-real-matched.webp"
+          src={photoUrl}
           alt=""
           className="portrait-reveal-preload"
           width="941"
           height="1672"
           decoding="async"
           fetchPriority="low"
+          data-startup-deferred=""
           onLoad={() => setPhotoReady(true)}
           onError={() => setPhotoUnavailable(true)}
         />
@@ -166,17 +168,17 @@ export default function PortraitReveal() {
               <feComposite in2="SourceGraphic" operator="in" />
             </filter>
             <mask id={subjectMaskId} maskUnits="userSpaceOnUse" x="0" y="0" width="941" height="1672" style={{ maskType: 'alpha' }}>
-              <image href="/images/jaztin-portrait-real-matched.webp" width="941" height="1672" filter={`url(#${subjectFilterId})`} />
+              <image href={photoUrl} width="941" height="1672" filter={`url(#${subjectFilterId})`} />
             </mask>
           </defs>
           <g mask={lightweight ? undefined : `url(#${pixelPhotoId})`}>
-            <image href="/images/jaztin-portrait-real-matched.webp" width="941" height="1672" mask={`url(#${subjectMaskId})`} style={{ filter: 'grayscale(1)' }} />
+            <image href={photoUrl} width="941" height="1672" mask={`url(#${subjectMaskId})`} style={{ filter: 'grayscale(1)' }} />
           </g>
         </svg>
         {!lightweight && <svg className="hero-portrait portrait-glitch" viewBox="0 0 941 1672" focusable="false">
           <defs>
             <pattern id={fragmentOutgoingId} patternUnits="userSpaceOnUse" width="941" height="1672"><image href="/images/jaztin-portrait.webp" width="941" height="1672" /></pattern>
-            <pattern id={fragmentIncomingId} patternUnits="userSpaceOnUse" width="941" height="1672"><image href="/images/jaztin-portrait-real-matched.webp" width="941" height="1672" /></pattern>
+            <pattern id={fragmentIncomingId} patternUnits="userSpaceOnUse" width="941" height="1672"><image href={photoUrl} width="941" height="1672" /></pattern>
           </defs>
           <rect className="portrait-glitch-scan" x="150" y="220" width="640" height="2" />
           {fragments.map((fragment, index) => <g key={index} style={{ '--fragment-start': fragment.delay / transitionDuration, '--fragment-x': `${fragment.dx}px`, '--fragment-y': `${fragment.dy}px` } as CSSProperties}>

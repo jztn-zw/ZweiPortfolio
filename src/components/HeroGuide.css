@@ -2,6 +2,66 @@
 :root[data-theme='light'] .hero-guide { --guide-bg: #fffefa; --guide-text: #24251f; --guide-muted: #797469; --guide-line: #d1cbc0; --guide-accent: #ad3039; }
 .hero-guide.is-positioned { opacity: 1; }
 .hero-guide.is-closing { opacity: 0; }
+
+.hero-guide-replay {
+  --replay-line: var(--theme-strong-line, #59574d);
+  --replay-surface: var(--theme-panel, #242420);
+  position: fixed;
+  z-index: 35;
+  isolation: isolate;
+  left: 50%;
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+  translate: -50% 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--theme-text, #edece3);
+  filter: drop-shadow(0 6px 12px #0003);
+  font: 600 11px/1.4 var(--font-mono);
+  letter-spacing: .035em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 180ms ease, translate 180ms ease, visibility 180ms;
+}
+
+.hero-guide-replay::before,
+.hero-guide-replay::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  transition: background-color 180ms ease;
+}
+
+.hero-guide-replay::before {
+  z-index: -2;
+  inset: 0;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  background: var(--replay-line);
+}
+
+.hero-guide-replay::after {
+  z-index: -1;
+  inset: 1px;
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%);
+  background: linear-gradient(var(--interaction-primary), var(--interaction-primary)) 12px 0 / 22px 1px no-repeat var(--replay-surface);
+}
+
+.hero-guide-replay svg { flex: none; color: var(--interaction-accent); }
+.hero-guide-replay:is(:hover, :focus-visible) {
+  --replay-line: var(--interaction-outline-border);
+  --replay-surface: var(--interaction-outline-surface);
+}
+.hero-guide-replay:focus-visible { outline: 2px solid var(--interaction-accent); outline-offset: 3px; }
+.hero-guide-replay:disabled, :root[data-page-transition] .hero-guide-replay { opacity: 0; visibility: hidden; pointer-events: none; translate: -50% 6px; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-guide-replay, .hero-guide-replay::before, .hero-guide-replay::after { transition: none; }
+}
 /* The guide is portaled above the page; suppress it before React changes routes. */
 :root[data-page-transition] .hero-guide { opacity: 0; visibility: hidden; transition: none; }
 /* One moving origin keeps the cursor and its small message together. */

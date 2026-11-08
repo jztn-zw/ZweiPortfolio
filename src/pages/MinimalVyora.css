@@ -1,0 +1,11 @@
+.min-vyora-preview { min-width: 0; margin: 0; }
+.min-vyora-screenshot { display: block; overflow: hidden; border: 1px solid var(--min-line); border-radius: 8px; background: var(--min-surface); }
+.min-vyora-screenshot img { display: block; width: 100%; height: auto; }
+.min-vyora-preview figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 4px 16px; margin-top: 9px; color: var(--min-muted); font-size: 10px; }
+.min-vyora-preview figcaption > span:last-child { display: inline-flex; align-items: center; gap: 5px; }
+.min-vyora-progress { margin-top: 32px; background: var(--min-soft); }
+.min-vyora-progress > p { max-width: 76ch; margin: 0; color: var(--min-body); font-size: 13px; line-height: 1.8; text-wrap: pretty; }
+.min-vyora-progress > p + p { margin-top: 10px; }
+@media (max-width: 620px) {
+  .min-vyora-progress { margin-top: 28px; }
+}

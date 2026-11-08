@@ -13,7 +13,7 @@ export default function JourneySection() {
       <div className="page-width journey-inner">
         <div className="journey-heading">
           <SectionHeading number="03" label="MY JOURNEY">
-            <span id="journey-title">FROM DESIGN<br />TO DEVELOPMENT<span className="red">.</span></span>
+<span id="journey-title">FROM DESIGN<br />TO DEVELOPMENT</span>
           </SectionHeading>
           <div className="journey-introduction">
             <p className="eyebrow">BACKGROUND &amp; EXPERIENCE</p>

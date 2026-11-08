@@ -1,19 +1,15 @@
-import { useState } from 'react'
 import Hero from '../components/Hero'
 import SiteHeader from '../components/SiteHeader'
 import Footer from '../components/Footer'
 import ProjectsSection from '../components/ProjectsSection'
 import CapabilitiesSection from '../components/CapabilitiesSection'
-import ProjectDialog from '../components/ProjectDialog'
 import JourneySection from '../components/JourneySection'
 import AboutSection from '../components/AboutSection'
 import ContactSection from '../components/ContactSection'
 import '../components/GraphicDetails.css'
 import '../components/DisciplineStrip.css'
-import type { Project } from '../data/portfolio'
 
 export default function Home() {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   return (
     <>
       <a className="skip-link" href="#main-content">Skip to content</a>
@@ -31,14 +27,13 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <ProjectsSection onSelect={setSelectedProject} />
+        <ProjectsSection />
         <CapabilitiesSection />
         <JourneySection />
         <AboutSection />
         <ContactSection />
       </main>
       <Footer />
-      {selectedProject && <ProjectDialog project={selectedProject} onClose={() => setSelectedProject(null)} />}
     </>
   )
 }

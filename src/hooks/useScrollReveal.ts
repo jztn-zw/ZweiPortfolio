@@ -84,12 +84,18 @@ export default function useScrollReveal(page: string) {
         })
       }, { rootMargin: '0px 0px -6% 0px', threshold: .06 })
 
+      const viewportHeight = window.innerHeight
+      const measurements: { element: HTMLElement; kind: string; reverse: boolean; inView: boolean }[] = []
       targets.forEach(({ kind, reverse }, element) => {
         if (!element.getClientRects().length) return
+        measurements.push({ element, kind, reverse, inView: element.getBoundingClientRect().top < viewportHeight })
+      })
+      // Measure the whole page before changing styles so each section doesn't trigger its own layout.
+      measurements.forEach(({ element, kind, reverse, inView }) => {
         element.dataset.scrollReveal = kind
         element.dataset.scrollSide = reverse ? 'right' : 'left'
         // Direct links, restored scroll positions, and the first screen stay readable immediately.
-        if (element.getBoundingClientRect().top < window.innerHeight) {
+        if (inView) {
           finish(element)
         } else {
           element.dataset.scrollState = 'pending'

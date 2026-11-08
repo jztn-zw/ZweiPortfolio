@@ -10,14 +10,14 @@ import ts from 'typescript'
 const compiled = ts.transpileModule(readFileSync(new URL('../src/components/PortraitReveal.tsx', import.meta.url), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText
 const masks = {}
 vm.runInNewContext(ts.transpileModule(readFileSync(new URL('../src/lib/portraitMask.ts', import.meta.url), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: masks })
-function portrait(mode, reduced = false) {
+function portrait(mode, reduced = false, loadPhoto = true) {
   const exports = {}
   vm.runInNewContext(compiled, {
     exports, document: { documentElement: { dataset: { effects: mode } } },
     window: { matchMedia: () => ({ matches: reduced }) },
     require: name => name === 'react' ? React : name === 'react/jsx-runtime' ? jsxRuntime : name === '../lib/portraitMask' ? masks : {},
   })
-  return renderToStaticMarkup(React.createElement(exports.default))
+  return renderToStaticMarkup(React.createElement(exports.default, { loadPhoto }))
 }
 
 test('constrained hardware retains the same full portrait reveal, fragments and photo', () => {
@@ -52,6 +52,13 @@ test('mask batching preserves every cell coordinate, edge size and opacity timin
   assert.equal(actual.size, 510)
   for (const tile of tiles) assert.equal(actual.get(`${tile.x}:${tile.y}`), tile.delay)
   assert.ok(grouped.length < tiles.length / 2)
+})
+
+test('the full effect is ready to mount while the alternate image waits for the hero image', () => {
+  const html = portrait('lite', false, false)
+  assert.match(html, /portrait-glitch/)
+  assert.match(html, /data-startup-deferred/)
+  assert.doesNotMatch(html, /jaztin-portrait-real-matched\.webp/)
 })
 
 test('an explicit reduced-motion preference still uses the accessible crossfade', () => {

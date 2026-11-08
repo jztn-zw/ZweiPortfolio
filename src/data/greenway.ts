@@ -7,7 +7,39 @@ export const greenwayFeatures = [
 ]
 
 export const greenwayStackLayers = [
-  { id: 'interface', title: 'Web & mobile', mark: 'modules', tools: ['React', 'React Native', 'TypeScript', 'Tailwind CSS', 'Expo'] },
-  { id: 'services', title: 'Services & data', mark: 'connection', tools: ['Node.js', 'Express', 'MySQL', 'Socket.IO'] },
-  { id: 'media', title: 'Maps & media', mark: 'globe', tools: ['Leaflet', 'MapLibre', 'Cloudinary'] },
+  {
+    id: 'interface',
+    title: 'Website',
+    mark: 'modules',
+    signal: 'interface',
+    tools: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Radix UI', 'React Router', 'TanStack Query', 'Zustand'],
+  },
+  {
+    id: 'services',
+    title: 'API & database',
+    mark: 'connection',
+    signal: 'services',
+    tools: ['Node.js', 'Express', 'TiDB (MySQL-compatible)', 'mysql2', 'Socket.IO', 'JWT', 'Zod'],
+  },
+  {
+    id: 'mobile',
+    title: 'Mobile apps',
+    mark: 'modules',
+    signal: 'interface',
+    tools: ['React Native', 'Expo', 'Expo Router', 'Expo Location', 'Expo Notifications', 'Expo SecureStore'],
+  },
+  {
+    id: 'media',
+    title: 'Maps & media',
+    mark: 'globe',
+    signal: 'media',
+    tools: ['Leaflet', 'MapLibre React Native', 'OpenStreetMap', 'OpenFreeMap', 'OSRM', 'Cloudinary'],
+  },
+  {
+    id: 'deployment',
+    title: 'Deployment',
+    mark: 'connection',
+    signal: 'additional',
+    tools: ['Vercel', 'Render', 'EAS'],
+  },
 ] as const

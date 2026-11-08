@@ -22,7 +22,7 @@ export default function CapabilitiesSection() {
       <div className="page-width capabilities-inner">
         <div className="capabilities-heading">
           <SectionHeading number="02" label="WHAT I DO">
-            <span id="capabilities-title">FROM CONCEPT<br />TO CODE<span className="red">.</span></span>
+<span id="capabilities-title">FROM CONCEPT<br />TO CODE</span>
           </SectionHeading>
           <div className="capabilities-intro">
             <p className="eyebrow">WHAT I CAN BUILD</p>

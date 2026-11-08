@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ArrowUpRight, Moon, Sun } from 'lucide-react'
+import { ArrowUp, Moon, Sun } from 'lucide-react'
 import { portfolio } from '../data/portfolio'
 import useTheme from '../hooks/useTheme'
 import FooterVerse from './FooterVerse'
@@ -18,7 +18,10 @@ export default function MinimalLayout({ children, contentId = 'minimal-content',
     <a className="min-skip" href={`#${contentId}`}>Skip to content</a>
     <div className="min-shell">
       <header className="min-topbar">
-        <a href="/minimal" className="min-wordmark" aria-label="Jaztin — Minimal portfolio"><img src={theme === 'light' ? '/brand-mark-light.svg' : '/brand-mark.svg'} width="24" height="24" alt="" /><span>Jaztin<span className="min-wordmark-dot">.</span></span></a>
+        <a href="/minimal" className="min-wordmark" aria-label="Jaztin — Minimal portfolio">
+          <img src={theme === 'light' ? '/brand-mark-light.svg' : '/brand-mark.svg'} width="24" height="24" alt="" />
+          <span>Jaztin</span>
+        </a>
         <nav className="min-top-actions" aria-label="View options">
           <a href={fullHref} className="min-full-view" aria-label="Full experience" title="Full experience"><FullExperienceIcon /></a>
           <button className="min-theme-toggle" type="button" aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`} onClick={event => {
@@ -28,7 +31,16 @@ export default function MinimalLayout({ children, contentId = 'minimal-content',
         </nav>
       </header>
       <main id={contentId} tabIndex={-1}>{children}</main>
-      <footer className="min-footer"><div><span>© {new Date().getFullYear()} {portfolio.name}</span><div className="min-footer-note"><FooterVerse /><span>Always learning. Always building.</span></div></div><a className="min-text-link" href={`#${contentId}`}>Back to top<ArrowUpRight size={13} /></a></footer>
+      <footer className="min-footer">
+        <div className="min-footer-main">
+          <span className="min-footer-copyright">© {new Date().getFullYear()} {portfolio.name}</span>
+          <a className="min-text-link min-footer-top" href={`#${contentId}`}>Back to top<ArrowUp size={13} aria-hidden="true" /></a>
+        </div>
+        <div className="min-footer-note">
+          <FooterVerse />
+          <span>Always learning. Always building.</span>
+        </div>
+      </footer>
     </div>
   </div>
 }

@@ -19,7 +19,7 @@ export default function TechnicalGraphic() {
         </g>
         <path d="M24 42V24h18M398 24h18v18M416 298v18h-18M42 316H24v-18" stroke="currentColor" strokeWidth="2" />
       </svg>
-      <div className="human-diagram-type"><span>CURIOUS</span><span>BY DESIGN<span className="red">.</span></span></div>
+<div className="human-diagram-type"><span>CURIOUS</span><span>BY DESIGN</span></div>
       <div className="technical-graphic-bottom"><span className="detail-dot-matrix" /><span className="eyebrow">MORE THAN A<br />LINE OF CODE.</span><span className="diagram-number">03</span></div>
     </div>
   )

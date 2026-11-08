@@ -3,7 +3,7 @@
 .projects-count { font-size: 11px; color: #a4a49a; letter-spacing: 1px; }
 .projects-count-value { margin-right: 8px; color: #d0cec1; font-variant-numeric: tabular-nums; }
 .more-projects-control { display: inline-flex; position: relative; }
-.more-projects-button { display: inline-flex; align-items: center; justify-content: center; gap: 17px; min-width: 145px; min-height: 44px; padding: 13px 15px; border: 1px solid #777765; border-radius: 0; background: transparent; color: #eae7da; font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .35px; text-transform: uppercase; white-space: nowrap; cursor: default; opacity: 1; transition: background .2s, color .2s; }
+.more-projects-button { gap: 17px; }
 .more-projects-button svg { flex-shrink: 0; }
 .more-projects-button:hover, .more-projects-button:focus-visible { background: #eae7da; color: #1b1b17; }
 .more-projects-tooltip { position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 3; padding: 8px 11px; border: 1px solid #444439; background: #1c1c18; color: #d2cdbf; font-family: var(--font-mono); font-size: 11px; line-height: 1.4; white-space: nowrap; pointer-events: none; opacity: 0; visibility: hidden; transform: translateY(4px); transition: opacity .18s, transform .18s, visibility .18s; }

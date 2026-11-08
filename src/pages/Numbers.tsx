@@ -72,7 +72,7 @@ export default function Numbers() {
           <section className="numbers-intro" aria-labelledby="numbers-title">
             <div>
               <p className="numbers-eyebrow eyebrow"><span className="red">A SNAPSHOT OF MY WORK</span><GraphicMark variant="signal" /></p>
-              <h1 id="numbers-title" tabIndex={-1}>THE WORK.<br />IN NUMBERS<span className="red">.</span></h1>
+<h1 id="numbers-title" tabIndex={-1}>THE WORK<br />IN NUMBERS</h1>
             </div>
             <div className="numbers-intro-copy">
               <span className="numbers-coordinate eyebrow" aria-hidden="true">BUILD / EXPLORE / REPEAT</span>

@@ -1,5 +1,5 @@
 import { flushSync } from 'react-dom'
-import { isMinimalPage, isPagePath, navigationPage, normalizeRoute } from '../lib/routes'
+import { isMinimalPage, isPagePath, isProjectCatalogPage, navigationPage, normalizeRoute } from '../lib/routes'
 import './pageNavigation.css'
 
 type NavigationScene = {
@@ -26,6 +26,7 @@ function browserRoute() {
 }
 
 let displayedRoute = browserRoute()
+let restoredProjectScroll: number | undefined
 let active: NavigationRun | undefined
 let preloadedArtwork: HTMLImageElement | undefined
 let preparedScene: NavigationScene | undefined
@@ -33,9 +34,10 @@ let preparingScene: Generator<void, NavigationScene> | undefined
 const artworkUrl = '/images/jaztin-transition-character-v3.webp'
 
 export function getNavigationLocation() { return displayedRoute }
+export function getRestoredProjectScroll() { return restoredProjectScroll }
 
 function destinationTitle() {
-  const titles = { home: 'BACK\nHOME', minimal: 'MINIMAL\nVIEW', minimalSkills: 'STACK &\nSKILLS', minimalGreenway: 'GREENWAY', numbers: 'BY THE\nNUMBERS', skills: 'STACK &\nSKILLS', greenway: 'GREENWAY', ai: 'ASK\nAI' }
+  const titles = { home: 'BACK\nHOME', minimal: 'MINIMAL\nVIEW', minimalSkills: 'STACK &\nSKILLS', minimalProjects: 'ALL\nPROJECTS', minimalWebMobileProjects: 'WEB &\nMOBILE', minimalAutomationProjects: 'AUTOMATION', minimalToolsProjects: 'TOOLS &\nEXPERIMENTS', minimalGreenway: 'GREENWAY', minimalVyora: 'VYORA', numbers: 'BY THE\nNUMBERS', skills: 'STACK &\nSKILLS', projects: 'ALL\nPROJECTS', webMobileProjects: 'WEB &\nMOBILE', automationProjects: 'AUTOMATION', toolsProjects: 'TOOLS &\nEXPERIMENTS', greenway: 'GREENWAY', ai: 'ASK\nAI' }
   return titles[navigationPage(browserRoute())]
 }
 
@@ -395,13 +397,16 @@ async function animateNavigation(commit: () => void) {
     run.animations.push(...arrival)
     await Promise.all(arrival.map(animation => animation.finished))
     if (active !== run) return
-    run.commit?.()
+    // Once this route is committed, a new request needs a fresh cover, even
+    // during the frames we wait for before starting the reveal animation.
+    run.phase = 'reveal'
+    const showDestination = run.commit
     run.commit = undefined
+    showDestination?.()
 
     // Let the new route mount and complete its normal focus/scroll handling.
     await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
     if (active !== run) return
-    run.phase = 'reveal'
     const content = document.querySelector('main')
     if (content && !lightweight) run.animations.push(content.animate([
       { opacity: .45, transform: 'translateY(18px) scale(.992)', transformOrigin: '50% 0' },
@@ -447,6 +452,7 @@ export function subscribeToNavigation(onChange: () => void) {
   if (!minimalStart && !preloadedArtwork && typeof window.Image === 'function') {
     preloadedArtwork = new window.Image()
     preloadedArtwork.decoding = 'async'
+    preloadedArtwork.fetchPriority = 'low'
     preloadedArtwork.src = artworkUrl
     void preloadedArtwork.decode().catch(() => { /* The geometric curtain still works if the artwork cannot load. */ })
   }
@@ -465,13 +471,15 @@ export function subscribeToNavigation(onChange: () => void) {
   }
   if (!minimalStart && !motion.matches && !preparedScene && typeof window.requestIdleCallback === 'function') preparation = window.requestIdleCallback(prepare)
   let requestedRoute = browserRoute()
+  let requestedProjectScroll: number | undefined
   const scrollWithinPage = () => {
     const hash = window.location.hash.slice(1)
     let id = hash
     try { id = decodeURIComponent(hash) } catch { /* Treat malformed fragments literally. */ }
     const target = id ? document.getElementById(id) : document.querySelector<HTMLElement>('main h1')
     const behavior = motion.matches ? 'instant' : 'smooth'
-    if (id) target?.scrollIntoView({ behavior, block: 'start' })
+    if (restoredProjectScroll !== undefined) window.scrollTo({ top: restoredProjectScroll, behavior: 'instant' })
+    else if (id) target?.scrollIntoView({ behavior, block: 'start' })
     else window.scrollTo({ top: 0, behavior })
     if (!target) return
     if (!target.hasAttribute('tabindex')) {
@@ -484,16 +492,21 @@ export function subscribeToNavigation(onChange: () => void) {
     const next = browserRoute()
     const samePage = navigationPage(displayedRoute) === navigationPage(next)
     displayedRoute = next
+    restoredProjectScroll = requestedProjectScroll
     flushSync(onChange)
     if (samePage) scrollWithinPage()
   }
-  const onLocationChange = () => {
+  const onLocationChange = (event?: Event) => {
     const next = browserRoute()
     if (next === requestedRoute) return
     requestedRoute = next
-    const changedPage = navigationPage(displayedRoute) !== navigationPage(next)
-    const minimalNavigation = isMinimalPage(navigationPage(displayedRoute)) || isMinimalPage(navigationPage(next))
-    if (minimalNavigation || (!changedPage && !active) || motion.matches || document.documentElement.dataset.themeTransition || typeof Element.prototype.animate !== 'function') {
+    requestedProjectScroll = event?.type === 'popstate' ? window.history.state?.portfolioProjectScroll : undefined
+    const fromPage = navigationPage(displayedRoute)
+    const toPage = navigationPage(next)
+    const changedPage = fromPage !== toPage
+    const minimalNavigation = isMinimalPage(fromPage) || isMinimalPage(toPage)
+    const withinCatalog = isProjectCatalogPage(fromPage) && isProjectCatalogPage(toPage)
+    if (minimalNavigation || withinCatalog || (!changedPage && !active) || motion.matches || document.documentElement.dataset.themeTransition || typeof Element.prototype.animate !== 'function') {
       cancelPageNavigation()
       commit()
       return
@@ -508,8 +521,29 @@ export function subscribeToNavigation(onChange: () => void) {
     if (url.origin !== window.location.origin || !isPagePath(url.pathname)) return
     const next = normalizeRoute(url.pathname + url.search + url.hash)
     event.preventDefault()
-    if (next === browserRoute()) { scrollWithinPage(); return }
-    window.history.pushState(null, '', next)
+    const current = browserRoute()
+    const backSteps = window.history.state?.portfolioProjectBackSteps
+    if (link.hasAttribute('data-project-back') && current === displayedRoute && Number.isSafeInteger(backSteps) && backSteps > 0) {
+      window.history.go(-backSteps)
+      return
+    }
+    if (next === current) {
+      restoredProjectScroll = undefined
+      scrollWithinPage()
+      return
+    }
+    const nextPage = navigationPage(next)
+    let historyState = null
+    if (current === displayedRoute && (nextPage === 'greenway' || nextPage === 'minimalGreenway' || nextPage === 'minimalVyora')) {
+      if (navigationPage(current) === nextPage) {
+        // Skip project anchors on the way back to the page that opened the project.
+        if (backSteps) historyState = { portfolioProjectBackSteps: backSteps + 1 }
+      } else {
+        window.history.replaceState({ ...window.history.state, portfolioProjectScroll: window.scrollY }, '')
+        historyState = { portfolioProjectBackSteps: 1 }
+      }
+    }
+    window.history.pushState(historyState, '', next)
     onLocationChange()
   }
   const onMotionChange = () => { if (motion.matches) cancelPageNavigation() }

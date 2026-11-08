@@ -79,7 +79,7 @@ export default function Skills() {
           <section className="skills-intro" aria-labelledby="skills-title">
             <div>
               <p className="eyebrow skills-eyebrow"><span className="red">UNDER THE HOOD</span><GraphicMark variant="registration" /></p>
-              <h1 id="skills-title" tabIndex={-1}>THE STACK.<br />THE SKILLS<span className="red">.</span></h1>
+<h1 id="skills-title" tabIndex={-1}>THE STACK<br />THE SKILLS</h1>
               <p className="skills-intro-description">The technologies behind my interfaces and systems, plus the AI tools I use for coding and workflow automation.</p>
             </div>
             <aside className="skills-overview" aria-label="Stack overview">

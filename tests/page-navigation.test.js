@@ -15,8 +15,8 @@ function harness({ reduced = false, supported = true, initial = '/', width = 128
   const animations = [], frames = [], listeners = new Map(), nodes = [], scrolls = [], anchors = new Map()
   const idleCallbacks = new Map()
   let createdNodes = 0, idleId = 0
-  const entries = [new URL(initial, 'https://portfolio.test').href]
-  let currentUrl = new URL(entries[0]), historyIndex = 0
+  const entries = [{ href: new URL(initial, 'https://portfolio.test').href, state: null }]
+  let currentUrl = new URL(entries[0].href), historyIndex = 0
   const motion = { matches: reduced, addEventListener: (_, callback) => listeners.set('motion', callback), removeEventListener: () => listeners.delete('motion') }
   class Element {
     children = []
@@ -59,13 +59,26 @@ function harness({ reduced = false, supported = true, initial = '/', width = 128
   const window = {
     get location() { return currentUrl },
     history: {
-      state: null,
-      pushState(_, title, href) { currentUrl = new URL(href, currentUrl); entries.splice(++historyIndex); entries.push(currentUrl.href) },
-      replaceState(_, title, href) { currentUrl = new URL(href, currentUrl); entries[historyIndex] = currentUrl.href },
-      back() { if (historyIndex > 0) { currentUrl = new URL(entries[--historyIndex]); listeners.get('popstate')() } },
-      forward() { if (historyIndex < entries.length - 1) { currentUrl = new URL(entries[++historyIndex]); listeners.get('popstate')() } },
+      get state() { return entries[historyIndex].state },
+      pushState(state, title, href) {
+        currentUrl = new URL(href, currentUrl)
+        entries.splice(++historyIndex, Infinity, { href: currentUrl.href, state })
+      },
+      replaceState(state, title, href = currentUrl.href) {
+        currentUrl = new URL(href, currentUrl)
+        entries[historyIndex] = { href: currentUrl.href, state }
+      },
+      go(delta) {
+        const index = historyIndex + delta
+        if (index < 0 || index >= entries.length) return
+        historyIndex = index
+        currentUrl = new URL(entries[index].href)
+        listeners.get('popstate')({ type: 'popstate', state: this.state })
+      },
+      back() { this.go(-1) },
+      forward() { this.go(1) },
     },
-    scrollTo: options => scrolls.push(options), innerWidth: width, matchMedia: () => motion,
+    scrollY: 0, scrollTo: options => scrolls.push(options), innerWidth: width, matchMedia: () => motion,
     navigator: { hardwareConcurrency: cores, deviceMemory: memory, connection: { saveData } },
     ...(idle ? {
       requestIdleCallback: callback => { idleCallbacks.set(++idleId, callback); return idleId },
@@ -88,6 +101,7 @@ function harness({ reduced = false, supported = true, initial = '/', width = 128
       link.href = new URL(href, currentUrl).href
       link.target = options.target ?? ''
       if (options.download) link.setAttribute('download', '')
+      if (options.projectBack) link.setAttribute('data-project-back', '')
       const event = { target: link, button: 0, defaultPrevented: false, preventDefault() { this.defaultPrevented = true }, ...options }
       listeners.get('click')(event)
       return event
@@ -131,21 +145,23 @@ test('route changes stay hidden until covered and rapid clicks use the latest de
   h.unsubscribe()
 })
 
-test('navigation during reveal reuses the curtain and does not apply stale cleanup', async () => {
-  const h = harness()
-  h.navigate('/numbers')
-  await cover(h)
-  h.frame(); h.frame(); await settle()
-  const curtain = h.nodes[0]
-  h.navigate('/')
-  assert.equal(h.nodes.length, 1)
-  assert.equal(h.nodes[0], curtain)
-  assert.equal(curtain.dataset.direction, 'back')
-  await cover(h)
-  assert.equal(h.api.getNavigationLocation(), '/')
-  await reveal(h)
-  assert.equal(h.nodes.length, 0)
-  h.unsubscribe()
+test('navigation after a commit reuses the curtain, even before the reveal animation starts', async () => {
+  for (const revealStarted of [false, true]) {
+    const h = harness()
+    h.navigate('/numbers')
+    await cover(h)
+    if (revealStarted) { h.frame(); h.frame(); await settle() }
+    const curtain = h.nodes[0]
+    h.navigate('/')
+    assert.equal(h.nodes.length, 1)
+    assert.equal(h.nodes[0], curtain)
+    assert.equal(curtain.dataset.direction, 'back')
+    await cover(h)
+    assert.equal(h.api.getNavigationLocation(), '/')
+    await reveal(h)
+    assert.equal(h.nodes.length, 0)
+    h.unsubscribe()
+  }
 })
 
 test('small screens and constrained devices retain every illustration and the original cut-in motion', async () => {
@@ -330,6 +346,7 @@ test('navigation during a theme reveal bypasses the curtain', () => {
 test('clean direct links and old hash bookmarks initialize without another history entry', () => {
   for (const [initial, expected] of [
     ['/numbers', '/numbers'], ['/skills/', '/skills'], ['/ask-ai/', '/ask-ai'],
+    ['/minimal/projects/vyora/', '/minimal/projects/vyora'],
     ['/?ref=bookmark#/numbers', '/numbers?ref=bookmark'],
     ['/#/projects/greenway/content', '/projects/greenway#greenway-content'], ['/#/ask-ai/content', '/ask-ai#ai-content'],
   ]) {
@@ -405,11 +422,83 @@ test('legacy hash navigation converts to a clean path and still uses the curtain
 
 test('Vercel rewrites cover app pages without capturing assets or API functions', () => {
   const config = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
-  for (const path of ['/numbers', '/skills', '/projects/greenway', '/ask-ai', '/minimal', '/minimal/skills', '/minimal/projects/greenway']) {
+  for (const path of ['/numbers', '/skills', '/projects', '/projects/web-mobile', '/projects/automation', '/projects/tools', '/projects/greenway', '/ask-ai', '/minimal', '/minimal/skills', '/minimal/projects', '/minimal/projects/web-mobile', '/minimal/projects/automation', '/minimal/projects/tools', '/minimal/projects/greenway']) {
     assert.equal(config.rewrites.find(rule => rule.source === path)?.destination, '/index.html')
   }
   assert.ok(config.rewrites.every(rule => routes.isPagePath(rule.source)))
   assert.equal(config.trailingSlash, false)
+})
+
+test('project collections have distinct routes and preserve browser history', async () => {
+  const h = harness()
+  h.navigate('/projects/automation')
+  await cover(h); await reveal(h)
+  assert.equal(h.api.getNavigationLocation(), '/projects/automation')
+  assert.equal(routes.navigationPage(h.api.getNavigationLocation()), 'automationProjects')
+  const animationCount = h.animations.length
+  h.navigate('/projects/tools')
+  assert.equal(h.api.getNavigationLocation(), '/projects/tools')
+  assert.equal(h.animations.length, animationCount)
+  h.window.history.back()
+  assert.equal(h.api.getNavigationLocation(), '/projects/automation')
+  h.window.history.forward()
+  assert.equal(h.api.getNavigationLocation(), '/projects/tools')
+  h.navigate('/projects')
+  assert.equal(h.api.getNavigationLocation(), '/projects')
+  h.unsubscribe()
+})
+
+test('old collection bookmarks resolve to the new page without losing unrelated URL parameters', () => {
+  const h = harness({ initial: '/projects/?category=web-mobile&ref=portfolio#project-filters' })
+  assert.equal(h.api.getNavigationLocation(), '/projects/web-mobile?ref=portfolio')
+  assert.equal(routes.navigationPage(h.api.getNavigationLocation()), 'webMobileProjects')
+  assert.equal(h.entries.length, 1)
+  h.unsubscribe()
+})
+
+test('GreenWay back links return to the originating collection and restore its scroll position', async () => {
+  const collection = '/projects/web-mobile'
+  const project = '/projects/greenway'
+  const h = harness({ initial: collection })
+  h.window.scrollY = 520
+  h.navigate(project)
+  await cover(h); await reveal(h)
+  h.navigate(`${project}#greenway-content`)
+  h.navigate('/projects', { projectBack: true })
+  await cover(h); await reveal(h)
+  assert.equal(h.api.getNavigationLocation(), collection)
+  assert.equal(h.api.getRestoredProjectScroll(), 520)
+  assert.equal(h.entries.length, 3, 'returning should not add a history entry')
+  h.window.history.forward()
+  await cover(h); await reveal(h)
+  assert.equal(h.api.getNavigationLocation(), project)
+  assert.equal(h.api.getRestoredProjectScroll(), undefined)
+  h.unsubscribe()
+})
+
+test('minimal GreenWay returns to its source while direct project visits use the link fallback', () => {
+  const minimal = harness({ initial: '/minimal#min-projects-title' })
+  minimal.navigate('/minimal/projects/greenway')
+  minimal.navigate('/minimal#min-projects-title', { projectBack: true })
+  assert.equal(minimal.api.getNavigationLocation(), '/minimal#min-projects-title')
+  assert.equal(minimal.entries.length, 2)
+  minimal.unsubscribe()
+
+  const direct = harness({ initial: '/projects/greenway', reduced: true })
+  direct.navigate('/projects', { projectBack: true })
+  assert.equal(direct.api.getNavigationLocation(), '/projects')
+  direct.unsubscribe()
+})
+
+test('minimal project gallery returns from GreenWay to its saved position', () => {
+  const h = harness({ initial: '/minimal/projects' })
+  h.window.scrollY = 440
+  h.navigate('/minimal/projects/greenway')
+  h.navigate('/minimal#min-projects-title', { projectBack: true })
+  assert.equal(h.api.getNavigationLocation(), '/minimal/projects')
+  assert.equal(h.api.getRestoredProjectScroll(), 440)
+  assert.equal(h.animations.length, 0)
+  h.unsubscribe()
 })
 
 test('minimal view enters, exits, and restores browser history without a cinematic curtain', () => {
@@ -446,7 +535,7 @@ test('direct minimal visits avoid scene preparation and can cancel an unfinished
 })
 
 test('minimal detail routes support direct visits, trailing slashes and history without cinematic artwork', () => {
-  for (const initial of ['/minimal/skills', '/minimal/projects/greenway/']) {
+  for (const initial of ['/minimal/skills', '/minimal/projects/', '/minimal/projects/web-mobile/', '/minimal/projects/automation/', '/minimal/projects/tools/', '/minimal/projects/greenway/']) {
     const h = harness({ initial, idle: true })
     h.idle()
     assert.equal(h.createdNodes, 0)

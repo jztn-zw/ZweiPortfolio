@@ -6,8 +6,8 @@ export function finishStartup() {
   const screen = document.getElementById('startup-screen')
   if (!screen || started) return
   started = true
-  // Lazy images, videos and live counters do not block the initial screen.
-  const images = [...document.querySelectorAll<HTMLImageElement>('#root img:not([loading="lazy"])')]
+  // The alternate portrait and other nonessential media can finish in the background.
+  const images = [...document.querySelectorAll<HTMLImageElement>('#root img:not([loading="lazy"], [data-startup-deferred])')]
   const progress = screen.querySelector<HTMLElement>('[data-startup-progress]')
   const status = screen.querySelector<HTMLElement>('[data-startup-status]')
   const tasks = [

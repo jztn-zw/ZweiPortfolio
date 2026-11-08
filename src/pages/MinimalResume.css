@@ -1,0 +1,37 @@
+.resume-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; margin-top: 23px; }
+.resume-location, .resume-contact-links { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 18px; }
+.resume-location { color: var(--min-body); font-size: 12px; }
+.resume-availability { display: inline-flex; align-items: center; gap: 7px; color: var(--min-muted); }
+.resume-availability::before { content: ''; width: 5px; height: 5px; flex-shrink: 0; border-radius: 50%; background: var(--min-accent); }
+
+.resume-date { color: var(--min-muted); font-family: var(--font-mono); font-size: 10px; font-variant-numeric: tabular-nums; }
+.resume-sheet :where(.resume-profile, .resume-experience p, .resume-education p:not(.resume-date)) {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--min-body);
+  font-size: 13px;
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+.resume-profile strong { color: var(--min-text); font-weight: 600; }
+.resume-about blockquote { margin: 16px 0 0; padding-left: 11px; border-left: 1px solid var(--min-muted); color: var(--min-muted); font-size: 12px; }
+.resume-sheet h3 { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.45; }
+.resume-sheet .resume-context { margin: 4px 0 7px; color: var(--min-muted); font-size: 11px; }
+
+.resume-experience { margin: 0; padding: 0; list-style: none; }
+.resume-experience > li { display: grid; grid-template-columns: minmax(72px, 24%) minmax(0, 1fr); gap: 12px; align-items: baseline; }
+.resume-experience > li + li { margin-top: 18px; padding-top: 17px; border-top: 1px solid var(--min-line); }
+
+.resume-skill-list { margin: 0; }
+.resume-skill-list > div { padding-block: 11px; }
+.resume-skill-list > div:first-child { padding-top: 0; }
+.resume-skill-list > div:last-child { padding-bottom: 0; }
+.resume-skill-list dt { color: var(--min-text); font-size: 12px; font-weight: 600; }
+.resume-skill-list dd { margin: 7px 0 0; }
+.resume-education .resume-date { display: inline-block; margin: 0 0 8px; padding: 1px 6px; border: 1px solid var(--min-line); }
+.resume-contact > a { display: flex; justify-content: space-between; min-height: 36px; overflow-wrap: anywhere; }
+.resume-contact > a + a { border-top: 1px solid var(--min-line); }
+
+@media (max-width: 420px) {
+  .resume-experience > li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}

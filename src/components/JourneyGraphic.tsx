@@ -85,7 +85,7 @@ export default function JourneyGraphic() {
         <path d="M74 258h212" stroke="#6d6b5e" strokeOpacity=".35" strokeWidth=".7" />
         <path d="M74 255v6m212-6v6" stroke="#a8a493" strokeWidth=".8" />
       </svg>
-      <div className="journey-graphic-type">A CREATIVE<br />FOUNDATION<span className="red">.</span></div>
+<div className="journey-graphic-type">A CREATIVE<br />FOUNDATION</div>
       <div className="journey-graphic-bottom eyebrow"><GraphicMark variant="chevrons" /><span>ALWAYS LEARNING.<br />ALWAYS BUILDING.</span></div>
     </div>
   )

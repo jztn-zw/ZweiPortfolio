@@ -25,7 +25,7 @@ export default function useProjectDrag(listRef: RefObject<HTMLDivElement | null>
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.pointerType !== 'mouse' || event.button !== 0) return
     stopMomentum()
-    if (event.target instanceof Element && event.target.closest('a, button')) return
+    if (event.target instanceof Element && event.target.closest('a:not([data-ribbon-link]), button')) return
     gesture.current = { pointer: event.pointerId, startX: event.clientX, startLeft: event.currentTarget.scrollLeft, lastX: event.clientX, lastTime: performance.now(), velocity: 0, moved: false }
   }
 

@@ -16,3 +16,18 @@ Sources:
 - n8n: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/n8n.svg
 - codex: https://raw.githubusercontent.com/lobehub/lobe-icons/master/packages/static-svg/icons/codex.svg
 - antigravity: https://raw.githubusercontent.com/lobehub/lobe-icons/master/packages/static-svg/icons/antigravity.svg
+
+GreenWay stack additions use Simple Icons and the Devicon plain Zustand mark. Zustand uses currentColor with its original path geometry. Devicon MIT attribution is included in public/tech-icons-LICENSE.txt.
+
+- vite: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/vite.svg
+- radixui: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/radixui.svg
+- reactrouter: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/reactrouter.svg
+- reactquery: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/reactquery.svg
+- zustand: https://raw.githubusercontent.com/devicons/devicon/master/icons/zustand/zustand-plain.svg
+- leaflet: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/leaflet.svg
+- maplibre: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/maplibre.svg
+- tidb: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/tidb.svg
+- socketio: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/socketdotio.svg
+- cloudinary: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/cloudinary.svg
+- vercel: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/vercel.svg
+- render: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/render.svg

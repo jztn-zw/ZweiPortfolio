@@ -1,4 +1,4 @@
-// Personal details supplied by Jaztin. Projects and unprovided social profiles remain placeholders.
+// Personal details supplied by Jaztin.
 // Leave contact URLs null until real destinations are available.
 export type Contact = {
   id: 'github' | 'linkedin' | 'email'
@@ -11,7 +11,7 @@ export const portfolio = {
   shortName: 'Jaztin',
   nameLines: ['Jaztin Abram', 'Contreras'],
   role: 'Full-Stack Developer',
-  location: 'Sariaya, Quezon, Philippines',
+  location: 'Quezon, Philippines',
   availability: 'Open to Opportunities',
   introduction: 'I build modern web and mobile applications, turning ideas into functional digital solutions.',
   description: 'Driven by curiosity and logical thinking, I enjoy solving problems, understanding how systems work, and exploring the possibilities of AI.',
@@ -24,7 +24,7 @@ export const portfolio = {
 
 export const contactContent = {
   question: 'Have something in mind?',
-  heading: ['Let’s make', 'it happen.'],
+heading: ['Let’s make', 'it happen'],
   paragraphs: [
     'Have a project idea, an opportunity, or just want to connect?',
     "I'm always open to exploring new ideas, collaborating on meaningful projects, and learning through new challenges.",
@@ -65,55 +65,93 @@ export const aboutMe = {
   ],
 } as const
 
+export type ProjectCollection = 'web-mobile' | 'automation' | 'tools'
+
 export type Project = {
   id: string
   title: string
   category: string
+  collection: ProjectCollection
+  listed: boolean
   description: string
   technologies: string[]
   artwork: 'terrain' | 'orbit' | 'structure' | 'greenway'
   status?: string
   liveUrl?: string
   detailsUrl?: string
+  minimalDetailsUrl?: string
 }
 
 export const projects: Project[] = [
-  { id: '001', title: '[PROJECT NAME]', category: '[PROJECT CATEGORY]', description: '[PROJECT DESCRIPTION]', technologies: ['[TECH STACK]'], artwork: 'terrain' },
   {
     id: '002',
     title: 'GreenWay',
     category: 'WEB & MOBILE APPLICATION',
+    collection: 'web-mobile',
+    listed: true,
     description: 'A waste management platform for Candelaria, Quezon, with collection tracking, pickup schedules, and resident reports.',
-    technologies: ['React', 'React Native', 'Node.js', 'MySQL', 'TypeScript', 'Tailwind CSS', 'Express', 'Expo', 'Socket.IO', 'Leaflet', 'MapLibre', 'Cloudinary'],
+    technologies: [
+      'React', 'React Native', 'Node.js', 'TiDB (MySQL-compatible)',
+      'TypeScript', 'Vite', 'Tailwind CSS', 'Radix UI', 'React Router',
+      'TanStack Query', 'Zustand',
+      'Express', 'mysql2', 'Socket.IO', 'JWT', 'Zod',
+      'Expo', 'Expo Router', 'Expo Location', 'Expo Notifications', 'Expo SecureStore',
+      'Leaflet', 'MapLibre React Native', 'OpenStreetMap', 'OpenFreeMap', 'OSRM', 'Cloudinary',
+      'Vercel', 'Render', 'EAS',
+    ],
     artwork: 'greenway',
     status: 'Completed',
     liveUrl: 'https://greenway-candelaria.vercel.app/',
     detailsUrl: '/projects/greenway',
   },
-  { id: '003', title: '[PROJECT NAME]', category: '[PROJECT CATEGORY]', description: '[PROJECT DESCRIPTION]', technologies: ['[TECH STACK]'], artwork: 'structure' },
+  {
+    id: 'vyora',
+    title: 'VYORA',
+    category: 'WINDOWS PHOTO BOOTH',
+    collection: 'tools',
+    listed: true,
+    description: 'A Windows photo booth for capturing, retaking, saving, and printing custom photo strips.',
+    technologies: [
+      'Electron', 'React', 'TypeScript', 'SQLite', 'Vite',
+      'Cloudflare Workers', 'Electron Forge', 'NSIS', 'GitHub Releases',
+    ],
+    artwork: 'structure',
+    status: 'Live · In development',
+    liveUrl: 'https://vyorabooth.vyora.workers.dev/',
+    minimalDetailsUrl: '/minimal/projects/vyora',
+  },
 ]
+
+export const listedProjects = projects.filter(project => project.listed)
 
 // User-supplied capabilities, including the AI tools added to the portfolio.
 export const capabilities = [
   {
     id: '01',
     title: 'Frontend & Mobile Development',
-    description: 'Responsive web and cross-platform mobile interfaces built for functionality, usability, and clear visual design.',
-    technologies: ['React', 'TypeScript', 'Tailwind CSS', 'React Native', 'Expo'],
+    description: 'Responsive websites and mobile apps with state management, interactive maps, and clear interface design.',
+    technologies: [
+      'React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Radix UI', 'React Router',
+      'TanStack Query', 'Zustand', 'React Native', 'Expo',
+      'Leaflet', 'MapLibre React Native', 'Vite', 'WordPress',
+    ],
     artwork: 'web',
   },
   {
     id: '02',
     title: 'Backend & Databases',
-    description: 'Backend application logic, APIs, and databases that connect interfaces to working systems.',
-    technologies: ['Node.js', 'Express', 'MySQL'],
+    description: 'APIs, live updates, databases, and cloud deployment that connect interfaces to working systems.',
+    technologies: [
+      'Node.js', 'Express', 'MySQL', 'TiDB', 'Supabase', 'Neon', 'MongoDB',
+      'Socket.IO', 'Cloudinary', 'Vercel', 'Render',
+    ],
     artwork: 'fullstack',
   },
   {
     id: '03',
     title: 'AI & Workflow Automation',
-    description: 'AI-assisted coding and connected workflows using Codex, Antigravity, and n8n.',
-    technologies: ['Codex', 'Antigravity', 'n8n'],
+    description: 'AI-assisted coding, workflow integrations, and CRM automation.',
+    technologies: ['Codex', 'Claude Code', 'Antigravity', 'n8n', 'GHL'],
     artwork: 'automation',
   },
 ] as const

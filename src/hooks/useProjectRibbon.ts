@@ -105,6 +105,17 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
     let previousWidth = -1
     let previousCompact: boolean | undefined
     const synchronizeLayout = () => {
+      if (media.matches !== isCompact) {
+        // Wait for React to add or remove the compact copies before measuring.
+        ready.current = false
+        compact.current = false
+        delete list.dataset.ready
+        cancelCentering()
+        stopMomentum()
+        clearIdle()
+        setIsCompact(media.matches)
+        return
+      }
       // Mobile browser chrome changes the rail's height through svh. Only a
       // horizontal layout change should interrupt a gesture or recenter it.
       const width = list.getBoundingClientRect().width
@@ -112,7 +123,6 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
       previousWidth = width
       previousCompact = media.matches
       compact.current = media.matches
-      setIsCompact(media.matches)
       cancelCentering()
       stopMomentum()
       clearIdle()
@@ -161,7 +171,7 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
       clearIdle()
       cancelCentering()
     }
-  }, [cancelCentering, clearIdle, geometry, initialProject, projectCount, scheduleSettle, settle, stopMomentum])
+  }, [cancelCentering, clearIdle, geometry, initialProject, isCompact, projectCount, scheduleSettle, settle, stopMomentum])
 
   const onScroll = (event: UIEvent<HTMLDivElement>) => {
     if (!ready.current || !compact.current) return
@@ -209,7 +219,7 @@ export default function useProjectRibbon(projectCount: number, initialProject: n
   }
 
   const onFocusCapture = (event: FocusEvent<HTMLDivElement>) => {
-    if (!compact.current || !(event.target instanceof Element)) return
+    if (!compact.current || pointerDown.current || !(event.target instanceof Element)) return
     const card = event.target.closest<HTMLElement>('[data-ribbon-index]')
     if (card && !card.classList.contains('project-tile--clone')) moveTo(Number(card.dataset.ribbonIndex))
   }

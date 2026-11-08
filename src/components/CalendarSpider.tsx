@@ -154,6 +154,7 @@ export default function CalendarSpider() {
     let headingError = 0
     let impactIndex = 0
     let frame = 0
+    let restTimer: ReturnType<typeof setTimeout> | undefined
     let visible = false
     let covered = false
     // Avoid computing this complex SVG more than 60 times/second on constrained
@@ -185,6 +186,7 @@ export default function CalendarSpider() {
       speed = patrol.speed
       overlay.setAttribute('viewBox', `0 -56 ${width} ${bounds.height + 112}`)
       frontClip?.setAttribute('width', String(width))
+      frontClip?.setAttribute('height', String(Math.max(0, bounds.height)))
       bottomClip?.setAttribute('width', String(width))
       bottomClip?.setAttribute('y', String(bounds.height))
       patrolRoute = makeRoute(patrol.points)
@@ -215,6 +217,10 @@ export default function CalendarSpider() {
     const tick = (now: number) => {
       frame = 0
       if (!visible || covered || motion.matches || document.hidden) return
+      if (restUntil > now) {
+        scheduleTick(now)
+        return
+      }
       if (frameInterval && now + .5 < nextPaint) { frame = requestAnimationFrame(tick); return }
       nextPaint = advanceFrameDeadline(now, nextPaint, frameInterval)
       // Show every first step after the section's own scroll entrance has finished.
@@ -225,7 +231,9 @@ export default function CalendarSpider() {
         frame = requestAnimationFrame(tick)
         return
       }
-      const dt = previousTime ? Math.min(50, now - previousTime) : 0
+      const waking = restUntil !== 0
+      const dt = previousTime && !waking ? Math.min(50, now - previousTime) : 0
+      if (waking && previousTime) elapsed += Math.max(0, restUntil - previousTime)
       previousTime = now
       elapsed += dt
       const panic = fleeing ? smooth((elapsed - fleeStarted) / 220) : 0
@@ -234,7 +242,7 @@ export default function CalendarSpider() {
       const targetCadence = entering || exiting ? (fleeing ? 9.6 : 3.4) : Math.min(fleeing ? 8.2 : 5.2, motionRate * 2.1)
       cadence += (targetCadence - cadence) * (1 - Math.exp(-dt / (fleeing ? 100 : 180)))
       stepClock += dt * cadence
-      if (restUntil && now >= restUntil) {
+      if (waking) {
         travelled = 0
         restUntil = 0
         fleeing = false
@@ -249,9 +257,8 @@ export default function CalendarSpider() {
         climbLandings.clear()
       }
       const walking = !restUntil
-      overlay.style.opacity = walking ? '1' : '0'
-      sprite.setAttribute('tabindex', walking && !fleeing ? '0' : '-1')
-      sprite.setAttribute('aria-hidden', walking ? 'false' : 'true')
+      if (overlay.style.opacity !== '1') overlay.style.opacity = '1'
+      if (sprite.getAttribute('aria-hidden') !== 'false') sprite.setAttribute('aria-hidden', 'false')
       const lifted = feet.filter(foot => foot.moving).length
       const footDebt = Math.max(0, ...feet.map((foot, index) => {
         const rest = spiderFeet[legs[index].row]
@@ -295,7 +302,6 @@ export default function CalendarSpider() {
       if (!feet.length) angle = desired
       else angle = turnTowards(angle, desired, dt / 1000 * turnRate * (footDebt > 32 ? (fleeing ? .82 : .7) : 1))
       headingError = Math.atan2(Math.sin(desired - angle), Math.cos(desired - angle))
-      const frontHeight = panelHeight
       const bottomExit = exiting && !fleeing
       let climbAge = 0
       const climbSupport = .72 + .28 * (1 - smooth((footDebt - 34) / 26))
@@ -326,9 +332,10 @@ export default function CalendarSpider() {
         }
       }
       position = { x, y }
-      frontClip?.setAttribute('height', String(Math.max(0, frontHeight)))
-      overlay.dataset.mode = restUntil ? 'hidden' : exiting ? 'exiting' : entering ? (climbAge < 500 ? 'climbing' : 'entering') : fleeing ? 'fleeing' : 'walking'
-      sprite.setAttribute('tabindex', walking && !restUntil && !fleeing && !exiting && (!entering || climbAge > 500) ? '0' : '-1')
+      const mode = restUntil ? 'hidden' : exiting ? 'exiting' : entering ? (climbAge < 500 ? 'climbing' : 'entering') : fleeing ? 'fleeing' : 'walking'
+      if (overlay.dataset.mode !== mode) overlay.dataset.mode = mode
+      const tabIndex = !restUntil && !fleeing && !exiting && (!entering || climbAge > 500) ? '0' : '-1'
+      if (sprite.getAttribute('tabindex') !== tabIndex) sprite.setAttribute('tabindex', tabIndex)
       const toWorld = (point: Point): Point => ({ x: x + (point.x * Math.cos(angle) - point.y * Math.sin(angle)) * scale, y: y + (point.x * Math.sin(angle) + point.y * Math.cos(angle)) * scale })
       const toLocal = (point: Point): Point => ({ x: ((point.x - x) * Math.cos(angle) + (point.y - y) * Math.sin(angle)) / scale, y: (-(point.x - x) * Math.sin(angle) + (point.y - y) * Math.cos(angle)) / scale })
       const folding = entering || exiting || fleeFromAbove
@@ -524,13 +531,26 @@ export default function CalendarSpider() {
         impacts[index].style.opacity = age >= 0 && age < 1 ? String((1 - age) * .65) : '0'
         impacts[index].setAttribute('transform', `translate(${foot.x} ${foot.y}) scale(${.35 + Math.min(1, Math.max(0, age)) * 1.5})`)
       })
-      frame = requestAnimationFrame(tick)
+      scheduleTick(now)
+    }
+    function scheduleTick(now: number) {
+      if (restUntil > now) {
+        // The sprite is fully out of view. Wake only when its existing rest ends.
+        restTimer = setTimeout(() => {
+          restTimer = undefined
+          frame = requestAnimationFrame(tick)
+        }, restUntil - now)
+      } else {
+        frame = requestAnimationFrame(tick)
+      }
     }
     const sync = () => {
       cancelAnimationFrame(frame)
+      clearTimeout(restTimer)
+      restTimer = undefined
       previousTime = 0
       nextPaint = 0
-      if (visible && !covered && !motion.matches && !document.hidden) frame = requestAnimationFrame(tick)
+      if (visible && !covered && !motion.matches && !document.hidden) scheduleTick(performance.now())
       else {
         animations.forEach(animation => animation.cancel())
         animations.clear()
@@ -584,6 +604,7 @@ export default function CalendarSpider() {
     return () => {
       scareRef.current = null
       cancelAnimationFrame(frame)
+      clearTimeout(restTimer)
       resizeTask.cancel()
       cellsTask.cancel()
       resize.disconnect()

@@ -54,7 +54,6 @@
 .ask-kicker .graphic-mark { width: 37px; height: 13px; margin-left: 5px; color: var(--ask-muted); }
 .ask-intro h1 { font-family: Impact, 'Arial Narrow', sans-serif; font-size: clamp(58px, 6.9vw, 102px); font-weight: 400; line-height: .98; letter-spacing: -.8px; }
 .ask-intro h1 > span { color: var(--ask-accent); }
-.ask-intro h1 .ask-period { display: inline; color: var(--ask-ink); }
 .ask-intro-copy { max-width: 340px; margin: 23px 0 27px; color: var(--ask-body); font-size: 12px; line-height: 1.85; text-wrap: pretty; }
 .ask-poster { position: relative; isolation: isolate; height: 248px; margin: 0; border: 1px solid var(--ask-line); overflow: hidden; background: var(--ask-panel); }
 .ask-poster::before { content: ''; position: absolute; inset: 0; z-index: -1; opacity: .23; background-image: linear-gradient(var(--ask-line) 1px, transparent 1px), linear-gradient(90deg, var(--ask-line) 1px, transparent 1px); background-size: 26px 26px; }

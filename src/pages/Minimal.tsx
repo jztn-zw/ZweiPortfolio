@@ -1,90 +1,115 @@
-import { ArrowRight, ArrowUpRight, BriefcaseBusiness, CodeXml, FileText, GraduationCap, Mail, MapPin, UserRound } from 'lucide-react'
-import { aboutMe, capabilities, journey, portfolio, projects } from '../data/portfolio'
+import { ArrowRight, ArrowUpRight, BriefcaseBusiness, ChevronRight, CodeXml, FolderOpen, GraduationCap, Mail, UserRound, type LucideIcon } from 'lucide-react'
+import { aboutMe, capabilities, journey, portfolio } from '../data/portfolio'
+import { projectCollections } from '../data/projectCollections'
+import { minimalProjectCollectionHref } from '../lib/routes'
 import MinimalLayout from '../components/MinimalLayout'
+import './MinimalResume.css'
+import './MinimalProjects.css'
+
+function ResumeHeading({ id, icon: Icon, children }: { id: string; icon: LucideIcon; children: string }) {
+  return <h2 className="min-card-title" id={id} tabIndex={-1}><Icon size={15} aria-hidden="true" />{children}</h2>
+}
 
 export default function Minimal() {
   const email = portfolio.contacts.find(contact => contact.id === 'email')?.url
   const github = portfolio.contacts.find(contact => contact.id === 'github')?.url
   const education = journey.entries.find(entry => entry.id === 'education')
   const experience = journey.entries.filter(entry => entry.id !== 'education')
-  const publishedProjects = projects.filter(project => project.detailsUrl || project.liveUrl)
 
-  return <MinimalLayout>
-        <section className="min-profile" aria-labelledby="minimal-title">
-          <img className="min-avatar" src="/images/jaztin-about-editorial.webp" width="112" height="112" alt="Jaztin wearing glasses, a cap, and a plaid cardigan" decoding="async" />
-          <div className="min-profile-copy">
-            <div className="min-profile-meta"><span className="min-kicker">A little about me</span><span className="min-availability"><i aria-hidden="true" />{portfolio.availability}</span></div>
-            <h1 id="minimal-title" tabIndex={-1}>{portfolio.name}</h1>
-            <p className="min-location"><MapPin size={13} />{portfolio.location}</p>
-            <p className="min-role">{portfolio.role}<span aria-hidden="true"> / </span><span>Curious by nature. Hands-on by choice.</span></p>
-            <div className="min-profile-actions">
-              {email && <a className="min-button min-button-primary" href={email}><Mail size={15} />Get in touch<ArrowUpRight size={14} /></a>}
-              <button className="min-button min-button-secondary" type="button" disabled><FileText size={15} />Resume<span className="min-soon">Soon</span></button>
-            </div>
+  return (
+    <MinimalLayout>
+      <div className="resume-sheet">
+        <header className="min-masthead">
+          <p className="min-kicker">{portfolio.role}</p>
+          <h1 id="minimal-title" tabIndex={-1}>{portfolio.name}</h1>
+          <div className="resume-meta">
+            <div className="resume-location"><span>{portfolio.location}</span><span className="resume-availability">{portfolio.availability}</span></div>
+            <nav className="resume-contact-links" aria-label="Contact">
+              {email && <a className="min-text-link" href={email}>Email<ArrowUpRight size={13} aria-hidden="true" /></a>}
+              {github && <a className="min-text-link" href={github} target="_blank" rel="noopener noreferrer">GitHub<ArrowUpRight size={13} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>}
+            </nav>
           </div>
-        </section>
+        </header>
 
-        <div className="min-layout">
+        <div className="min-card-grid">
           <div className="min-column">
-            <section className="min-panel" aria-labelledby="min-about-title">
-              <h2 id="min-about-title"><UserRound size={16} />About</h2>
-              <p>{aboutMe.introduction}</p>
-              <p>My focus is on <strong>{aboutMe.focus}</strong>. {aboutMe.exploration}</p>
-              <p>I learn best by building, trying things out, and figuring out the logic behind them.</p>
+            <section className="min-card resume-about" aria-labelledby="min-about-title">
+              <ResumeHeading id="min-about-title" icon={UserRound}>About</ResumeHeading>
+              <p className="resume-profile">I’m a fourth-year Computer Science student building web and mobile applications. My focus is on <strong>{aboutMe.focus}</strong>, and I learn best by trying things myself.</p>
               <blockquote>“{aboutMe.quote}”</blockquote>
             </section>
 
-            <section className="min-panel" aria-labelledby="min-stack-title">
-              <div className="min-section-heading"><h2 id="min-stack-title"><CodeXml size={16} />Tools I work with</h2><a className="min-text-link" href="/minimal/skills">Full stack<ArrowUpRight size={13} /></a></div>
-              <div className="min-stack-groups">{capabilities.map(group => <div className="min-stack-group" key={group.id}>
-                <h3>{group.title}</h3>
-                <ul className="min-tags" aria-label={group.title}>{group.technologies.map(technology => <li key={technology}>{technology}</li>)}</ul>
-              </div>)}</div>
+            <section className="min-card" aria-labelledby="min-stack-title">
+              <div className="min-card-heading">
+                <ResumeHeading id="min-stack-title" icon={CodeXml}>Skills</ResumeHeading>
+                <a className="min-text-link" href="/minimal/skills">Full stack<ArrowRight size={14} aria-hidden="true" /></a>
+              </div>
+              <dl className="resume-skill-list">
+                {capabilities.map(group => (
+                  <div key={group.id}>
+                    <dt>{group.title}</dt>
+                    <dd>
+                      <ul className="min-tags min-tags-outlined" aria-label={`${group.title} technologies`}>
+                        {group.technologies.map(technology => <li key={technology}>{technology}</li>)}
+                      </ul>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             </section>
 
-            <section className="min-panel min-projects" aria-labelledby="min-projects-title">
-              <div className="min-section-heading"><h2 id="min-projects-title"><BriefcaseBusiness size={16} />Selected work</h2><span className="min-small">{String(publishedProjects.length).padStart(2, '0')} / Published</span></div>
-              {publishedProjects.length ? publishedProjects.map(project => <article className="min-project" key={project.id}>
-                {project.artwork === 'greenway' && <a className="min-project-preview" href="/minimal/projects/greenway" aria-label={`Read about ${project.title}`}><img src="/images/greenway-showcase-poster.jpg" width="1920" height="1080" alt="GreenWay Candelaria application showing collection schedules, truck tracking, and resident reports" loading="lazy" decoding="async" /><span>Inside the project<ArrowUpRight size={16} /></span></a>}
-                <div className="min-project-title"><h3>{project.title}</h3>{project.status && <span className="min-project-status">{project.status}</span>}</div>
-                <p>{project.description}</p>
-                <ul className="min-tags" aria-label={`${project.title} technologies`}>{project.technologies.slice(0, 4).map(technology => <li key={technology}>{technology}</li>)}</ul>
-                <div className="min-project-links">
-                  {project.detailsUrl && <a className="min-text-link" href={project.artwork === 'greenway' ? '/minimal/projects/greenway' : project.detailsUrl}>View project<ArrowRight size={14} /></a>}
-                  {project.liveUrl && <a className="min-text-link" href={project.liveUrl} target="_blank" rel="noopener noreferrer">Live website<ArrowUpRight size={14} /><span className="sr-only"> (opens in a new tab)</span></a>}
-                </div>
-              </article>) : <p>New projects will appear here as they’re ready to share.</p>}
+            <section className="min-card resume-work" aria-labelledby="min-projects-title">
+              <div className="min-card-heading">
+                <ResumeHeading id="min-projects-title" icon={FolderOpen}>Projects</ResumeHeading>
+                <a className="min-text-link" href="/minimal/projects">View all<ArrowRight size={14} aria-hidden="true" /></a>
+              </div>
+              <div className="min-project-summaries">
+                {projectCollections.map(collection => (
+                  <a className="min-project-summary" key={collection.id} href={minimalProjectCollectionHref(collection.id)}>
+                    <h3>{collection.title}<ChevronRight className="min-collection-chevron" size={12} aria-hidden="true" /></h3>
+                    <p>{collection.description}</p>
+                  </a>
+                ))}
+              </div>
             </section>
+
           </div>
 
           <div className="min-column">
-            <section className="min-panel" aria-labelledby="min-experience-title">
-              <h2 id="min-experience-title"><BriefcaseBusiness size={16} />Experience</h2>
-              <ol className="min-timeline">{experience.map(entry => <li key={entry.id}>
-                <div className="min-entry-heading"><h3>{entry.title}</h3><span>{entry.date}</span></div>
-                <p className="min-entry-context">{entry.context}</p>
-                <p>{entry.description}</p>
-              </li>)}</ol>
+            <section className="min-card" aria-labelledby="min-experience-title">
+              <ResumeHeading id="min-experience-title" icon={BriefcaseBusiness}>Experience</ResumeHeading>
+              <ol className="resume-experience">
+                {experience.map(entry => (
+                  <li key={entry.id}>
+                    <span className="resume-date">{entry.date}</span>
+                    <div>
+                      <h3>{entry.title}</h3>
+                      <p className="resume-context">{entry.context}</p>
+                      <p>{entry.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
             </section>
 
-            {education && <section className="min-panel" aria-labelledby="min-education-title">
-              <h2 id="min-education-title"><GraduationCap size={17} />Education</h2>
-              <div className="min-education"><span className="min-small">Currently studying</span><h3>{education.title}</h3><p>{education.context}</p><p>{education.description}</p></div>
-            </section>}
+            {education && (
+              <section className="min-card resume-education" aria-labelledby="min-education-title">
+                <ResumeHeading id="min-education-title" icon={GraduationCap}>Education</ResumeHeading>
+                <p className="resume-date">Currently studying</p>
+                <h3>BS Computer Science</h3>
+                <p className="resume-context">{education.context}</p>
+                <p>{education.description}</p>
+              </section>
+            )}
 
-            <section id="minimal-contact" className="min-panel min-contact" aria-labelledby="min-contact-title">
-              <h2 id="min-contact-title"><Mail size={16} />Let’s connect</h2>
-              <p>Have a project in mind or an opportunity to share? I’d be happy to hear from you.</p>
-              {email && <a href={email} className="min-email">{email.replace(/^mailto:/, '')}<ArrowUpRight size={15} /></a>}
-              <div className="min-socials">
-                {github && <a className="min-text-link" href={github} target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="currentColor"><path d="M12 .3A12 12 0 0 0 8.2 23.7c.6.1.8-.3.8-.6v-2.3c-3.4.7-4.1-1.4-4.1-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.4-5.5-6A4.7 4.7 0 0 1 5.5 8c-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 3 .1 3.3a4.7 4.7 0 0 1 1.2 3.3c0 4.6-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.6c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z" /></svg>GitHub<ArrowUpRight size={12} /><span className="sr-only"> (opens in a new tab)</span></a>}
-                <span className="min-unavailable">LinkedIn<span className="min-soon">Soon</span></span>
-              </div>
-              <a className="min-ask-link" href="/ask-ai"><span>Want to know more about me?</span>Ask me anything<ArrowRight size={14} /></a>
+            <section className="min-card resume-contact" id="minimal-contact" aria-labelledby="min-contact-title">
+              <ResumeHeading id="min-contact-title" icon={Mail}>Let’s connect</ResumeHeading>
+              {email && <a className="min-text-link" href={email}>{email.replace(/^mailto:/, '')}<ArrowUpRight size={13} aria-hidden="true" /></a>}
+              <a className="min-text-link" href="/ask-ai">Ask me anything<ArrowRight size={14} aria-hidden="true" /></a>
             </section>
-
-            <aside className="min-offline" aria-label="Outside of work"><span className="min-kicker">Off the keyboard</span><p>Basketball, Mobile Legends, and a guitar nearby. Always curious about something new.</p></aside>
           </div>
         </div>
-  </MinimalLayout>
+      </div>
+    </MinimalLayout>
+  )
 }

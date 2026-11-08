@@ -77,7 +77,7 @@ export default function GreenWay() {
   const project = projects.find(project => project.artwork === 'greenway')
 
   if (!project) {
-    return <><SiteHeader isHome={false} /><main className="greenway-case page-width"><h1 id="greenway-title" tabIndex={-1}>Project unavailable.</h1><a className="page-back-button" href="/">Back to Home</a></main><Footer /></>
+    return <><SiteHeader isHome={false} /><main className="greenway-case page-width"><h1 id="greenway-title" tabIndex={-1}>Project unavailable.</h1><a className="page-back-button" href="/projects" data-project-back>Back to projects</a></main><Footer /></>
   }
 
   const additionalTools = project.technologies.filter(tech => !stackLayers.some(layer => layer.tools.some(tool => tool === tech)))
@@ -87,14 +87,14 @@ export default function GreenWay() {
     <SiteHeader isHome={false} />
     <main id="greenway-content" className="greenway-case page-width" tabIndex={-1}>
       <div className="greenway-case-breadcrumb">
-        <a className="page-back-button" href="/"><ArrowLeft size={16} aria-hidden="true" />Back to Home</a>
+        <a className="page-back-button" href="/projects" data-project-back><ArrowLeft size={16} aria-hidden="true" />Back to projects</a>
         <span className="eyebrow greenway-project-label">SELECTED WORK <span aria-hidden="true">/</span> GREENWAY</span>
       </div>
 
       <section className="greenway-case-hero" aria-labelledby="greenway-title">
         <div>
           <p className="eyebrow greenway-case-kicker"><span>PROJECT SPOTLIGHT</span><GraphicMark variant="weave" /></p>
-          <h1 id="greenway-title" tabIndex={-1}>{project.title}<span>.</span></h1>
+          <h1 id="greenway-title" tabIndex={-1}>{project.title}</h1>
           <p className="greenway-case-tagline">A cleaner routine.<br />A connected community.</p>
         </div>
         <div className="greenway-case-intro">
@@ -113,7 +113,7 @@ export default function GreenWay() {
       <div className="greenway-case-brief">
         <ShowcaseFilm />
         <section className="greenway-case-overview" aria-labelledby="greenway-overview-title">
-          <div><p className="eyebrow greenway-case-kicker"><span className="greenway-section-index">01 /</span> THE IDEA</p><h2 id="greenway-overview-title">LESS GUESSWORK.<br />MORE CONNECTION<span>.</span></h2></div>
+          <div><p className="eyebrow greenway-case-kicker"><span className="greenway-section-index">01 /</span> THE IDEA</p><h2 id="greenway-overview-title">LESS GUESSWORK<br />MORE CONNECTION</h2></div>
           <div className="greenway-case-prose"><p className="greenway-case-lead">The right information.<br />Right when it matters.</p><p>Residents shouldn’t have to guess when collection happens or where to raise a concern. GreenWay brings the collection routine into one connected web and mobile platform.</p><p>Built for Candelaria, Quezon, it connects everyday resident needs with schedules, collection updates, and the Municipal Environment and Natural Resources Office.</p></div>
         </section>
       </div>
@@ -121,7 +121,7 @@ export default function GreenWay() {
       <section className="greenway-case-features" aria-labelledby="greenway-features-title">
         <div>
           <p className="eyebrow greenway-case-kicker"><span className="greenway-section-index">02 /</span> THE EXPERIENCE</p>
-          <h2 id="greenway-features-title">BUILT AROUND<br />THE EVERYDAY<span>.</span></h2>
+          <h2 id="greenway-features-title">BUILT AROUND<br />THE EVERYDAY</h2>
           <ol className="greenway-case-feature-list">
             {features.map(({ title, icon: Icon, description }, index) => <li key={title} data-hover-surface="feature"><SurfaceSignal kind="feature" /><Icon size={21} strokeWidth={1.4} aria-hidden="true" /><div><h3>{title}</h3><p>{description}</p></div><span className="greenway-case-feature-index eyebrow" aria-hidden="true">0{index + 1}</span></li>)}
           </ol>
@@ -142,21 +142,21 @@ export default function GreenWay() {
       </section>
 
       <section className="greenway-case-stack" aria-labelledby="greenway-stack-title">
-        <div className="greenway-stack-heading"><div><p className="eyebrow greenway-case-kicker"><span className="greenway-section-index">03 /</span> UNDER THE HOOD</p><h2 id="greenway-stack-title">THE TOOLS.<br />THE CONNECTIONS<span>.</span></h2></div><p>From the resident interface to the services behind it, a shared stack connects web, mobile, maps, and media.</p></div>
+        <div className="greenway-stack-heading"><div><p className="eyebrow greenway-case-kicker"><span className="greenway-section-index">03 /</span> UNDER THE HOOD</p><h2 id="greenway-stack-title">THE TOOLS<br />THE CONNECTIONS</h2></div><p>From the resident interface to the services behind it, a shared stack connects web, mobile, maps, and media.</p></div>
         <div className="greenway-stack-board" aria-label="GreenWay technology stack">
           <div className="greenway-stack-board-top eyebrow"><span>THE BUILD / SYSTEM STACK</span><span>{String(project.technologies.length).padStart(2, '0')} TECHNOLOGIES<GraphicMark variant="weave" /></span></div>
           {stackLayers.map(layer => {
             const tools = project.technologies.filter(tech => layer.tools.some(tool => tool === tech))
             if (!tools.length) return null
-            return <section className="greenway-stack-layer" key={layer.id} aria-labelledby={`greenway-stack-${layer.id}`}><div className="greenway-stack-layer-label"><GraphicMark variant={layer.mark} /><h3 id={`greenway-stack-${layer.id}`}>{layer.title}</h3></div><ul aria-label={`${layer.title} technologies`}>{tools.map(tech => <li key={tech}>{tech}</li>)}</ul><GreenWayStackSignal kind={layer.id} /></section>
+            return <section className="greenway-stack-layer" key={layer.id} aria-labelledby={`greenway-stack-${layer.id}`}><div className="greenway-stack-layer-label"><GraphicMark variant={layer.mark} /><h3 id={`greenway-stack-${layer.id}`}>{layer.title}</h3></div><ul aria-label={`${layer.title} technologies`}>{tools.map(tech => <li key={tech}>{tech}</li>)}</ul><GreenWayStackSignal kind={layer.signal} /></section>
           })}
           {additionalTools.length > 0 && <section className="greenway-stack-layer" aria-labelledby="greenway-stack-additional"><div className="greenway-stack-layer-label"><GraphicMark variant="chevrons" /><h3 id="greenway-stack-additional">Additional tools</h3></div><ul aria-label="Additional technologies">{additionalTools.map(tech => <li key={tech}>{tech}</li>)}</ul><GreenWayStackSignal kind="additional" /></section>}
         </div>
       </section>
 
       <section className="greenway-case-next" aria-labelledby="greenway-next-title">
-        <div><p className="eyebrow greenway-case-kicker">TAKE A CLOSER LOOK <GraphicMark variant="weave" /></p><h2 id="greenway-next-title">MEET GREENWAY<span>.</span></h2><p>Explore the web experience for yourself.</p></div>
-        <div>{project.liveUrl && <a className="greenway-case-live" href={project.liveUrl} target="_blank" rel="noopener noreferrer">Visit live site <ArrowUpRight size={18} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>}<a className="page-back-button" href="/"><ArrowLeft size={16} aria-hidden="true" />Back to Home</a></div>
+        <div><p className="eyebrow greenway-case-kicker">TAKE A CLOSER LOOK <GraphicMark variant="weave" /></p><h2 id="greenway-next-title">MEET GREENWAY</h2><p>Explore the web experience for yourself.</p></div>
+        <div>{project.liveUrl && <a className="greenway-case-live" href={project.liveUrl} target="_blank" rel="noopener noreferrer">Visit live site <ArrowUpRight size={18} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>}<a className="page-back-button" href="/projects" data-project-back><ArrowLeft size={16} aria-hidden="true" />Back to projects</a></div>
       </section>
     </main>
     <Footer topHref="/projects/greenway" />

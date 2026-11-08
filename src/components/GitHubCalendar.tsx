@@ -67,7 +67,7 @@ export default function GitHubCalendar() {
   return (
     <section className="github-calendar" aria-labelledby="github-calendar-title">
       <div className="github-calendar-header">
-        <div><p className="eyebrow"><span className="red">GITHUB / ACTIVITY</span><GraphicMark variant="modules" /></p><h2 id="github-calendar-title">CODE, DAY BY DAY<span className="red">.</span></h2></div>
+<div><p className="eyebrow"><span className="red">GITHUB / ACTIVITY</span><GraphicMark variant="modules" /></p><h2 id="github-calendar-title">CODE, DAY BY DAY</h2></div>
         <a href="https://github.com/jztn-zw" target="_blank" rel="noreferrer"><CodeXml size={17} aria-hidden="true" /><span>@jztn-zw</span><ArrowUpRight size={15} aria-hidden="true" /></a>
       </div>
       <div className="github-calendar-panel" aria-busy={!calendar && !failed} data-calendar-inspecting={selected !== null}>

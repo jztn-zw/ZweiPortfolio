@@ -41,6 +41,17 @@ export default function ProjectCard({ project, view, onSelect, ribbonIndex, inst
         <div className="project-tile-copy">
           <p className="tile-category eyebrow">{project.category}</p>
           <h3 id={titleId}>{project.title}</h3>
+          {view === 'cards' && project.artwork === 'greenway' && (
+            <img
+              className="catalog-project-preview"
+              src="/images/greenway-showcase-poster.jpg"
+              alt="GreenWay mobile app showing collection schedules, truck tracking, and resident reports"
+              width="1920"
+              height="1080"
+              loading="lazy"
+              decoding="async"
+            />
+          )}
           <div className="tile-details">
             <p className="tile-description">{project.description}</p>
             <div className="tile-technologies">
@@ -62,11 +73,18 @@ export default function ProjectCard({ project, view, onSelect, ribbonIndex, inst
             </div>
           </div>
           <div className="project-tile-bottom">
-            <span className="eyebrow tile-status">{project.status ?? 'PLACEHOLDER'}</span>
+            {project.status && <span className="eyebrow tile-status">{project.status}</span>}
             {project.detailsUrl ? (
-              <a href={project.detailsUrl} tabIndex={actionTabIndex} aria-label={`View ${project.title} project details`}>
-                View Project <ArrowUpRight size={16} />
-              </a>
+              <div className="tile-project-links">
+                {view === 'cards' && project.liveUrl && (
+                  <a className="tile-project-secondary" href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                    Live site <ArrowUpRight size={14} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                )}
+                <a className="tile-project-primary" href={project.detailsUrl} tabIndex={actionTabIndex} aria-label={`View ${project.title} project details`}>
+                  View Project <ArrowUpRight size={16} aria-hidden="true" />
+                </a>
+              </div>
             ) : project.liveUrl ? (
               <a href={project.liveUrl} tabIndex={actionTabIndex} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.title} live website (opens in a new tab)`}>
                 View Project <ArrowUpRight size={16} />

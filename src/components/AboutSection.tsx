@@ -50,7 +50,7 @@ export default function AboutSection() {
       <div className="page-width about-me-inner">
         <div className="about-me-heading">
           <SectionHeading number="04" label="ABOUT ME">
-            <span id="about-me-title">BEYOND THE CODE<span className="red">.</span></span>
+<span id="about-me-title">BEYOND THE CODE</span>
           </SectionHeading>
           <span className="about-me-who eyebrow">WHO I AM <GraphicMark variant="globe" /></span>
         </div>
