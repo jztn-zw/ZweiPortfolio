@@ -8,6 +8,7 @@
 .min-stack-intro > p, .min-stack-cards section > p { max-width: 65ch; color: var(--min-body); font-size: 13px; line-height: 1.75; text-wrap: pretty; }
 .min-stack-intro > p { margin: 14px 0 0; }
 .min-stack-summary { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 12px; color: var(--min-muted); font-family: var(--font-mono); font-size: 10px; }
+.min-card-grid.min-stack-cards { grid-template-columns: minmax(0, 1fr); }
 .min-stack-cards section > p { margin: 0; }
 .min-stack-cards .min-tags { margin-top: 12px; }
 .min-stack-cards .min-tags li { display: inline-flex; align-items: center; gap: 6px; }

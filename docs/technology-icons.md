@@ -31,3 +31,17 @@ GreenWay stack additions use Simple Icons and the Devicon plain Zustand mark. Zu
 - cloudinary: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/cloudinary.svg
 - vercel: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/vercel.svg
 - render: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/render.svg
+
+VYORA additions use Simple Icons. Electron Forge shares the Electron brand mark; GitHub Releases uses the GitHub mark.
+
+- electron: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/electron.svg
+- sqlite: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/sqlite.svg
+- cloudflareworkers: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/cloudflareworkers.svg
+- nsis: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/nsis.svg
+- github: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg
+
+Minimal View's social connections use the same monochrome sprite and Simple Icons CC0 assets.
+
+- facebook: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/facebook.svg
+- instagram: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/instagram.svg
+- tiktok: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/tiktok.svg

@@ -358,7 +358,8 @@ async function animateNavigation(commit: () => void) {
   title.textContent = destinationTitle()
   const run: NavigationRun = { curtain, panels, artwork, portrait, caption, title, cards, animations: [], phase: 'cover', commit }
   active = run
-  document.documentElement.dataset.pageTransition = 'active'
+  const { dataset } = document.documentElement
+  dataset.pageTransition = 'active'
   const lightweight = lightweightTransition()
   // The budget skips covered-page rasterization, never the cut-in's illustrations.
   curtain.dataset.quality = lightweight ? 'lite' : 'full'
@@ -395,20 +396,29 @@ async function animateNavigation(commit: () => void) {
     ], { duration: compact ? 360 : 440, delay: 110 + index * 45, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' }))
     const arrival = [...cover, boardArrival, portraitArrival, captionArrival, ...cardArrival]
     run.animations.push(...arrival)
+    // Stop painting the outgoing page once all three opaque panels cover it.
+    void Promise.all(cover.map(animation => animation.finished)).then(() => {
+      if (active === run && run.phase === 'cover') dataset.pageTransition = 'covered'
+    }, () => { /* A newer navigation owns the curtain. */ })
     await Promise.all(arrival.map(animation => animation.finished))
     if (active !== run) return
     // Once this route is committed, a new request needs a fresh cover, even
     // during the frames we wait for before starting the reveal animation.
     run.phase = 'reveal'
+    dataset.pageTransition = 'active'
     const showDestination = run.commit
     run.commit = undefined
+    const mountStarted = performance.now()
     showDestination?.()
 
     // Let the new route mount and complete its normal focus/scroll handling.
-    await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+    const revealFrame = await new Promise<number>(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
     if (active !== run) return
-    const content = document.querySelector('main')
-    if (content && !lightweight) run.animations.push(content.animate([
+    // A slow handoff can happen on any device. Give the illustrated shutter
+    // the frame budget when the destination has already missed several frames.
+    const smoothHandoff = !lightweight && revealFrame - mountStarted < 50
+    const content = smoothHandoff ? document.querySelector('main') : null
+    if (content) run.animations.push(content.animate([
       { opacity: .45, transform: 'translateY(18px) scale(.992)', transformOrigin: '50% 0' },
       { opacity: 1, transform: 'translateY(0) scale(1)', transformOrigin: '50% 0' },
     ], { duration: revealDuration + stagger * 2, easing: 'cubic-bezier(.16,1,.3,1)' }))
@@ -449,14 +459,14 @@ async function animateNavigation(commit: () => void) {
 
 export function subscribeToNavigation(onChange: () => void) {
   const minimalStart = isMinimalPage(navigationPage(browserRoute()))
-  if (!minimalStart && !preloadedArtwork && typeof window.Image === 'function') {
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
+  if (!minimalStart && !motion.matches && !preloadedArtwork && typeof window.Image === 'function') {
     preloadedArtwork = new window.Image()
     preloadedArtwork.decoding = 'async'
     preloadedArtwork.fetchPriority = 'low'
     preloadedArtwork.src = artworkUrl
     void preloadedArtwork.decode().catch(() => { /* The geometric curtain still works if the artwork cannot load. */ })
   }
-  const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
   // Prepare one small off-DOM stage per idle callback, including on slower devices.
   // A busy browser may defer this work; a click can safely finish the same builder.
   let preparation: number | undefined
@@ -523,6 +533,11 @@ export function subscribeToNavigation(onChange: () => void) {
     event.preventDefault()
     const current = browserRoute()
     const backSteps = window.history.state?.portfolioProjectBackSteps
+    const minimalBackSteps = window.history.state?.portfolioMinimalBackSteps
+    if (link.hasAttribute('data-minimal-back') && current === displayedRoute && Number.isSafeInteger(minimalBackSteps) && minimalBackSteps > 0) {
+      window.history.go(-minimalBackSteps)
+      return
+    }
     if (link.hasAttribute('data-project-back') && current === displayedRoute && Number.isSafeInteger(backSteps) && backSteps > 0) {
       window.history.go(-backSteps)
       return
@@ -533,7 +548,7 @@ export function subscribeToNavigation(onChange: () => void) {
       return
     }
     const nextPage = navigationPage(next)
-    let historyState = null
+    let historyState: { portfolioProjectBackSteps?: number; portfolioMinimalBackSteps?: number } | null = null
     if (current === displayedRoute && (nextPage === 'greenway' || nextPage === 'minimalGreenway' || nextPage === 'minimalVyora')) {
       if (navigationPage(current) === nextPage) {
         // Skip project anchors on the way back to the page that opened the project.
@@ -541,6 +556,15 @@ export function subscribeToNavigation(onChange: () => void) {
       } else {
         window.history.replaceState({ ...window.history.state, portfolioProjectScroll: window.scrollY }, '')
         historyState = { portfolioProjectBackSteps: 1 }
+      }
+    }
+    if (current === displayedRoute && isMinimalPage(nextPage)) {
+      if (navigationPage(current) === nextPage) {
+        // Filters and section anchors belong to this page, not another Back destination.
+        if (Number.isSafeInteger(minimalBackSteps) && minimalBackSteps > 0) historyState = { ...historyState, portfolioMinimalBackSteps: minimalBackSteps + 1 }
+      } else {
+        window.history.replaceState({ ...window.history.state, portfolioProjectScroll: window.scrollY }, '')
+        historyState = { ...historyState, portfolioMinimalBackSteps: 1 }
       }
     }
     window.history.pushState(historyState, '', next)

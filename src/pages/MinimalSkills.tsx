@@ -4,7 +4,7 @@ import { capabilities, portfolio } from '../data/portfolio'
 import './MinimalDetails.css'
 
 const icons = { web: CodeXml, fullstack: Database, automation: Workflow }
-const technologyIconIds: Record<string, string> = {
+const technologyIconIds: Record<(typeof capabilities)[number]['technologies'][number], string> = {
   React: 'react',
   'Next.js': 'nextjs',
   TypeScript: 'typescript',
@@ -19,10 +19,16 @@ const technologyIconIds: Record<string, string> = {
   'React Native': 'react',
   Expo: 'expo',
   WordPress: 'wordpress',
+  Electron: 'electron',
+  'Electron Forge': 'electron',
+  NSIS: 'nsis',
+  'GitHub Releases': 'github',
   'Node.js': 'node',
   Express: 'express',
   MySQL: 'mysql',
   TiDB: 'tidb',
+  SQLite: 'sqlite',
+  'Cloudflare Workers': 'cloudflareworkers',
   'Socket.IO': 'socketio',
   Cloudinary: 'cloudinary',
   Vercel: 'vercel',
@@ -42,8 +48,8 @@ export default function MinimalSkills() {
   const email = portfolio.contacts.find(contact => contact.id === 'email')?.url
   return <MinimalLayout contentId="minimalSkills-content" fullHref="/skills">
     <header className="min-masthead min-stack-intro">
-      <h1 id="minimalSkills-title" tabIndex={-1}>Full stack</h1>
-      <p>The tools I use to build web and mobile applications, connect systems, and automate workflows.</p>
+      <h1 id="minimalSkills-title" tabIndex={-1}>Tech stack</h1>
+      <p>The tools I use to build web, mobile, and desktop applications, connect systems, and automate workflows.</p>
       <div className="min-stack-summary"><span>{tools.size} tools &amp; technologies</span><span>{capabilities.length} areas of focus</span></div>
     </header>
 

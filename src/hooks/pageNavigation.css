@@ -7,6 +7,7 @@
   overflow: clip;
   contain: paint;
 }
+:root[data-page-transition='covered'] #root main { opacity: 0; }
 /* Keep the outgoing/incoming page's decorative CSS animations idle while covered. */
 :root[data-page-transition] #root main *,
 :root[data-page-transition] #root main *::before,

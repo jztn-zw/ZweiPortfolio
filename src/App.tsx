@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useSyncExternalStore } from 'react'
+import { lazy, Suspense, useDeferredValue, useEffect, useSyncExternalStore } from 'react'
 import PageLoading, { PageLoadBoundary } from './components/PageLoading'
 import { loadPage, preloadRoutePage, preloadLinkPage } from './lib/pageModules'
 import { portfolio } from './data/portfolio'
@@ -77,7 +77,11 @@ function RenderedPage({ page, route }: { page: Page; route: string }) {
 }
 
 export default function App() {
-  const route = useSyncExternalStore(subscribeToNavigation, getNavigationLocation, () => '/')
+  const requestedRoute = useSyncExternalStore(subscribeToNavigation, getNavigationLocation, () => '/')
+  const deferredRoute = useDeferredValue(requestedRoute)
+  // Keep the current Minimal page painted while the next page's code and CSS load.
+  // Full Experience keeps its existing covered handoff and animation timing.
+  const route = isMinimalPage(navigationPage(requestedRoute)) && isMinimalPage(navigationPage(deferredRoute)) ? deferredRoute : requestedRoute
   const page = navigationPage(route)
 
   useEffect(() => {
@@ -103,5 +107,5 @@ export default function App() {
     }
   }, [])
 
-  return <PageLoadBoundary key={page} minimal={isMinimalPage(page)}><Suspense fallback={<PageLoading minimal={isMinimalPage(page)} />}><RenderedPage page={page} route={route} /></Suspense></PageLoadBoundary>
+  return <PageLoadBoundary key={isMinimalPage(page) ? 'minimal' : page} minimal={isMinimalPage(page)}><Suspense fallback={<PageLoading minimal={isMinimalPage(page)} />}><RenderedPage key={page} page={page} route={route} /></Suspense></PageLoadBoundary>
 }

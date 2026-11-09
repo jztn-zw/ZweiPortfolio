@@ -1,0 +1,49 @@
+html:has(.min-chat-overlay) { overflow: hidden; }
+.min-chat-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  min-height: 0;
+  background: transparent;
+  font-family: Consolas, 'Courier New', monospace;
+  --ask-ink: var(--min-text);
+  --ask-body: var(--min-text);
+  --ask-muted: var(--min-muted);
+  --ask-line: transparent;
+  --ask-panel: transparent;
+  --ask-inset: transparent;
+  --ask-accent: var(--min-text);
+  --ask-soft: transparent;
+}
+.min-chat-backdrop { position: absolute; inset: 0; border: 0; padding: 0; background: color-mix(in srgb, var(--theme-canvas, #111) 68%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); cursor: default; }
+.min-chat-conversation { position: relative; display: flex; flex-direction: column; align-self: flex-start; width: min(100%, 560px); min-height: 0; max-height: calc(100dvh - 48px); margin-block: auto; padding-inline: clamp(24px, 7vw, 96px) clamp(18px, 3vw, 40px); }
+.min-chat-conversation:focus { outline: none; }
+.min-chat-status { margin: 0; color: var(--min-text); font-size: 13px; }
+.min-chat-status a { text-decoration: underline; }
+.min-chat-overlay .ask-console { display: flex; flex-direction: column; min-height: 0; border: 0; background: transparent; }
+.min-chat-overlay .ask-console::before, .min-chat-overlay .ask-console::after { display: none; }
+.min-chat-overlay .ask-feed { flex: 0 1 auto; height: auto; min-height: 0; max-height: calc(100dvh - 140px); scrollbar-width: thin; scrollbar-color: var(--min-muted) transparent; }
+.min-chat-overlay .ask-feed::-webkit-scrollbar { width: 4px; }
+.min-chat-overlay .ask-feed::-webkit-scrollbar-track { border: 0; background: transparent; }
+.min-chat-overlay .ask-feed::-webkit-scrollbar-thumb { border: 0; border-radius: 0; background: var(--min-muted); }
+.min-chat-overlay .ask-exchanges { gap: 20px; padding: 0 8px 24px 0; }
+.min-chat-overlay .ask-exchange { gap: 14px; animation: none; }
+.min-chat-overlay .ask-message { justify-self: stretch; max-width: 100%; padding: 0; border: 0; background: transparent; color: var(--min-text); font-size: 13px; }
+.min-chat-overlay .ask-message p { margin: 0; }
+.min-chat-overlay .ask-message--guide::before, .min-chat-overlay .ask-response-cursor { display: none; }
+.min-chat-overlay .ask-thinking { margin: 0; color: var(--min-muted); font: inherit; }
+.min-chat-overlay .ask-chat-error { margin-top: 6px; padding: 0; border: 0; background: transparent; font: inherit; }
+.min-chat-overlay .ask-chat-error button, .min-chat-overlay .ask-answer-links a { padding: 0; border: 0; font: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.min-chat-overlay .ask-answer-links { gap: 6px 16px; margin-top: 8px; animation: none; }
+.min-chat-overlay .ask-composer { flex: none; padding: 0; }
+.min-chat-overlay .ask-input-frame { display: flex; align-items: baseline; gap: 8px; padding: 0; border: 0; background: transparent; }
+.min-chat-overlay .ask-input-frame:focus-within { box-shadow: none; }
+.min-terminal-cursor { animation: min-terminal-blink 1s step-end infinite; }
+@keyframes min-terminal-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .min-terminal-cursor { animation: none; } }
+.min-chat-overlay .ask-input-frame textarea { flex: 1; min-height: 29px; max-height: 100px; padding: 0; font-family: inherit; font-size: 16px; line-height: 1.8; }
+.min-chat-overlay .ask-send { width: auto; height: auto; padding: 0; border: 0; background: transparent; color: var(--min-text); font-family: inherit; font-size: 13px; }
+.min-chat-overlay .ask-send:active { transform: none; }
+@media (hover: hover) {
+  .min-chat-overlay .ask-send:not(:disabled):hover { background: transparent; color: var(--min-text); text-decoration: underline; text-underline-offset: 3px; }
+}

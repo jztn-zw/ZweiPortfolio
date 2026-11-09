@@ -157,6 +157,7 @@ export default function CalendarSpider() {
     let restTimer: ReturnType<typeof setTimeout> | undefined
     let visible = false
     let covered = false
+    let wasFolding: boolean | undefined
     // Avoid computing this complex SVG more than 60 times/second on constrained
     // devices with high-refresh displays. The pose, gait and elapsed time stay intact.
     const frameInterval = document.documentElement.dataset.effects === 'lite' ? 1000 / 60 : 0
@@ -196,15 +197,20 @@ export default function CalendarSpider() {
     }
     const pulse = (x: number, y: number) => {
       if (y < 0 || y > panelHeight) return
-      const radius = scale * 72
-      const nearby = cells.map(cell => ({ ...cell, distance: Math.hypot(cell.x - x, cell.y - y) }))
-        .filter(cell => cell.distance < radius && !cell.element.classList.contains('is-selected'))
-        .sort((a, b) => a.distance - b.distance).slice(0, 5)
+      const radiusSquared = (scale * 72) ** 2
+      const nearby: { element: SVGRectElement; distanceSquared: number }[] = []
+      for (const cell of cells) {
+        const distanceSquared = (cell.x - x) ** 2 + (cell.y - y) ** 2
+        if (distanceSquared < radiusSquared && !cell.element.classList.contains('is-selected')) {
+          nearby.push({ element: cell.element, distanceSquared })
+        }
+      }
+      nearby.sort((a, b) => a.distanceSquared - b.distanceSquared)
       // Contacts on the lip must not resemble square openings in the card.
       if (!nearby.length) return
       const index = impactIndex++ % impacts.length
       footprints[index] = { x, y, born: elapsed }
-      nearby.forEach((cell, rank) => {
+      nearby.slice(0, 5).forEach((cell, rank) => {
           const animation = cell.element.animate([
             { fill: 'var(--day-color)', transform: 'translateY(0) scale(1)', filter: 'drop-shadow(0 0 0 transparent)' },
             { fill: 'var(--numbers-accent)', transform: `translateY(${rank === 0 ? -2 : -1}px) scale(${rank === 0 ? 1.13 : 1.04})`, filter: 'drop-shadow(0 0 3px var(--numbers-accent))', offset: .22 },
@@ -260,10 +266,11 @@ export default function CalendarSpider() {
       if (overlay.style.opacity !== '1') overlay.style.opacity = '1'
       if (sprite.getAttribute('aria-hidden') !== 'false') sprite.setAttribute('aria-hidden', 'false')
       const lifted = feet.filter(foot => foot.moving).length
+      const previousSin = Math.sin(angle), previousCos = Math.cos(angle)
       const footDebt = Math.max(0, ...feet.map((foot, index) => {
         const rest = spiderFeet[legs[index].row]
         const local = { x: rest.x * legs[index].side, y: rest.y }
-        const goal = { x: position.x + (local.x * Math.cos(angle) - local.y * Math.sin(angle)) * scale, y: position.y + (local.x * Math.sin(angle) + local.y * Math.cos(angle)) * scale }
+        const goal = { x: position.x + (local.x * previousCos - local.y * previousSin) * scale, y: position.y + (local.x * previousSin + local.y * previousCos) * scale }
         return Math.hypot(foot.position.x - goal.x, foot.position.y - goal.y) / scale
       }))
       // Ease almost to a stop while steering, so the body turns before advancing.
@@ -336,9 +343,12 @@ export default function CalendarSpider() {
       if (overlay.dataset.mode !== mode) overlay.dataset.mode = mode
       const tabIndex = !restUntil && !fleeing && !exiting && (!entering || climbAge > 500) ? '0' : '-1'
       if (sprite.getAttribute('tabindex') !== tabIndex) sprite.setAttribute('tabindex', tabIndex)
-      const toWorld = (point: Point): Point => ({ x: x + (point.x * Math.cos(angle) - point.y * Math.sin(angle)) * scale, y: y + (point.x * Math.sin(angle) + point.y * Math.cos(angle)) * scale })
-      const toLocal = (point: Point): Point => ({ x: ((point.x - x) * Math.cos(angle) + (point.y - y) * Math.sin(angle)) / scale, y: (-(point.x - x) * Math.sin(angle) + (point.y - y) * Math.cos(angle)) / scale })
+      const sin = Math.sin(angle), cos = Math.cos(angle)
+      const toWorld = (point: Point): Point => ({ x: x + (point.x * cos - point.y * sin) * scale, y: y + (point.x * sin + point.y * cos) * scale })
+      const toLocal = (point: Point): Point => ({ x: ((point.x - x) * cos + (point.y - y) * sin) / scale, y: (-(point.x - x) * sin + (point.y - y) * cos) / scale })
       const folding = entering || exiting || fleeFromAbove
+      const updateFoldGeometry = folding || folding !== wasFolding
+      wasFolding = folding
       const visibleFaces = (points: SurfaceVertex[]) => visibleSurfaceFaces(points, bottomExit, panelHeight)
       const wrap = (point: Point, height = 0) => {
         if (!folding) return { x: point.x + height * scale * .12, y: point.y - height * scale * .35, z: lipRadius + height * scale }
@@ -347,45 +357,48 @@ export default function CalendarSpider() {
         const frontTilt = smooth((edgePoint.y + halfTurn) / halfTurn) * height * scale
         return { x: projected.x + .12 * frontTilt, y: (bottomExit ? panelHeight - projected.y : projected.y) - .35 * frontTilt, z: projected.z }
       }
-      const surfacePolygon = (points: Point[], height: (point: Point) => number = () => 0) => folding ? visibleFaces(points.map(point => ({ ...wrap(toWorld(point), height(point)), u: point.x, v: point.y }))).map(face => polygonPath(face.map(toLocal))).join(' ') : polygonPath(points)
-      hitTarget?.setAttribute('d', surfacePolygon([{ x: -82, y: -120 }, { x: 82, y: -120 }, { x: 97, y: -102 }, { x: 97, y: 86 }, { x: 78, y: 98 }, { x: -78, y: 98 }, { x: -97, y: 80 }, { x: -97, y: -102 }]))
       // Rounding either lip turns the shell through a raised side profile.
       const edgeDistance = bottomExit ? panelHeight - y : y
       const s = edgeDistance + halfTurn
       const turning = folding && s >= -halfTurn && s <= halfTurn
       const depth = folding ? s < -halfTurn ? -1 : s > halfTurn ? 1 : Math.sin(s / lipRadius) : 1
       const depthSlope = turning ? Math.cos(s / lipRadius) * (bottomExit ? -1 : 1) : 0
-      const sin = Math.sin(angle), cos = Math.cos(angle)
       const shellCenter = wrap({ x, y }, 3)
       const shellOffset = toLocal(shellCenter)
       const shellMatrix = { a: cos * cos + depth * sin * sin, b: (depth - 1) * sin * cos, d: sin * sin + depth * cos * cos }
       shellSurface?.setAttribute('transform', `matrix(${shellMatrix.a} ${shellMatrix.b} ${shellMatrix.b} ${shellMatrix.d} ${shellOffset.x} ${shellOffset.y})`)
-      const shellVertex = (point: Point, height = 3): SurfaceVertex => {
-        const raw = toWorld(point)
-        const center = wrap({ x, y }, height)
-        return { x: raw.x, y: center.y + (raw.y - y) * depth, z: center.z + (raw.y - y) * depthSlope, u: point.x, v: point.y }
+      // These paths are static on the flat face of the calendar.
+      if (updateFoldGeometry) {
+        const hitBounds = [{ x: -82, y: -120 }, { x: 82, y: -120 }, { x: 97, y: -102 }, { x: 97, y: 86 }, { x: 78, y: 98 }, { x: -78, y: 98 }, { x: -97, y: 80 }, { x: -97, y: -102 }]
+        hitTarget?.setAttribute('d', folding ? visibleFaces(hitBounds.map(point => ({ ...wrap(toWorld(point)), u: point.x, v: point.y }))).map(face => polygonPath(face.map(toLocal))).join(' ') : polygonPath(hitBounds))
+        const shellVertex = (point: Point, height = 3): SurfaceVertex => {
+          const raw = toWorld(point)
+          const center = wrap({ x, y }, height)
+          return { x: raw.x, y: center.y + (raw.y - y) * depth, z: center.z + (raw.y - y) * depthSlope, u: point.x, v: point.y }
+        }
+        const outline = [{ x: 0, y: -39 }, { x: 17, y: -26 }, { x: 14, y: -10 }, { x: 22, y: 7 }, { x: 13, y: 29 }, { x: 0, y: 40 }, { x: -13, y: 29 }, { x: -22, y: 7 }, { x: -14, y: -10 }, { x: -17, y: -26 }]
+        shellSide?.setAttribute('d', folding ? outline.map((point, index) => {
+          const nextPoint = outline[(index + 1) % outline.length]
+          return visibleFaces([shellVertex(point, 3), shellVertex(nextPoint, 3), shellVertex(nextPoint, -9), shellVertex(point, -9)]).map(face => polygonPath(face.map(toLocal))).join(' ')
+        }).join(' ') : '')
+        const facets = [
+          [[0, -39, 3], [-17, -26, 3], [-10, -12, 12], [0, -10, 22], [0, -34, 12]],
+          [[0, -39, 3], [17, -26, 3], [10, -12, 12], [0, -10, 22], [0, -34, 12]],
+          [[-14, -10, 3], [-22, 7, 3], [-13, 29, 3], [0, 31, 16], [0, -6, 22]],
+          [[14, -10, 3], [22, 7, 3], [13, 29, 3], [0, 31, 16], [0, -6, 22]],
+          [[-13, 29, 3], [0, 40, 3], [0, 31, 16]],
+          [[13, 29, 3], [0, 40, 3], [0, 31, 16]],
+          [[-8, -27, 15], [8, -27, 15], [6, -18, 20], [-6, -18, 20]],
+        ]
+        const facetOpacity = String(turning ? Math.pow(1 - Math.abs(depth), .55) : 0)
+        facets.forEach((facet, index) => {
+          shellFacets[index].setAttribute('d', folding ? visibleFaces(facet.map(([fx, fy, height]) => shellVertex({ x: fx, y: fy }, height))).map(face => polygonPath(face.map(toLocal))).join(' ') : '')
+          shellFacets[index].style.opacity = facetOpacity
+        })
+        const shellBounds = [{ x: -60, y: -60 }, { x: 60, y: -60 }, { x: 60, y: 60 }, { x: -60, y: 60 }]
+        shellClip?.setAttribute('d', folding ? visibleFaces(shellBounds.map(point => shellVertex(point))).map(face => polygonPath(face.map(point => ({ x: point.u, y: point.v })))).join(' ') : polygonPath(shellBounds))
+        shellShadow?.style.setProperty('opacity', String(folding ? smooth(edgeDistance / 55) * .12 : .12))
       }
-      const outline = [{ x: 0, y: -39 }, { x: 17, y: -26 }, { x: 14, y: -10 }, { x: 22, y: 7 }, { x: 13, y: 29 }, { x: 0, y: 40 }, { x: -13, y: 29 }, { x: -22, y: 7 }, { x: -14, y: -10 }, { x: -17, y: -26 }]
-      shellSide?.setAttribute('d', folding ? outline.map((point, index) => {
-        const nextPoint = outline[(index + 1) % outline.length]
-        return visibleFaces([shellVertex(point, 3), shellVertex(nextPoint, 3), shellVertex(nextPoint, -9), shellVertex(point, -9)]).map(face => polygonPath(face.map(toLocal))).join(' ')
-      }).join(' ') : '')
-      const facets = [
-        [[0, -39, 3], [-17, -26, 3], [-10, -12, 12], [0, -10, 22], [0, -34, 12]],
-        [[0, -39, 3], [17, -26, 3], [10, -12, 12], [0, -10, 22], [0, -34, 12]],
-        [[-14, -10, 3], [-22, 7, 3], [-13, 29, 3], [0, 31, 16], [0, -6, 22]],
-        [[14, -10, 3], [22, 7, 3], [13, 29, 3], [0, 31, 16], [0, -6, 22]],
-        [[-13, 29, 3], [0, 40, 3], [0, 31, 16]],
-        [[13, 29, 3], [0, 40, 3], [0, 31, 16]],
-        [[-8, -27, 15], [8, -27, 15], [6, -18, 20], [-6, -18, 20]],
-      ]
-      facets.forEach((facet, index) => {
-        shellFacets[index].setAttribute('d', folding ? visibleFaces(facet.map(([fx, fy, height]) => shellVertex({ x: fx, y: fy }, height))).map(face => polygonPath(face.map(toLocal))).join(' ') : '')
-        shellFacets[index].style.opacity = String(turning ? Math.pow(1 - Math.abs(depth), .55) : 0)
-      })
-      const shellBounds = [{ x: -60, y: -60 }, { x: 60, y: -60 }, { x: 60, y: 60 }, { x: -60, y: 60 }]
-      shellClip?.setAttribute('d', folding ? visibleFaces(shellBounds.map(point => shellVertex(point))).map(face => polygonPath(face.map(point => ({ x: point.u, y: point.v })))).join(' ') : polygonPath(shellBounds))
-      shellShadow?.style.setProperty('opacity', String(folding ? smooth(edgeDistance / 55) * .12 : .12))
       sprite.setAttribute('transform', `translate(${x} ${y}) rotate(${angle * 180 / Math.PI}) scale(${scale})`)
       body.style.setProperty('--virus-pulse', String(.8 + Math.sin(elapsed / 1500) * .15))
       let activeFeet = lifted

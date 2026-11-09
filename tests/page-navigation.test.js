@@ -14,7 +14,7 @@ vm.runInNewContext(ts.transpileModule(routeSource, { compilerOptions: { module: 
 function harness({ reduced = false, supported = true, initial = '/', width = 1280, cores = 8, memory = 8, saveData = false, idle = false, lite = false } = {}) {
   const animations = [], frames = [], listeners = new Map(), nodes = [], scrolls = [], anchors = new Map()
   const idleCallbacks = new Map()
-  let createdNodes = 0, idleId = 0
+  let createdNodes = 0, idleId = 0, frameTime = 0
   const entries = [{ href: new URL(initial, 'https://portfolio.test').href, state: null }]
   let currentUrl = new URL(entries[0].href), historyIndex = 0
   const motion = { matches: reduced, addEventListener: (_, callback) => listeners.set('motion', callback), removeEventListener: () => listeners.delete('motion') }
@@ -87,7 +87,7 @@ function harness({ reduced = false, supported = true, initial = '/', width = 128
     addEventListener: (event, callback) => listeners.set(event, callback), removeEventListener: event => listeners.delete(event),
   }
   const exports = {}
-  vm.runInNewContext(compiled, { exports, window, document, Element, URL, getComputedStyle: node => ({ transform: node.style.transform || 'translateX(0)' }), requestAnimationFrame: callback => frames.push(callback), require: name => name === 'react-dom' ? { flushSync: callback => callback() } : name === '../lib/routes' ? routes : {} })
+  vm.runInNewContext(compiled, { exports, window, document, Element, URL, performance: { now: () => frameTime }, getComputedStyle: node => ({ transform: node.style.transform || 'translateX(0)' }), requestAnimationFrame: callback => frames.push(callback), require: name => name === 'react-dom' ? { flushSync: callback => callback() } : name === '../lib/routes' ? routes : {} })
   let notifications = 0
   const unsubscribe = exports.subscribeToNavigation(() => notifications++)
   return {
@@ -102,12 +102,13 @@ function harness({ reduced = false, supported = true, initial = '/', width = 128
       link.target = options.target ?? ''
       if (options.download) link.setAttribute('download', '')
       if (options.projectBack) link.setAttribute('data-project-back', '')
+      if (options.minimalBack) link.setAttribute('data-minimal-back', '')
       const event = { target: link, button: 0, defaultPrevented: false, preventDefault() { this.defaultPrevented = true }, ...options }
       listeners.get('click')(event)
       return event
     },
     hash(hash) { currentUrl.hash = hash; listeners.get('hashchange')() },
-    frame() { const callbacks = frames.splice(0); callbacks.forEach(callback => callback()) },
+    frame(duration = 16) { frameTime += duration; const callbacks = frames.splice(0); callbacks.forEach(callback => callback(frameTime)) },
     changeMotion() { motion.matches = true; listeners.get('motion')() },
   }
 }
@@ -289,13 +290,32 @@ test('the new portrait and title finish their cut-in before the route swaps', as
   assert.equal(artwork.children[1].children[2].textContent, 'BY THE\nNUMBERS')
   h.animations.slice(0, 3).forEach(animation => animation.finish())
   await settle()
+  assert.equal(h.document.documentElement.dataset.pageTransition, 'covered')
   assert.equal(h.api.getNavigationLocation(), '/', 'closing the panels should not cut off the portrait arrival')
   h.animations.slice(3).forEach(animation => animation.finish())
   await settle()
   assert.equal(h.api.getNavigationLocation(), '/numbers')
+  assert.equal(h.document.documentElement.dataset.pageTransition, 'active')
   await reveal(h)
   assert.equal(h.nodes.length, 0)
   h.unsubscribe()
+})
+
+test('a stalled route handoff skips the whole-page motion and keeps the illustrated reveal', async () => {
+  for (const firstFrameTime of [16, 68]) {
+    const h = harness()
+    h.navigate('/numbers')
+    await cover(h)
+    h.frame(firstFrameTime)
+    h.frame()
+    await settle()
+    assert.equal(h.animations.filter(animation => animation.node === h.main).length, firstFrameTime === 16 ? 1 : 0)
+    assert.equal(h.animations.filter(animation => animation.node.className === 'page-logic-card page-logic-card--puzzle').length, 2)
+    h.animations.forEach(animation => animation.finish())
+    await settle()
+    assert.equal(h.document.documentElement.dataset.pageTransition, undefined)
+    h.unsubscribe()
+  }
 })
 
 test('theme cancellation and a reduced-motion change commit pending navigation safely', async () => {
@@ -499,6 +519,50 @@ test('minimal project gallery returns from GreenWay to its saved position', () =
   assert.equal(h.api.getRestoredProjectScroll(), 440)
   assert.equal(h.animations.length, 0)
   h.unsubscribe()
+})
+
+test('shared Minimal Back returns through the actual page chain and restores scroll positions', () => {
+  const h = harness({ initial: '/minimal' })
+  h.window.scrollY = 640
+  h.navigate('/minimal/projects/tools')
+  h.window.scrollY = 230
+  h.navigate('/minimal/projects/vyora')
+  h.window.scrollY = 980
+  h.navigate('/minimal/skills')
+  const entryCount = h.entries.length
+  for (const [page, scroll] of [['/minimal/projects/vyora', 980], ['/minimal/projects/tools', 230], ['/minimal', 640]]) {
+    h.navigate('/minimal', { minimalBack: true })
+    assert.equal(h.api.getNavigationLocation(), page)
+    assert.equal(h.api.getRestoredProjectScroll(), scroll)
+  }
+  assert.equal(h.entries.length, entryCount, 'Back must traverse history instead of adding another page')
+  assert.equal(h.animations.length, 0)
+  h.unsubscribe()
+})
+
+test('Minimal Back skips same-page filters and anchors, but honors the page that opened it', () => {
+  const h = harness({ initial: '/minimal/projects' })
+  h.window.scrollY = 410
+  h.navigate('/minimal/projects/greenway')
+  h.navigate('/minimal/projects/greenway#minimalGreenway-content')
+  h.navigate('/minimal/projects/greenway?ref=details#minimalGreenway-content')
+  h.navigate('/minimal', { minimalBack: true })
+  assert.equal(h.api.getNavigationLocation(), '/minimal/projects')
+  assert.equal(h.api.getRestoredProjectScroll(), 410)
+  assert.equal(h.entries.length, 4)
+  h.unsubscribe()
+})
+
+test('direct Minimal subpage Back has a safe home fallback and keeps native modified clicks', () => {
+  for (const initial of ['/minimal/skills', '/minimal/projects', '/minimal/projects/automation', '/minimal/projects/greenway', '/minimal/projects/vyora']) {
+    const h = harness({ initial })
+    assert.equal(h.navigate('/minimal', { minimalBack: true, ctrlKey: true }).defaultPrevented, false)
+    h.navigate('/minimal', { minimalBack: true })
+    assert.equal(h.api.getNavigationLocation(), '/minimal')
+    assert.equal(h.entries.length, 2)
+    assert.equal(h.animations.length, 0)
+    h.unsubscribe()
+  }
 })
 
 test('minimal view enters, exits, and restores browser history without a cinematic curtain', () => {

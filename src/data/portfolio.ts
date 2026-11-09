@@ -17,7 +17,7 @@ export const portfolio = {
   description: 'Driven by curiosity and logical thinking, I enjoy solving problems, understanding how systems work, and exploring the possibilities of AI.',
   contacts: [
     { id: 'github', label: 'GitHub', url: 'https://github.com/jztn-zw' },
-    { id: 'linkedin', label: 'LinkedIn', url: null },
+    { id: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/jaztin-contreras-58508b446/' },
     { id: 'email', label: 'Email', url: 'mailto:jaztinabramcontreras@gmail.com' },
   ] as Contact[],
 }
@@ -128,12 +128,13 @@ export const listedProjects = projects.filter(project => project.listed)
 export const capabilities = [
   {
     id: '01',
-    title: 'Frontend & Mobile Development',
-    description: 'Responsive websites and mobile apps with state management, interactive maps, and clear interface design.',
+    title: 'Web, Mobile & Desktop',
+    description: 'Websites, mobile apps, and Windows desktop experiences, from interface development to packaged releases.',
     technologies: [
       'React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Radix UI', 'React Router',
       'TanStack Query', 'Zustand', 'React Native', 'Expo',
       'Leaflet', 'MapLibre React Native', 'Vite', 'WordPress',
+      'Electron', 'Electron Forge', 'NSIS', 'GitHub Releases',
     ],
     artwork: 'web',
   },
@@ -143,7 +144,7 @@ export const capabilities = [
     description: 'APIs, live updates, databases, and cloud deployment that connect interfaces to working systems.',
     technologies: [
       'Node.js', 'Express', 'MySQL', 'TiDB', 'Supabase', 'Neon', 'MongoDB',
-      'Socket.IO', 'Cloudinary', 'Vercel', 'Render',
+      'Socket.IO', 'Cloudinary', 'Vercel', 'Render', 'SQLite', 'Cloudflare Workers',
     ],
     artwork: 'fullstack',
   },

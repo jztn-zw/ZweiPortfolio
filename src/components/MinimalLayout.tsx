@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ArrowUp, Moon, Sun } from 'lucide-react'
+import { ArrowLeft, ArrowUp, Moon, Sun } from 'lucide-react'
 import { portfolio } from '../data/portfolio'
 import useTheme from '../hooks/useTheme'
 import FooterVerse from './FooterVerse'
@@ -12,11 +12,11 @@ function FullExperienceIcon() {
   </svg>
 }
 
-export default function MinimalLayout({ children, contentId = 'minimal-content', fullHref = '/' }: { children: ReactNode; contentId?: string; fullHref?: string }) {
+export default function MinimalLayout({ children, contentId = 'minimal-content', fullHref = '/', resume = false }: { children: ReactNode; contentId?: string; fullHref?: string; resume?: boolean }) {
   const { theme, toggleTheme } = useTheme()
   return <div className="minimal-view">
     <a className="min-skip" href={`#${contentId}`}>Skip to content</a>
-    <div className="min-shell">
+    <div className={resume ? 'min-shell min-shell-resume' : 'min-shell'}>
       <header className="min-topbar">
         <a href="/minimal" className="min-wordmark" aria-label="Jaztin — Minimal portfolio">
           <img src={theme === 'light' ? '/brand-mark-light.svg' : '/brand-mark.svg'} width="24" height="24" alt="" />
@@ -30,7 +30,10 @@ export default function MinimalLayout({ children, contentId = 'minimal-content',
           }}>{theme === 'light' ? <Moon size={17} /> : <Sun size={17} />}</button>
         </nav>
       </header>
-      <main id={contentId} tabIndex={-1}>{children}</main>
+      <main id={contentId} tabIndex={-1}>
+        {!resume && <nav className="min-back-nav" aria-label="Page navigation"><a className="min-text-link min-page-back" href="/minimal" data-minimal-back><ArrowLeft size={14} aria-hidden="true" />Back</a></nav>}
+        {children}
+      </main>
       <footer className="min-footer">
         <div className="min-footer-main">
           <span className="min-footer-copyright">© {new Date().getFullYear()} {portfolio.name}</span>

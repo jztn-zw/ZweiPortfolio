@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 
+const entryOnlySurfaces = new Set(['timeline', 'feature', 'arsenal'])
+
 // One delegated controller per page. One frame per pointer update, no idle loop.
 export default function useSurfaceHover(page: string) {
   useEffect(() => {
@@ -29,6 +31,10 @@ export default function useSurfaceHover(page: string) {
     const paint = () => {
       frame = undefined
       if (!active || motion.matches || document.hidden) return
+      if (entryOnlySurfaces.has(active.dataset.hoverSurface ?? '')) {
+        active.dataset.hoverActive = 'true'
+        return
+      }
       const bounds = active.getBoundingClientRect()
       if (!bounds.width || !bounds.height) { stop(); return }
       const x = Math.max(0, Math.min(bounds.width, clientX - bounds.left))
@@ -52,7 +58,7 @@ export default function useSurfaceHover(page: string) {
       const next = surface(event.target)
       if (!next || !root.contains(next)) { stop(); return }
       // Entry-only motifs do not need pointer coordinates after activation.
-      if (next === active && ['timeline', 'feature', 'arsenal'].includes(next.dataset.hoverSurface ?? '')) return
+      if (next === active && entryOnlySurfaces.has(next.dataset.hoverSurface ?? '')) return
       if (next !== active) { stop(); active = next; touched.add(next) }
       clientX = event.clientX; clientY = event.clientY
       if (frame === undefined) frame = requestAnimationFrame(paint)

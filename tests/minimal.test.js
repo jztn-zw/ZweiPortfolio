@@ -32,6 +32,16 @@ function renderMinimal(theme, page = 'Minimal', profile = data, pageProps = {}) 
     exports: projectCard,
     require: name => name === 'react/jsx-runtime' ? jsxRuntime : name === 'lucide-react' ? icons : {},
   })
+  const calendar = {}
+  vm.runInNewContext(compile('../src/components/MinimalGitHubCalendar.tsx'), {
+    exports: calendar,
+    require: name => name === 'react/jsx-runtime' ? jsxRuntime : name === 'lucide-react' ? icons : name === 'react' ? React : {},
+  })
+  const chatDrawer = {}
+  vm.runInNewContext(compile('../src/components/MinimalChatOverlay.tsx'), {
+    exports: chatDrawer,
+    require: name => name === 'react/jsx-runtime' ? jsxRuntime : name === 'lucide-react' ? icons : name === 'react' ? React : {},
+  })
   const exports = {}
   const dependencies = {
     react: React,
@@ -45,6 +55,8 @@ function renderMinimal(theme, page = 'Minimal', profile = data, pageProps = {}) 
     '../lib/routes': routes,
     '../components/MinimalLayout': layout,
     '../components/MinimalProjectCard': projectCard,
+    '../components/MinimalGitHubCalendar': calendar,
+    '../components/MinimalChatOverlay': chatDrawer,
   }
   vm.runInNewContext(compile(`../src/pages/${page}.tsx`), {
     exports, URL,
@@ -63,20 +75,29 @@ test('minimal view renders the profile, capabilities, and published work in both
     assert.doesNotMatch(html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1], /<img\b|<video\b/)
     assert.ok(html.includes(`src="${theme === 'light' ? '/brand-mark-light.svg' : '/brand-mark.svg'}"`))
     assert.match(html, /Tools &amp; Experiments/)
+    assert.match(html, /id="min-contributions-title"[^>]*>[\s\S]*?GitHub contributions<\/h2>/)
+    assert.match(html, /role="status">Loading GitHub contributions…/)
     assert.doesNotMatch(html, /\[PROJECT NAME\]|\[TECH STACK\]/)
-    for (const group of data.capabilities) for (const technology of group.technologies) assert.ok(html.includes(technology))
+    const stackPreview = html.match(/<section\b[^>]*aria-labelledby="min-stack-title"[^>]*>([\s\S]*?)<\/section>/)[1]
+    assert.match(stackPreview, /Tech stack<\/h2>/)
+    assert.match(stackPreview, /href="\/minimal\/skills"[^>]*>View all/)
+    assert.match(stackPreview, /<li>Electron<\/li>/)
+    assert.doesNotMatch(stackPreview, /<li>Electron Forge<\/li>/)
     assert.ok(html.includes(theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'))
   }
 })
 
 test('the résumé links to real contact and project destinations', () => {
   const html = renderMinimal('light')
-  for (const href of ['/', '/minimal/skills', '/minimal/projects', '/ask-ai', '/minimal/projects/web-mobile', '/minimal/projects/automation', '/minimal/projects/tools', 'https://github.com/jztn-zw', 'mailto:jaztinabramcontreras@gmail.com']) {
+  for (const href of ['/', '/minimal/skills', '/minimal/projects', '/minimal/projects/web-mobile', '/minimal/projects/automation', '/minimal/projects/tools', 'https://github.com/jztn-zw', 'mailto:jaztinabramcontreras@gmail.com']) {
     assert.ok(html.includes(`href="${href}"`), href)
   }
   assert.doesNotMatch(html, /download=|href="#"/)
   assert.match(html, /href="#minimal-content"/)
   assert.match(html, /id="minimal-title"/)
+    assert.doesNotMatch(html, /data-minimal-back/, 'the home page does not need a Back control')
+  assert.match(html, /<button[^>]*aria-expanded="false" aria-controls="min-chat-conversation">[\s\S]*?<span>Ask me anything<\/span>/)
+  assert.doesNotMatch(html, /id="ask-question"/)
 })
 
 test('selected work links to three collections while View all shows every listed project', () => {
@@ -195,6 +216,7 @@ test('minimal detail pages share navigation and preserve confirmed content in bo
       assert.match(html, /Philippians 4:13/)
       assert.match(html, /href="\/minimal"/)
       assert.match(html, /Switch to (dark|light) mode/)
+      assert.match(html, /<main[^>]*><nav class="min-back-nav" aria-label="Page navigation"><a class="min-text-link min-page-back" href="\/minimal" data-minimal-back="true">[\s\S]*?Back<\/a><\/nav>/)
       assert.doesNotMatch(html, /data-hover-surface|page-navigation-curtain/)
     }
   }
@@ -205,7 +227,8 @@ test('every skill badge references an available local technology brand symbol', 
   const references = [...html.matchAll(/href="\/tech-icons\.svg#([^"]+)"/g)].map(match => match[1])
   const sprite = readFileSync(new URL('../public/tech-icons.svg', import.meta.url), 'utf8')
   const symbols = new Set([...sprite.matchAll(/<symbol\b[^>]*\bid="([^"]+)"/g)].map(match => match[1]))
-  const technologies = data.capabilities.flatMap(group => group.technologies)
-  assert.equal(references.length, technologies.length)
+  const shownCount = Number(html.match(/(\d+) tools &amp; technologies/)[1])
+  assert.equal(references.length, shownCount)
+  assert.equal(shownCount, data.capabilities.flatMap(group => group.technologies).length)
   for (const symbol of references) assert.ok(symbols.has(symbol), `Missing brand symbol: ${symbol}`)
 })

@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { observePageCover } from '../lib/pageVisibility'
 import '../components/ScrollReveal.css'
 
 // Animate layout groups rather than individual cards inside the draggable gallery.
@@ -38,9 +39,7 @@ export default function useScrollReveal(page: string) {
 
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
     const targets = new Map<HTMLElement, { kind: string; reverse: boolean }>()
-    for (const { selector, kind } of revealGroups) {
-      document.querySelectorAll<HTMLElement>(selector).forEach((element, index) => targets.set(element, { kind, reverse: index % 2 === 1 }))
-    }
+    let initialized = false
     let observer: IntersectionObserver | undefined
     const finishTimers = new Map<HTMLElement, ReturnType<typeof setTimeout>>()
 
@@ -66,7 +65,13 @@ export default function useScrollReveal(page: string) {
 
     function start() {
       reset()
-      if (motion.matches) return
+      if (!initialized || motion.matches) return
+
+      if (!targets.size) {
+        for (const { selector, kind } of revealGroups) {
+          document.querySelectorAll<HTMLElement>(selector).forEach((element, index) => targets.set(element, { kind, reverse: index % 2 === 1 }))
+        }
+      }
 
       observer = new IntersectionObserver(entries => {
         const entering = entries.filter(entry => entry.isIntersecting && (entry.target as HTMLElement).dataset.scrollState === 'pending')
@@ -119,11 +124,21 @@ export default function useScrollReveal(page: string) {
       }
     }
 
-    start()
+    function initialize() {
+      initialized = true
+      start()
+    }
+
+    // Keep the first viewport visible and defer layout reads until the shutter exits.
+    const stopWaiting = document.documentElement.dataset.pageTransition
+      ? observePageCover(covered => { if (!covered && !initialized) initialize() })
+      : undefined
+    if (!stopWaiting) initialize()
     motion.addEventListener('change', start)
     document.addEventListener('focusin', handleFocus)
     document.addEventListener('animationend', handleAnimationEnd)
     return () => {
+      stopWaiting?.()
       reset()
       motion.removeEventListener('change', start)
       document.removeEventListener('focusin', handleFocus)
