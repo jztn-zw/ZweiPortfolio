@@ -10,12 +10,13 @@
         let theme = 'dark';
         try { if (localStorage.getItem('jaztin-portfolio-theme') === 'light') theme = 'light'; } catch {}
         document.documentElement.dataset.theme = theme;
-        if (/^\/minimal(?:\/skills|\/projects(?:\/(?:greenway|vyora|web-mobile|automation|tools))?)?\/?$/.test(location.pathname)) {
+        const isLegacyPage = /^#\/(skills|numbers|projects\/greenway|ask-ai)(\/content)?$/.test(location.hash);
+        const isFullHomeHash = /^#(?:home|projects|about|capabilities|journey|contact|activity)$/.test(location.hash);
+        if ((location.pathname === '/' && !isLegacyPage && !isFullHomeHash) || /^\/minimal(?:\/skills|\/projects(?:\/(?:greenway|vyora|web-mobile|automation|tools))?)?\/?$/.test(location.pathname)) {
           document.documentElement.dataset.view = 'minimal';
         } else {
           const assets = ['/theme-pixels-dense.svg', '/theme-pixels-sparse.svg'];
-          const isLegacyPage = /^#\/(skills|numbers|projects\/greenway|ask-ai)(\/content)?$/.test(location.hash);
-          if ((location.pathname === '/' && !isLegacyPage) || location.hash === '#home') {
+          if (location.pathname === '/experience' || (location.pathname === '/' && isFullHomeHash) || location.hash === '#home') {
             assets.push('/images/jaztin-portrait.webp');
           }
           for (const href of assets) {

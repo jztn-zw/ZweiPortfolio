@@ -81,20 +81,28 @@ test('minimal view renders the profile, capabilities, and published work in both
     const stackPreview = html.match(/<section\b[^>]*aria-labelledby="min-stack-title"[^>]*>([\s\S]*?)<\/section>/)[1]
     assert.match(stackPreview, /Tech stack<\/h2>/)
     assert.match(stackPreview, /href="\/minimal\/skills"[^>]*>View all/)
-    assert.match(stackPreview, /<li>Electron<\/li>/)
-    assert.doesNotMatch(stackPreview, /<li>Electron Forge<\/li>/)
+    const previewBadges = [...stackPreview.matchAll(/<li><svg\b[\s\S]*?<\/svg>([^<]*)<\/li>/g)].map(match => match[1])
+    for (const technology of ['Electron', 'Next.js', 'Tailwind CSS', 'Expo', 'MySQL', 'MongoDB', 'Vercel']) assert.ok(previewBadges.includes(technology), technology)
+    for (const [index, featuredCount] of [[0, 8], [1, 8]]) {
+      const remaining = data.capabilities[index].technologies.length - featuredCount
+      assert.ok(stackPreview.includes(`aria-label="View ${remaining} more ${data.capabilities[index].title.replaceAll('&', '&amp;')} technologies">+${remaining} more</a>`))
+    }
+    assert.ok(!previewBadges.includes('Electron Forge'))
     assert.ok(html.includes(theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'))
   }
 })
 
 test('the résumé links to real contact and project destinations', () => {
   const html = renderMinimal('light')
-  for (const href of ['/', '/minimal/skills', '/minimal/projects', '/minimal/projects/web-mobile', '/minimal/projects/automation', '/minimal/projects/tools', 'https://github.com/jztn-zw', 'mailto:jaztinabramcontreras@gmail.com']) {
+  for (const href of ['/experience', '/minimal/skills', '/minimal/projects', '/minimal/projects/web-mobile', '/minimal/projects/automation', '/minimal/projects/tools', 'https://github.com/jztn-zw']) {
     assert.ok(html.includes(`href="${href}"`), href)
   }
   assert.doesNotMatch(html, /download=|href="#"/)
   assert.match(html, /href="#minimal-content"/)
   assert.match(html, /id="minimal-title"/)
+  assert.match(html, /<dialog[^>]*aria-labelledby="resume-email-title"/)
+  assert.match(html, /<input[^>]*type="email"[^>]*name="email"/)
+  assert.match(html, /<textarea[^>]*name="message"/)
     assert.doesNotMatch(html, /data-minimal-back/, 'the home page does not need a Back control')
   assert.match(html, /<button[^>]*aria-expanded="false" aria-controls="min-chat-conversation">[\s\S]*?<span>Ask me anything<\/span>/)
   assert.doesNotMatch(html, /id="ask-question"/)
@@ -170,7 +178,7 @@ test('first paint preloads the hero only on home and skips full artwork on minim
   const bootstrap = readFileSync(new URL('../index.html', import.meta.url), 'utf8').match(/<script>([\s\S]*?)<\/script>/)[1]
   for (const [pathname, hash, hero] of [
     ['/minimal', '', false], ['/minimal/', '', false], ['/minimal/skills', '', false],
-    ['/minimal/projects/greenway', '', false], ['/minimal/projects/vyora', '', false], ['/minimal/projects', '', false], ['/', '', true], ['/', '#projects', true],
+    ['/minimal/projects/greenway', '', false], ['/minimal/projects/vyora', '', false], ['/minimal/projects', '', false], ['/', '', false], ['/experience', '', true], ['/', '#projects', true],
     ['/minimal/projects/web-mobile', '', false], ['/minimal/projects/automation', '', false], ['/minimal/projects/tools', '', false],
     ['/', '#/skills', false], ['/projects/web-mobile', '', false], ['/numbers', '', false],
     ['/projects/greenway', '#home', true],
@@ -181,9 +189,9 @@ test('first paint preloads the hero only on home and skips full artwork on minim
       document: { documentElement: { dataset }, querySelector: () => ({}), createElement: () => ({}), head: { appendChild: link => links.push(link) } },
     })
     assert.equal(dataset.theme, 'light')
-    assert.equal(links.length, pathname.startsWith('/minimal') ? 0 : hero ? 3 : 2)
+    assert.equal(links.length, pathname.startsWith('/minimal') || (pathname === '/' && !hash) ? 0 : hero ? 3 : 2)
     assert.equal(links.some(link => link.href === '/images/jaztin-portrait.webp'), hero)
-    assert.equal(dataset.view === 'minimal', pathname.startsWith('/minimal'))
+    assert.equal(dataset.view === 'minimal', pathname.startsWith('/minimal') || (pathname === '/' && !hash))
   }
 })
 
@@ -231,4 +239,8 @@ test('every skill badge references an available local technology brand symbol', 
   assert.equal(references.length, shownCount)
   assert.equal(shownCount, data.capabilities.flatMap(group => group.technologies).length)
   for (const symbol of references) assert.ok(symbols.has(symbol), `Missing brand symbol: ${symbol}`)
+  const home = renderMinimal('dark').match(/<section\b[^>]*aria-labelledby="min-stack-title"[^>]*>([\s\S]*?)<\/section>/)[1]
+  const homeReferences = [...home.matchAll(/href="\/tech-icons\.svg#([^"]+)"/g)].map(match => match[1])
+  assert.equal(homeReferences.length, 21)
+  for (const symbol of homeReferences) assert.ok(symbols.has(symbol), `Missing home brand symbol: ${symbol}`)
 })

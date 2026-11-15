@@ -7,6 +7,7 @@
     }
   },
   "rewrites": [
+    { "source": "/experience", "destination": "/index.html" },
     { "source": "/minimal", "destination": "/index.html" },
     { "source": "/minimal/skills", "destination": "/index.html" },
     { "source": "/minimal/projects", "destination": "/index.html" },

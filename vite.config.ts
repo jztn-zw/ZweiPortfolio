@@ -5,6 +5,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import githubContributions from "./api/github-contributions.js";
 import chat from './api/chat.js';
+import contact from './api/contact.js';
 
 export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss(), {
@@ -12,10 +13,12 @@ export default defineConfig(({ mode }) => ({
     configureServer(server) {
       const local = loadEnv(mode, process.cwd(), '');
       // Only server-side code receives these values. VITE_ variables remain public.
-      for (const name of ['GEMINI_API_KEY', 'GROQ_API_KEY', 'GEMINI_MODEL', 'GROQ_MODEL', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN', 'VISITOR_COOKIE_SECRET', 'AI_RATE_LIMIT_SECRET']) {
+      for (const name of ['RESEND_API_KEY', 'CONTACT_FROM_EMAIL', 'CONTACT_TO_EMAIL', 'GEMINI_API_KEY', 'GROQ_API_KEY', 'GEMINI_MODEL', 'GROQ_MODEL', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN', 'VISITOR_COOKIE_SECRET', 'AI_RATE_LIMIT_SECRET']) {
         if (local[name]) process.env[name] = local[name];
       }
-      server.middlewares.use('/api/chat', async (request, response) => {
+      server.middlewares.use(async (request, response, next) => {
+        const path = request.url?.split('?')[0];
+        if (path !== '/api/chat' && path !== '/api/contact') return next();
         const abort = new AbortController();
         response.on('close', () => { if (!response.writableEnded) abort.abort(); });
         try {
@@ -36,7 +39,8 @@ export default defineConfig(({ mode }) => ({
             }
             body = Buffer.concat(chunks).toString('utf8');
           }
-          const result = await chat.fetch(new Request(`http://${request.headers.host}/api/chat`, { method: request.method, headers, signal: abort.signal, ...(request.method === 'POST' ? { body } : {}) }));
+          const handler = path === '/api/contact' ? contact : chat;
+          const result = await handler.fetch(new Request(`http://${request.headers.host}${path}`, { method: request.method, headers, signal: abort.signal, ...(request.method === 'POST' ? { body } : {}) }));
           response.statusCode = result.status;
           result.headers.forEach((value, name) => response.setHeader(name, value));
           if (result.body) Readable.fromWeb(result.body as import('node:stream/web').ReadableStream<Uint8Array>).pipe(response);

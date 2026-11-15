@@ -30,15 +30,15 @@ export function getPortfolioAnswer(question: string): PortfolioAnswer {
   if (hasCurrentFocusTopic(question)) return {
     topic: 'My current focus',
     paragraphs: [`I’m focused on ${aboutMe.focus}. I’m building my skills through hands-on projects and exploring new technologies.`],
-    links: [{ label: 'Explore my skills', href: '/skills' }, { label: 'More about me', href: '/#about' }],
+    links: [{ label: 'Explore my skills', href: '/skills' }, { label: 'More about me', href: '/experience#about' }],
   }
   const personalAnswer = getPersonalAnswer(question)
-  if (personalAnswer) return { topic: 'Off the keyboard', paragraphs: [personalAnswer], links: [{ label: 'More about me', href: '/#about' }] }
+  if (personalAnswer) return { topic: 'Off the keyboard', paragraphs: [personalAnswer], links: [{ label: 'More about me', href: '/experience#about' }] }
   const text = normalizeChatQuestion(question)
   if (/resume|résumé|cv\b/.test(text)) return {
     topic: 'Resume',
     paragraphs: ['My résumé is coming soon. In the meantime, you can explore my skills and background, or reach out to me directly.'],
-    links: [{ label: 'Explore skills', href: '/skills' }, { label: 'Get in touch', href: '/#contact' }],
+    links: [{ label: 'Explore skills', href: '/skills' }, { label: 'Get in touch', href: '/experience#contact' }],
   }
   if (/contact|email|reach|hire|opportunit|availab|collaborat|work with|connect/.test(text)) return {
     topic: 'Let’s connect',
@@ -61,7 +61,7 @@ export function getPortfolioAnswer(question: string): PortfolioAnswer {
   if (/who|about|background|student|education|study|studying|college|university|yourself|jaztin|hello|\bhi\b/.test(text)) return {
     topic: 'Meet Jaztin',
     paragraphs: [`I’m ${portfolio.name}, a 4th-year BS Computer Science student based in ${portfolio.location}.`, 'I started with gaming graphics and banner design, then grew into building web and mobile applications. I enjoy understanding how systems work and turning ideas into practical solutions.'],
-    links: [{ label: 'More about me', href: '/#about' }, { label: 'Explore my journey', href: '/#journey' }],
+    links: [{ label: 'More about me', href: '/experience#about' }, { label: 'Explore my journey', href: '/experience#journey' }],
   }
   return {
     topic: 'A quick note',

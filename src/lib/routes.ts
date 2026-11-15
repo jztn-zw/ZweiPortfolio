@@ -7,7 +7,7 @@ const projectCollectionPaths = {
 } as const satisfies Record<ProjectCollection, string>
 
 export const pagePaths = {
-  home: '/',
+  home: '/experience',
   minimal: '/minimal',
   minimalSkills: '/minimal/skills',
   minimalProjects: '/minimal/projects',
@@ -71,9 +71,10 @@ export function normalizeRoute(route: string) {
     const page = legacy[1] === 'projects/greenway' ? 'greenway' : legacy[1] === 'ask-ai' ? 'ai' : legacy[1]
     url.hash = legacy[2] ? `#${page}-content` : ''
   } else if (url.hash === '#home') {
-    url.pathname = '/'
+    url.pathname = '/experience'
     url.hash = ''
   }
+  if (url.pathname === '/' && /^#(?:projects|about|capabilities|journey|contact|activity)$/.test(url.hash)) url.pathname = '/experience'
   const path = url.pathname.replace(/\/+$/, '') || '/'
   if (Object.values(pagePaths).some(value => value === path)) url.pathname = path
   if (path === pagePaths.projects) {
@@ -89,10 +90,11 @@ export function normalizeRoute(route: string) {
 
 export function navigationPage(route: string): Page {
   const path = normalizeRoute(route).split(/[?#]/)[0]
+  if (path === '/') return 'minimal'
   return (Object.entries(pagePaths).find(([, value]) => value === path)?.[0] as Page | undefined) ?? 'home'
 }
 
 export function isPagePath(path: string) {
   const normalized = path.replace(/\/+$/, '') || '/'
-  return Object.values(pagePaths).some(value => value === normalized)
+  return normalized === '/' || Object.values(pagePaths).some(value => value === normalized)
 }

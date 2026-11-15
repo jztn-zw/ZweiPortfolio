@@ -11,7 +11,7 @@ const routeSource = readFileSync(new URL('../src/lib/routes.ts', import.meta.url
 const routes = {}
 vm.runInNewContext(ts.transpileModule(routeSource, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: routes, URL })
 
-function harness({ reduced = false, supported = true, initial = '/', width = 1280, cores = 8, memory = 8, saveData = false, idle = false, lite = false } = {}) {
+function harness({ reduced = false, supported = true, initial = '/experience', width = 1280, cores = 8, memory = 8, saveData = false, idle = false, lite = false } = {}) {
   const animations = [], frames = [], listeners = new Map(), nodes = [], scrolls = [], anchors = new Map()
   const idleCallbacks = new Map()
   let createdNodes = 0, idleId = 0, frameTime = 0
@@ -114,13 +114,27 @@ function harness({ reduced = false, supported = true, initial = '/', width = 128
 }
 
 async function settle() { for (let index = 0; index < 8; index++) await Promise.resolve() }
+
+test('the root opens Minimal while the full experience remains directly addressable', () => {
+  const h = harness({ initial: '/', idle: true })
+  h.idle()
+  assert.equal(routes.navigationPage(h.api.getNavigationLocation()), 'minimal')
+  assert.equal(h.createdNodes, 0)
+  h.navigate('/experience')
+  assert.equal(routes.navigationPage(h.api.getNavigationLocation()), 'home')
+  assert.equal(h.animations.length, 0)
+  h.window.history.back()
+  assert.equal(h.api.getNavigationLocation(), '/')
+  assert.equal(routes.navigationPage('/#about'), 'home')
+  h.unsubscribe()
+})
 async function cover(h) { h.animations.forEach(animation => animation.finish()); await settle() }
 async function reveal(h) { h.frame(); h.frame(); await settle(); h.animations.forEach(animation => animation.finish()); await settle() }
 
 test('same-page anchors, reduced motion, and missing animation support update immediately', () => {
   for (const options of [{}, { reduced: true }, { supported: false }]) {
     const h = harness(options)
-    const destination = Object.keys(options).length ? '/numbers' : '/#projects'
+    const destination = Object.keys(options).length ? '/numbers' : '/experience#projects'
     h.navigate(destination)
     assert.equal(h.api.getNavigationLocation(), destination)
     assert.equal(h.nodes.length, 0)
@@ -132,7 +146,7 @@ test('same-page anchors, reduced motion, and missing animation support update im
 test('route changes stay hidden until covered and rapid clicks use the latest destination', async () => {
   const h = harness()
   h.navigate('/numbers')
-  assert.equal(h.api.getNavigationLocation(), '/')
+  assert.equal(h.api.getNavigationLocation(), '/experience')
   assert.equal(h.animations.length, 9)
   h.navigate('/projects/greenway')
   assert.equal(h.animations.length, 9, 'another click should not restart the cover')
@@ -153,12 +167,12 @@ test('navigation after a commit reuses the curtain, even before the reveal anima
     await cover(h)
     if (revealStarted) { h.frame(); h.frame(); await settle() }
     const curtain = h.nodes[0]
-    h.navigate('/')
+    h.navigate('/experience')
     assert.equal(h.nodes.length, 1)
     assert.equal(h.nodes[0], curtain)
     assert.equal(curtain.dataset.direction, 'back')
     await cover(h)
-    assert.equal(h.api.getNavigationLocation(), '/')
+    assert.equal(h.api.getNavigationLocation(), '/experience')
     await reveal(h)
     assert.equal(h.nodes.length, 0)
     h.unsubscribe()
@@ -211,14 +225,14 @@ test('subsequent transitions reuse the scene, reset its transforms, and reassess
   const count = h.createdNodes
   curtain.children[0].style.transform = 'stale'
   h.window.innerWidth = 390
-  h.navigate('/')
+  h.navigate('/experience')
   assert.equal(h.nodes[0], curtain)
   assert.equal(h.createdNodes, count, 'repeated navigation should not rebuild the SVG scene')
   assert.equal(curtain.dataset.quality, 'lite')
   assert.notEqual(h.animations.at(-9).keyframes[0].transform, 'stale')
   h.api.cancelPageNavigation()
   await settle()
-  assert.equal(h.api.getNavigationLocation(), '/')
+  assert.equal(h.api.getNavigationLocation(), '/experience')
   assert.equal(h.document.documentElement.dataset.pageTransition, undefined)
   assert.equal(h.nodes.length, 0)
   h.unsubscribe()
@@ -291,7 +305,7 @@ test('the new portrait and title finish their cut-in before the route swaps', as
   h.animations.slice(0, 3).forEach(animation => animation.finish())
   await settle()
   assert.equal(h.document.documentElement.dataset.pageTransition, 'covered')
-  assert.equal(h.api.getNavigationLocation(), '/', 'closing the panels should not cut off the portrait arrival')
+  assert.equal(h.api.getNavigationLocation(), '/experience', 'closing the panels should not cut off the portrait arrival')
   h.animations.slice(3).forEach(animation => animation.finish())
   await settle()
   assert.equal(h.api.getNavigationLocation(), '/numbers')
@@ -401,15 +415,15 @@ test('Back and Forward preserve clean URLs and wait for the page transition', as
 
 test('section links scroll and focus without a page curtain or duplicate history entries', () => {
   const h = harness()
-  const event = h.navigate('/#projects')
+  const event = h.navigate('/experience#projects')
   assert.equal(event.defaultPrevented, true)
-  assert.equal(h.api.getNavigationLocation(), '/#projects')
+  assert.equal(h.api.getNavigationLocation(), '/experience#projects')
   assert.equal(h.document.activeElement, h.anchors.get('projects'))
   assert.equal(h.scrolls.at(-1).behavior, 'smooth')
   assert.equal(h.nodes.length, 0)
-  h.navigate('/#projects')
+  h.navigate('/experience#projects')
   assert.equal(h.entries.length, 2)
-  h.navigate('/')
+  h.navigate('/experience')
   assert.equal(h.scrolls.at(-1).top, 0)
   h.unsubscribe()
 })
@@ -424,7 +438,7 @@ test('modified clicks, external links, downloads, assets, and APIs retain native
     ['/api/visitors', {}], ['/images/jaztin-portrait.webp', {}], ['/numbers-extra', {}],
   ]) assert.equal(h.navigate(href, options).defaultPrevented, false)
   assert.equal(h.entries.length, 1)
-  assert.equal(h.api.getNavigationLocation(), '/')
+  assert.equal(h.api.getNavigationLocation(), '/experience')
   assert.equal(h.nodes.length, 0)
   h.unsubscribe()
 })
@@ -434,7 +448,7 @@ test('legacy hash navigation converts to a clean path and still uses the curtain
   h.hash('#/skills')
   assert.equal(h.window.location.pathname, '/skills')
   assert.equal(h.window.location.hash, '')
-  assert.equal(h.api.getNavigationLocation(), '/')
+  assert.equal(h.api.getNavigationLocation(), '/experience')
   await cover(h); await reveal(h)
   assert.equal(h.api.getNavigationLocation(), '/skills')
   h.unsubscribe()
@@ -572,7 +586,7 @@ test('minimal view enters, exits, and restores browser history without a cinemat
   assert.equal(h.nodes.length, 0)
   assert.equal(h.animations.length, 0)
   h.window.history.back()
-  assert.equal(h.api.getNavigationLocation(), '/')
+  assert.equal(h.api.getNavigationLocation(), '/experience')
   h.window.history.forward()
   assert.equal(h.api.getNavigationLocation(), '/minimal')
   h.navigate('/skills')

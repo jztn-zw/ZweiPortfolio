@@ -72,7 +72,7 @@ export default function Skills() {
       <main id="skills-content" className="skills-content" tabIndex={-1}>
         <div className="page-width">
           <div className="skills-breadcrumb">
-            <a href="/#capabilities" className="page-back-button"><ArrowLeft size={16} aria-hidden="true" /> Back to Home</a>
+            <a href="/experience#capabilities" className="page-back-button"><ArrowLeft size={16} aria-hidden="true" /> Back to Home</a>
             <span className="eyebrow">CAPABILITIES <span className="red">/</span> IN DETAIL</span>
           </div>
 

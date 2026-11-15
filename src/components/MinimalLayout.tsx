@@ -12,7 +12,7 @@ function FullExperienceIcon() {
   </svg>
 }
 
-export default function MinimalLayout({ children, contentId = 'minimal-content', fullHref = '/', resume = false }: { children: ReactNode; contentId?: string; fullHref?: string; resume?: boolean }) {
+export default function MinimalLayout({ children, contentId = 'minimal-content', fullHref = '/experience', resume = false }: { children: ReactNode; contentId?: string; fullHref?: string; resume?: boolean }) {
   const { theme, toggleTheme } = useTheme()
   return <div className="minimal-view">
     <a className="min-skip" href={`#${contentId}`}>Skip to content</a>

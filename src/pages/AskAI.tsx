@@ -22,7 +22,7 @@ export default function AskAI() {
     <SiteHeader isHome={false} isAI />
     <main id="ai-content" className="ask-content page-width" tabIndex={-1}>
       <div className="ask-breadcrumb">
-        <a className="page-back-button" href="/"><ArrowLeft size={15} aria-hidden="true" /> Back to Home</a>
+        <a className="page-back-button" href="/experience"><ArrowLeft size={15} aria-hidden="true" /> Back to Home</a>
         <span className="eyebrow">A CONVERSATION <span className="red">/</span> A CONNECTION</span>
       </div>
 
@@ -46,7 +46,7 @@ export default function AskAI() {
         <AskChat />
       </div>
 
-      <div className="ask-bottom-line"><span><ArrowDown size={12} aria-hidden="true" /> MORE THAN A CONVERSATION</span><a href="/#projects">Explore the work<ArrowUpRight size={13} aria-hidden="true" /></a><GraphicMark variant="chevrons" /></div>
+      <div className="ask-bottom-line"><span><ArrowDown size={12} aria-hidden="true" /> MORE THAN A CONVERSATION</span><a href="/experience#projects">Explore the work<ArrowUpRight size={13} aria-hidden="true" /></a><GraphicMark variant="chevrons" /></div>
     </main>
     <Footer topHref="/ask-ai" />
   </div>

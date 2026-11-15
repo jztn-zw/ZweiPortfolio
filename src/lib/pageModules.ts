@@ -1,4 +1,4 @@
-import { isMinimalProjectCatalogPage, isPagePath, isProjectCatalogPage, navigationPage } from './routes'
+import { isMinimalPage, isMinimalProjectCatalogPage, isPagePath, isProjectCatalogPage, navigationPage } from './routes'
 
 const loaders = {
   home: () => import('../pages/Home'),
@@ -26,11 +26,12 @@ export function loadPage<P extends DeferredPage>(page: P): ReturnType<typeof loa
 }
 
 // Pointer, keyboard and touch intent start the download during the existing curtain.
-export function preloadLinkPage(target: EventTarget | null) {
+export function preloadLinkPage(target: EventTarget | null, activated = false) {
   if (!(target instanceof Element)) return
   const link = target.closest<HTMLAnchorElement>('a[href]')
   if (!link) return
   const url = new URL(link.href, window.location.href)
+  if (!activated && isMinimalPage(navigationPage(window.location.pathname)) && !isMinimalPage(navigationPage(url.pathname))) return
   if (url.origin === window.location.origin && isPagePath(url.pathname)) preloadRoutePage(url.pathname + url.search + url.hash)
 }
 

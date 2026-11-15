@@ -72,7 +72,7 @@ export default function FloatingNavbar({ isHome = true, isNumbers = false, isAI 
   return (
     <nav ref={navRef} className="side-nav" aria-label="Main navigation">
       <span className="side-nav-marker" aria-hidden="true" />
-      <a href="/" data-guide="home" aria-label="Home" aria-current={isHome ? 'page' : undefined} className={`side-nav-item${isHome ? ' is-active' : ''}`}><NavbarGlyph name="home" /><span className="side-nav-tooltip">Home</span></a>
+      <a href="/experience" data-guide="home" aria-label="Home" aria-current={isHome ? 'page' : undefined} className={`side-nav-item${isHome ? ' is-active' : ''}`}><NavbarGlyph name="home" /><span className="side-nav-tooltip">Home</span></a>
       {items.map(({ label, icon }) => (
         <button type="button" key={label} data-guide={icon} className="side-nav-item" aria-label={`${label} — Coming soon`} aria-disabled="true"><NavbarGlyph name={icon} /><span className="side-nav-tooltip">{label}<span>Coming soon</span></span></button>
       ))}

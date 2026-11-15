@@ -1,6 +1,5 @@
 import { flushSync } from 'react-dom'
 import { isMinimalPage, isPagePath, isProjectCatalogPage, navigationPage, normalizeRoute } from '../lib/routes'
-import './pageNavigation.css'
 
 type NavigationScene = {
   curtain: HTMLElement

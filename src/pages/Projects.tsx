@@ -39,7 +39,7 @@ export default function Projects({ page, route }: { page: ProjectCatalogPage; ro
       <a className="skip-link" href="#projects-content">Skip to content</a>
       <SiteHeader isHome={false} />
       <main className="project-catalog page-width" id="projects-content" tabIndex={-1}>
-        <a className="page-back-button" href="/#projects"><ArrowLeft size={16} aria-hidden="true" />Back to home</a>
+        <a className="page-back-button" href="/experience#projects"><ArrowLeft size={16} aria-hidden="true" />Back to home</a>
         <header className="project-catalog-heading">
           <SectionLabel number={collection?.index ?? '01'} label={isAll ? 'PROJECT COLLECTIONS' : 'PROJECT COLLECTION'} />
 <h1 id={`${page}-title`} tabIndex={-1}>{collection?.title ?? 'All Projects'}</h1>

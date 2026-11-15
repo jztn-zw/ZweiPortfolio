@@ -4,9 +4,6 @@ import { loadPage, preloadRoutePage, preloadLinkPage } from './lib/pageModules'
 import { portfolio } from './data/portfolio'
 import { getVisitorCount } from './lib/visitorCount'
 import { finishStartup } from './lib/startupScreen'
-import useScrollReveal from './hooks/useScrollReveal'
-import useAnimationVisibility from './hooks/useAnimationVisibility'
-import useSurfaceHover from './hooks/useSurfaceHover'
 import { getNavigationLocation, getRestoredProjectScroll, subscribeToNavigation } from './hooks/pageNavigation'
 import { isMinimalPage, isMinimalProjectCatalogPage, isProjectCatalogPage, navigationPage, type Page } from './lib/routes'
 
@@ -21,6 +18,7 @@ const GreenWay = lazy(() => loadPage('greenway'))
 const Projects = lazy(() => loadPage('projects'))
 const Numbers = lazy(() => loadPage('numbers'))
 const AskAI = lazy(() => loadPage('ai'))
+const FullExperienceEffects = lazy(() => import('./components/FullExperienceEffects'))
 
 const pageTitles: Record<Page, string> = {
   home: portfolio.role,
@@ -66,10 +64,6 @@ function RenderedPage({ page, route }: { page: Page; route: string }) {
       if (page !== 'home') document.getElementById(`${page}-title`)?.focus({ preventScroll: true })
     }
   }, [page])
-  const effectsPage = isMinimalPage(page) ? 'minimal' : page
-  useScrollReveal(effectsPage)
-  useAnimationVisibility(effectsPage)
-  useSurfaceHover(effectsPage)
   if (isProjectCatalogPage(page)) return <Projects page={page} route={route} />
   if (isMinimalProjectCatalogPage(page)) return <MinimalProjects page={page} route={route} />
   if (page === 'minimalVyora') return <MinimalVyora />
@@ -89,7 +83,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const preload = (event: Event) => preloadLinkPage(event.target)
+    const preload = (event: Event) => preloadLinkPage(event.target, event.type === 'click')
     document.addEventListener('pointerover', preload, { passive: true })
     document.addEventListener('focusin', preload)
     document.addEventListener('pointerdown', preload, { passive: true })
@@ -107,5 +101,5 @@ export default function App() {
     }
   }, [])
 
-  return <PageLoadBoundary key={isMinimalPage(page) ? 'minimal' : page} minimal={isMinimalPage(page)}><Suspense fallback={<PageLoading minimal={isMinimalPage(page)} />}><RenderedPage key={page} page={page} route={route} /></Suspense></PageLoadBoundary>
+  return <PageLoadBoundary key={isMinimalPage(page) ? 'minimal' : page} minimal={isMinimalPage(page)}><Suspense fallback={<PageLoading minimal={isMinimalPage(page)} />}><RenderedPage key={page} page={page} route={route} />{!isMinimalPage(page) && <FullExperienceEffects key={page} page={page} />}</Suspense></PageLoadBoundary>
 }

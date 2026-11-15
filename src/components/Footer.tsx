@@ -10,7 +10,7 @@ export default function Footer({ topHref = '/' }: { topHref?: string }) {
   return (
     <footer className="site-footer page-width">
       <div className="site-footer-top">
-        <a href="/" className="site-footer-identity"><img src={theme === 'light' ? '/brand-mark-light.svg' : '/brand-mark.svg'} className="site-footer-logo" width="30" height="30" alt="" aria-hidden="true" /><span>{portfolio.name}<span className="site-footer-copyright">© 2026</span></span></a>
+        <a href="/experience" className="site-footer-identity"><img src={theme === 'light' ? '/brand-mark-light.svg' : '/brand-mark.svg'} className="site-footer-logo" width="30" height="30" alt="" aria-hidden="true" /><span>{portfolio.name}<span className="site-footer-copyright">© 2026</span></span></a>
         <a href={topHref} className="site-footer-back eyebrow" aria-label="Back to top" onClick={event => {
           if (window.location.pathname !== topHref || window.location.hash || window.location.search) return
           event.preventDefault()

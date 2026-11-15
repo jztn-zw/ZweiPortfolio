@@ -92,6 +92,7 @@
 .min-tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; }
 .min-tags li { padding: 3px 8px; background: var(--min-soft); color: var(--min-body); border-radius: 4px; font-family: var(--font-mono); font-size: 10px; line-height: 1.7; }
 .min-tags-outlined li { padding: 4px 8px; border: 1px solid var(--min-line); }
+.min-tool-icon { flex-shrink: 0; fill: currentColor; }
 .minimal-view h3 { color: var(--min-text); font-family: inherit; line-height: 1.6; letter-spacing: -.15px; }
 .min-shell > main { flex: 1; padding-bottom: clamp(28px, 4vw, 40px); }
 .min-back-nav { display: flex; padding-top: 16px; }
