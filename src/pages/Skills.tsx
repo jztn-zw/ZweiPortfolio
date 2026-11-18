@@ -4,6 +4,7 @@ import StackIllustration from '../components/StackIllustration'
 import SiteHeader from '../components/SiteHeader'
 import Footer from '../components/Footer'
 import GraphicMark from '../components/GraphicMark'
+import TechnologyIcon from '../components/TechnologyIcon'
 import { capabilities } from '../data/portfolio'
 import { technologyDescriptions } from '../data/skills'
 import '../components/GraphicDetails.css'
@@ -44,7 +45,7 @@ function SkillDiscipline({ capability }: { capability: (typeof capabilities)[num
                 onClick={() => setActiveTechnology(technology)}
                 onKeyDown={event => { if (event.key === 'Escape') setActiveTechnology(null) }}
               >
-                <span className="skill-tag-node" aria-hidden="true" /><span>{technology}</span>
+                <TechnologyIcon technology={technology} /><span>{technology}</span>
               </button>
               <span id={descriptionId} className="sr-only">{technologyDescriptions[technology]}</span>
             </li>

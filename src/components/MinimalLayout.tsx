@@ -23,7 +23,9 @@ export default function MinimalLayout({ children, contentId = 'minimal-content',
           <span>Jaztin</span>
         </a>
         <nav className="min-top-actions" aria-label="View options">
-          <a href={fullHref} className="min-full-view" aria-label="Full experience" title="Full experience"><FullExperienceIcon /></a>
+          <a href={fullHref} className="min-full-view" aria-label="Full experience" title="Full experience">
+            <FullExperienceIcon />
+          </a>
           <button className="min-theme-toggle" type="button" aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`} onClick={event => {
             const bounds = event.currentTarget.getBoundingClientRect()
             toggleTheme({ x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 })

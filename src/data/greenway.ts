@@ -19,7 +19,7 @@ export const greenwayStackLayers = [
     title: 'API & database',
     mark: 'connection',
     signal: 'services',
-    tools: ['Node.js', 'Express', 'TiDB (MySQL-compatible)', 'mysql2', 'Socket.IO', 'JWT', 'Zod'],
+    tools: ['Node.js', 'TiDB (MySQL-compatible)', 'Express', 'mysql2', 'Socket.IO', 'JWT', 'Zod'],
   },
   {
     id: 'mobile',

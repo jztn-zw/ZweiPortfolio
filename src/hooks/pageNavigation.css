@@ -7,6 +7,21 @@
   overflow: clip;
   contain: paint;
 }
+.page-shutter[data-mode-entry] {
+  inset: 0;
+  --interaction-primary: #d1363a;
+  --theme-accent: #d1363a;
+}
+:root[data-theme='light'] .page-shutter[data-mode-entry] { --theme-accent: #ad3039; }
+.page-minimal-fade {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  pointer-events: none;
+  background: #111111;
+}
+:root[data-theme='light'] .page-minimal-fade { background: #fafafa; }
+@media (prefers-reduced-motion: reduce) { .page-minimal-fade { display: none; } }
 :root[data-page-transition='covered'] #root main { opacity: 0; }
 /* Keep the outgoing/incoming page's decorative CSS animations idle while covered. */
 :root[data-page-transition] #root main *,

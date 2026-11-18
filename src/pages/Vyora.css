@@ -1,0 +1,72 @@
+.vyora-case {
+  max-width: 1120px;
+  padding-block: clamp(28px, 5vw, 64px) clamp(52px, 8vw, 104px);
+  --vyora-body: var(--theme-body, #c5c1b6);
+}
+
+.vyora-case-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+.vyora-case-link { color: var(--vyora-body); font-size: 13px; }
+.vyora-case-link:hover { text-decoration: underline; }
+.vyora-case :is(header, section) p { margin: 0; color: var(--vyora-body); line-height: 1.7; text-wrap: pretty; }
+.vyora-case .eyebrow { color: var(--vyora-body); font-size: 10px; letter-spacing: .09em; text-transform: uppercase; }
+
+.vyora-case-hero, .vyora-case-story {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(20px, 5vw, 76px);
+}
+
+.vyora-case-hero { align-items: end; margin-block: clamp(32px, 6vw, 72px) 28px; }
+.vyora-case-hero h1 { margin: 10px 0 12px; font-size: clamp(56px, 12vw, 136px); line-height: .94; }
+.vyora-case-hero .vyora-case-tagline { font-size: clamp(16px, 2vw, 24px); }
+.vyora-case-hero .page-back-button { margin-top: 17px; }
+.vyora-case-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 24px;
+  margin: 0 0 24px;
+  padding-block: 16px;
+  border-block: 1px solid var(--line);
+}
+.vyora-case-facts dd { margin: 5px 0 0; font-size: 13px; overflow-wrap: anywhere; }
+
+.vyora-case-preview { min-width: 0; margin: 0; }
+.vyora-case-preview img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
+.vyora-case-preview figcaption { margin-top: 8px; }
+.vyora-case-story { align-items: center; margin-block: clamp(32px, 6vw, 72px); }
+
+.vyora-case :is(h2, h3) { margin: 0 0 10px; }
+.vyora-case h2 { font-size: clamp(25px, 4vw, 44px); text-transform: uppercase; }
+.vyora-case h3 { font-size: 15px; font-weight: 650; }
+.vyora-case section p + p { margin-top: 10px; }
+.vyora-case-section { padding-top: 24px; margin-top: 32px; border-top: 1px solid var(--line); }
+.vyora-case-features, .vyora-case-stack {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.vyora-case-features > li, .vyora-case-stack > div {
+  min-width: 0;
+  padding: clamp(14px, 2vw, 22px);
+  border: 1px solid var(--line);
+}
+.vyora-case-features svg { margin-bottom: 10px; color: var(--interaction-accent, #ee7275); }
+.vyora-case-features p { font-size: 13px; }
+.vyora-case-stack ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.vyora-case-stack li { padding: 4px 7px; border: 1px solid var(--line); color: var(--vyora-body); font: 11px / 1.5 var(--font-mono); }
+.vyora-case-progress p { max-width: 68ch; }
+
+@media (max-width: 740px) {
+  .vyora-case-hero, .vyora-case-story, .vyora-case-features, .vyora-case-stack { grid-template-columns: minmax(0, 1fr); }
+  .vyora-case-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

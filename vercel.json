@@ -23,6 +23,7 @@
     { "source": "/projects/web-mobile", "destination": "/index.html" },
     { "source": "/projects/automation", "destination": "/index.html" },
     { "source": "/projects/tools", "destination": "/index.html" },
-    { "source": "/projects/greenway", "destination": "/index.html" }
+    { "source": "/projects/greenway", "destination": "/index.html" },
+    { "source": "/projects/vyora", "destination": "/index.html" }
   ]
 }

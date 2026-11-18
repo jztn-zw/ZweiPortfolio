@@ -118,6 +118,7 @@ export const projects: Project[] = [
     artwork: 'structure',
     status: 'Live · In development',
     liveUrl: 'https://vyorabooth.vyora.workers.dev/',
+    detailsUrl: '/projects/vyora',
     minimalDetailsUrl: '/minimal/projects/vyora',
   },
 ]

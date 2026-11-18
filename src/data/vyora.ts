@@ -1,5 +1,24 @@
 import { Camera, PanelsTopLeft, Printer } from 'lucide-react'
 
+export const vyoraCase = {
+  category: 'Windows photo booth & website',
+  tagline: ['A little moment.', 'Something to keep.'],
+  summary: 'Built to keep the booth running offline, with a separate website for downloads and setup.',
+  facts: [
+    { label: 'My role', value: 'Developer & designer' },
+    { label: 'Platforms', value: 'Windows & Web' },
+    { label: 'Core experience', value: 'Offline-first' },
+  ],
+  overview: [
+    'Guests should be able to pick a frame, take their photos, and keep a strip. VYORA brings that flow into a Windows app, with the library and finished images stored on the computer.',
+    'The website is a separate starting point for downloading the installer and following the setup guide.',
+  ],
+  progress: [
+    'The app is already usable and the website is deployed. I’m continuing to add features and improve the experience as development moves forward.',
+    'Online photo uploads and galleries are planned for a future release. The current booth keeps capture, saving, and printing local.',
+  ],
+} as const
+
 export const vyoraFeatures = [
   {
     title: 'Capture, review, retake',

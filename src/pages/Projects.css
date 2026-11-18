@@ -39,12 +39,13 @@
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
+  object-fit: contain;
   margin-bottom: 14px;
   border: 1px solid var(--line);
   background: var(--theme-surface, #1a1917);
 }
 .project-catalog .project-tile-bottom, .tile-project-links { flex-wrap: wrap; }
-.tile-project-links { display: flex; align-items: center; gap: 0 14px; }
+.tile-project-links { display: flex; align-items: center; gap: 0 14px; margin-inline-start: auto; }
 .project-catalog .project-tile--cards .tile-project-primary { position: static; }
 .project-catalog .tile-project-primary::before { content: ''; position: absolute; inset: 0; z-index: 1; }
 .project-catalog .project-tile--cards .tile-project-primary::after { content: none; }

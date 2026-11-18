@@ -22,6 +22,7 @@ export const pagePaths = {
   automationProjects: projectCollectionPaths.automation,
   toolsProjects: projectCollectionPaths.tools,
   greenway: '/projects/greenway',
+  vyora: '/projects/vyora',
   numbers: '/numbers',
   ai: '/ask-ai',
 } as const

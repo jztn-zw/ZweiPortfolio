@@ -11,7 +11,7 @@ const routeSource = readFileSync(new URL('../src/lib/routes.ts', import.meta.url
 const routes = {}
 vm.runInNewContext(ts.transpileModule(routeSource, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: routes, URL })
 
-function harness({ reduced = false, supported = true, initial = '/experience', width = 1280, cores = 8, memory = 8, saveData = false, idle = false, lite = false } = {}) {
+function harness({ reduced = false, supported = true, initial = '/experience', width = 1280, cores = 8, memory = 8, saveData = false, idle = false, lite = false, loadRouteResources = () => Promise.resolve() } = {}) {
   const animations = [], frames = [], listeners = new Map(), nodes = [], scrolls = [], anchors = new Map()
   const idleCallbacks = new Map()
   let createdNodes = 0, idleId = 0, frameTime = 0
@@ -27,6 +27,7 @@ function harness({ reduced = false, supported = true, initial = '/experience', w
     getAttribute(name) { return this.attributes[name] ?? null }
     hasAttribute(name) { return name in this.attributes }
     removeAttribute(name) { delete this.attributes[name] }
+    toggleAttribute(name, enabled) { if (enabled) this.setAttribute(name, ''); else this.removeAttribute(name) }
     addEventListener() {}
     closest() { return this }
     focus() { document.activeElement = this }
@@ -87,7 +88,18 @@ function harness({ reduced = false, supported = true, initial = '/experience', w
     addEventListener: (event, callback) => listeners.set(event, callback), removeEventListener: event => listeners.delete(event),
   }
   const exports = {}
-  vm.runInNewContext(compiled, { exports, window, document, Element, URL, performance: { now: () => frameTime }, getComputedStyle: node => ({ transform: node.style.transform || 'translateX(0)' }), requestAnimationFrame: callback => frames.push(callback), require: name => name === 'react-dom' ? { flushSync: callback => callback() } : name === '../lib/routes' ? routes : {} })
+  vm.runInNewContext(compiled, {
+    exports, window, document, Element, URL,
+    performance: { now: () => frameTime },
+    getComputedStyle: node => ({ transform: node.style.transform || 'translateX(0)' }),
+    requestAnimationFrame: callback => frames.push(callback),
+    require: name => {
+      if (name === 'react-dom') return { flushSync: callback => callback() }
+      if (name === '../lib/routes') return routes
+      if (name === '../lib/pageModules') return { loadRouteResources }
+      return {}
+    },
+  })
   let notifications = 0
   const unsubscribe = exports.subscribeToNavigation(() => notifications++)
   return {
@@ -115,16 +127,26 @@ function harness({ reduced = false, supported = true, initial = '/experience', w
 
 async function settle() { for (let index = 0; index < 8; index++) await Promise.resolve() }
 
-test('the root opens Minimal while the full experience remains directly addressable', () => {
+test('the root opens Minimal and only prepares full artwork when the visitor opts in', async () => {
   const h = harness({ initial: '/', idle: true })
   h.idle()
   assert.equal(routes.navigationPage(h.api.getNavigationLocation()), 'minimal')
   assert.equal(h.createdNodes, 0)
   h.navigate('/experience')
-  assert.equal(routes.navigationPage(h.api.getNavigationLocation()), 'home')
-  assert.equal(h.animations.length, 0)
-  h.window.history.back()
   assert.equal(h.api.getNavigationLocation(), '/')
+  assert.equal(h.nodes[0].className, 'page-shutter')
+  assert.equal(h.nodes[0].hasAttribute('data-mode-entry'), true)
+  await cover(h)
+  assert.equal(routes.navigationPage(h.api.getNavigationLocation()), 'home')
+  await reveal(h)
+  assert.equal(h.nodes.length, 0)
+  h.window.history.back()
+  await settle()
+  assert.equal(h.nodes[0].className, 'page-minimal-fade')
+  await cover(h)
+  assert.equal(h.api.getNavigationLocation(), '/')
+  await reveal(h)
+  assert.equal(h.nodes.length, 0)
   assert.equal(routes.navigationPage('/#about'), 'home')
   h.unsubscribe()
 })
@@ -579,8 +601,37 @@ test('direct Minimal subpage Back has a safe home fallback and keeps native modi
   }
 })
 
-test('minimal view enters, exits, and restores browser history without a cinematic curtain', () => {
-  const h = harness()
+test('mode switch waits for full resources under an illustrated curtain and returns with one fade', async () => {
+  let release
+  const incoming = new Promise(resolve => { release = resolve })
+  const h = harness({ initial: '/', width: 390, cores: 2, loadRouteResources: route => route === '/skills' ? incoming : Promise.resolve() })
+  h.navigate('/skills')
+  assert.equal(h.nodes[0].dataset.quality, 'lite')
+  assert.equal(h.nodes[0].children[3].children.filter(child => child.dataset.kind).length, 3)
+  await cover(h)
+  assert.equal(h.api.getNavigationLocation(), '/')
+  assert.equal(h.document.documentElement.dataset.pageTransition, 'covered')
+  release()
+  await settle()
+  assert.equal(h.api.getNavigationLocation(), '/skills')
+  await reveal(h)
+  assert.ok(h.animations.every(animation => animation.node !== h.main))
+
+  const arrivalCount = h.animations.length
+  h.window.history.back()
+  await settle()
+  assert.equal(h.nodes[0].className, 'page-minimal-fade')
+  assert.equal(h.nodes[0].children.length, 0)
+  await cover(h)
+  assert.equal(h.api.getNavigationLocation(), '/')
+  await reveal(h)
+  assert.equal(h.animations.length, arrivalCount + 2)
+  assert.equal(h.nodes.length, 0)
+  h.unsubscribe()
+})
+
+test('reduced motion keeps mode switches immediate and preserves browser history', () => {
+  const h = harness({ reduced: true })
   h.navigate('/minimal')
   assert.equal(h.api.getNavigationLocation(), '/minimal')
   assert.equal(h.nodes.length, 0)
@@ -606,7 +657,10 @@ test('direct minimal visits avoid scene preparation and can cancel an unfinished
   assert.equal(h.nodes.length, 1)
   h.navigate('/minimal')
   await settle()
+  assert.equal(h.nodes[0].className, 'page-minimal-fade')
+  await cover(h)
   assert.equal(h.api.getNavigationLocation(), '/minimal')
+  await reveal(h)
   assert.equal(h.nodes.length, 0)
   assert.equal(h.document.documentElement.dataset.pageTransition, undefined)
   h.unsubscribe()

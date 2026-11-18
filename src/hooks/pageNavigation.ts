@@ -1,4 +1,5 @@
 import { flushSync } from 'react-dom'
+import { loadRouteResources } from '../lib/pageModules'
 import { isMinimalPage, isPagePath, isProjectCatalogPage, navigationPage, normalizeRoute } from '../lib/routes'
 
 type NavigationScene = {
@@ -13,9 +14,12 @@ type NavigationScene = {
 
 type NavigationRun = NavigationScene & {
   animations: Animation[]
-  phase: 'cover' | 'reveal'
+  phase: 'cover' | 'waiting' | 'reveal'
   commit: (() => void) | undefined
+  ready?: Promise<void>
 }
+
+type FadeRun = Pick<NavigationRun, 'curtain' | 'animations' | 'commit'>
 
 function browserRoute() {
   const current = window.location.pathname + window.location.search + window.location.hash
@@ -27,6 +31,7 @@ function browserRoute() {
 let displayedRoute = browserRoute()
 let restoredProjectScroll: number | undefined
 let active: NavigationRun | undefined
+let activeFade: FadeRun | undefined
 let preloadedArtwork: HTMLImageElement | undefined
 let preparedScene: NavigationScene | undefined
 let preparingScene: Generator<void, NavigationScene> | undefined
@@ -36,7 +41,7 @@ export function getNavigationLocation() { return displayedRoute }
 export function getRestoredProjectScroll() { return restoredProjectScroll }
 
 function destinationTitle() {
-  const titles = { home: 'BACK\nHOME', minimal: 'MINIMAL\nVIEW', minimalSkills: 'STACK &\nSKILLS', minimalProjects: 'ALL\nPROJECTS', minimalWebMobileProjects: 'WEB &\nMOBILE', minimalAutomationProjects: 'AUTOMATION', minimalToolsProjects: 'TOOLS &\nEXPERIMENTS', minimalGreenway: 'GREENWAY', minimalVyora: 'VYORA', numbers: 'BY THE\nNUMBERS', skills: 'STACK &\nSKILLS', projects: 'ALL\nPROJECTS', webMobileProjects: 'WEB &\nMOBILE', automationProjects: 'AUTOMATION', toolsProjects: 'TOOLS &\nEXPERIMENTS', greenway: 'GREENWAY', ai: 'ASK\nAI' }
+  const titles = { home: 'BACK\nHOME', minimal: 'MINIMAL\nVIEW', minimalSkills: 'STACK &\nSKILLS', minimalProjects: 'ALL\nPROJECTS', minimalWebMobileProjects: 'WEB &\nMOBILE', minimalAutomationProjects: 'AUTOMATION', minimalToolsProjects: 'TOOLS &\nEXPERIMENTS', minimalGreenway: 'GREENWAY', minimalVyora: 'VYORA', numbers: 'BY THE\nNUMBERS', skills: 'STACK &\nSKILLS', projects: 'ALL\nPROJECTS', webMobileProjects: 'WEB &\nMOBILE', automationProjects: 'AUTOMATION', toolsProjects: 'TOOLS &\nEXPERIMENTS', greenway: 'GREENWAY', vyora: 'VYORA', ai: 'ASK\nAI' }
   return titles[navigationPage(browserRoute())]
 }
 
@@ -234,15 +239,53 @@ function createNameLetter(character: string) {
 
 // The URL changes normally. React receives the new route only after the shutter
 // covers the outgoing content, so unrelated renders cannot expose it early.
-export function cancelPageNavigation() {
-  const run = active
+export function cancelPageNavigation(commitPending = true) {
+  const run = active ?? activeFade
   if (!run) return
+  if (active) cacheNavigationScene(active)
   active = undefined
+  activeFade = undefined
   run.animations.forEach(animation => animation.cancel())
   run.curtain.remove()
-  cacheNavigationScene(run)
   delete document.documentElement.dataset.pageTransition
-  run.commit?.()
+  if (commitPending) run.commit?.()
+}
+
+function afterPagePaint() {
+  return new Promise<number>(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+}
+
+async function fadeToMinimal(commit: () => void, ready: Promise<void>) {
+  const curtain = document.createElement('div')
+  curtain.className = 'page-minimal-fade'
+  curtain.setAttribute('aria-hidden', 'true')
+  const run: FadeRun = { curtain, animations: [], commit }
+  activeFade = run
+
+  try {
+    // Keep the full page visible while a cold Minimal route downloads.
+    await ready
+    if (activeFade !== run) return
+    document.body.append(curtain)
+    document.documentElement.dataset.pageTransition = 'active'
+    const cover = curtain.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: 120, easing: 'ease-out', fill: 'both',
+    })
+    run.animations.push(cover)
+    await cover.finished
+    if (activeFade !== run) return
+    run.commit = undefined
+    commit()
+    await afterPagePaint()
+    if (activeFade !== run) return
+    const reveal = curtain.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: 180, easing: 'ease-out', fill: 'both',
+    })
+    run.animations.push(reveal)
+    await reveal.finished
+  } finally {
+    if (activeFade === run) cancelPageNavigation()
+  }
 }
 
 function lightweightTransition() {
@@ -309,11 +352,12 @@ function createNavigationScene(): NavigationScene {
   return step.value
 }
 
-async function animateNavigation(commit: () => void) {
+async function animateNavigation(commit: () => void, ready?: Promise<void>) {
   if (active?.phase === 'cover') {
     // Finish the existing close and show the latest requested destination.
     active.commit = commit
-    active.title.textContent = destinationTitle()
+    active.ready = ready
+    active.title.textContent = ready ? 'FULL\nEXPERIENCE' : destinationTitle()
     return
   }
 
@@ -354,8 +398,9 @@ async function animateNavigation(commit: () => void) {
     document.body.append(curtain)
   }
 
-  title.textContent = destinationTitle()
-  const run: NavigationRun = { curtain, panels, artwork, portrait, caption, title, cards, animations: [], phase: 'cover', commit }
+  curtain.toggleAttribute('data-mode-entry', Boolean(ready))
+  title.textContent = ready ? 'FULL\nEXPERIENCE' : destinationTitle()
+  const run: NavigationRun = { curtain, panels, artwork, portrait, caption, title, cards, animations: [], phase: 'cover', commit, ready }
   active = run
   const { dataset } = document.documentElement
   dataset.pageTransition = 'active'
@@ -366,7 +411,7 @@ async function animateNavigation(commit: () => void) {
   const coverDuration = compact ? 230 : 290
   const revealDuration = compact ? 380 : 460
   const stagger = compact ? 22 : 30
-  const backwards = navigationPage(browserRoute()) === 'home'
+  const backwards = !ready && navigationPage(browserRoute()) === 'home'
   const direction = backwards ? -1 : 1
   curtain.dataset.direction = backwards ? 'back' : 'forward'
 
@@ -401,6 +446,11 @@ async function animateNavigation(commit: () => void) {
     }, () => { /* A newer navigation owns the curtain. */ })
     await Promise.all(arrival.map(animation => animation.finished))
     if (active !== run) return
+    if (run.ready) {
+      run.phase = 'waiting'
+      await run.ready
+      if (active !== run) return
+    }
     // Once this route is committed, a new request needs a fresh cover, even
     // during the frames we wait for before starting the reveal animation.
     run.phase = 'reveal'
@@ -411,11 +461,11 @@ async function animateNavigation(commit: () => void) {
     showDestination?.()
 
     // Let the new route mount and complete its normal focus/scroll handling.
-    const revealFrame = await new Promise<number>(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+    const revealFrame = await afterPagePaint()
     if (active !== run) return
     // A slow handoff can happen on any device. Give the illustrated shutter
     // the frame budget when the destination has already missed several frames.
-    const smoothHandoff = !lightweight && revealFrame - mountStarted < 50
+    const smoothHandoff = !run.ready && !lightweight && revealFrame - mountStarted < 50
     const content = smoothHandoff ? document.querySelector('main') : null
     if (content) run.animations.push(content.animate([
       { opacity: .45, transform: 'translateY(18px) scale(.992)', transformOrigin: '50% 0' },
@@ -457,29 +507,38 @@ async function animateNavigation(commit: () => void) {
 }
 
 export function subscribeToNavigation(onChange: () => void) {
-  const minimalStart = isMinimalPage(navigationPage(browserRoute()))
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
-  if (!minimalStart && !motion.matches && !preloadedArtwork && typeof window.Image === 'function') {
-    preloadedArtwork = new window.Image()
-    preloadedArtwork.decoding = 'async'
-    preloadedArtwork.fetchPriority = 'low'
-    preloadedArtwork.src = artworkUrl
-    void preloadedArtwork.decode().catch(() => { /* The geometric curtain still works if the artwork cannot load. */ })
-  }
   // Prepare one small off-DOM stage per idle callback, including on slower devices.
   // A busy browser may defer this work; a click can safely finish the same builder.
   let preparation: number | undefined
   let disposed = false
   const prepare = () => {
     preparation = undefined
-    if (disposed || active || preparedScene) return
+    if (disposed || active || preparedScene || motion.matches || isMinimalPage(navigationPage(displayedRoute))) return
     const builder = preparingScene ??= buildNavigationScene()
     const step = builder.next()
     if (step.done) { preparedScene = step.value; preparingScene = undefined }
     else preparation = window.requestIdleCallback(prepare)
   }
-  if (!minimalStart && !motion.matches && !preparedScene && typeof window.requestIdleCallback === 'function') preparation = window.requestIdleCallback(prepare)
+  const warmFullExperience = () => {
+    if (disposed || motion.matches || typeof Element.prototype.animate !== 'function') return
+    if (!preloadedArtwork && typeof window.Image === 'function') {
+      preloadedArtwork = new window.Image()
+      preloadedArtwork.decoding = 'async'
+      preloadedArtwork.fetchPriority = 'low'
+      preloadedArtwork.src = artworkUrl
+      void preloadedArtwork.decode().catch(() => { /* The geometric curtain still works if the artwork cannot load. */ })
+    }
+    if (preparation === undefined && !preparedScene && typeof window.requestIdleCallback === 'function') {
+      preparation = window.requestIdleCallback(prepare)
+    }
+  }
+  const stopPreparation = () => {
+    if (preparation !== undefined) window.cancelIdleCallback(preparation)
+    preparation = undefined
+  }
   let requestedRoute = browserRoute()
+  if (!isMinimalPage(navigationPage(requestedRoute))) warmFullExperience()
   let requestedProjectScroll: number | undefined
   const scrollWithinPage = () => {
     const hash = window.location.hash.slice(1)
@@ -504,6 +563,13 @@ export function subscribeToNavigation(onChange: () => void) {
     restoredProjectScroll = requestedProjectScroll
     flushSync(onChange)
     if (samePage) scrollWithinPage()
+    if (isMinimalPage(navigationPage(next))) {
+      stopPreparation()
+      preparedScene = undefined
+      preparingScene = undefined
+    } else if (!active) {
+      warmFullExperience()
+    }
   }
   const onLocationChange = (event?: Event) => {
     const next = browserRoute()
@@ -513,11 +579,19 @@ export function subscribeToNavigation(onChange: () => void) {
     const fromPage = navigationPage(displayedRoute)
     const toPage = navigationPage(next)
     const changedPage = fromPage !== toPage
-    const minimalNavigation = isMinimalPage(fromPage) || isMinimalPage(toPage)
+    const fromMinimal = isMinimalPage(fromPage)
+    const toMinimal = isMinimalPage(toPage)
     const withinCatalog = isProjectCatalogPage(fromPage) && isProjectCatalogPage(toPage)
-    if (minimalNavigation || withinCatalog || (!changedPage && !active) || motion.matches || document.documentElement.dataset.themeTransition || typeof Element.prototype.animate !== 'function') {
-      cancelPageNavigation()
+    if (activeFade || toMinimal) cancelPageNavigation(false)
+    if ((fromMinimal && toMinimal) || withinCatalog || (!changedPage && !active) || motion.matches || document.documentElement.dataset.themeTransition || typeof Element.prototype.animate !== 'function') {
+      cancelPageNavigation(false)
       commit()
+      return
+    }
+    if (fromMinimal || toMinimal) {
+      const ready = loadRouteResources(next).catch(() => { /* The page boundary can show its retry action. */ })
+      if (toMinimal) void fadeToMinimal(commit, ready).catch(() => { /* Cancelled animation. */ })
+      else void animateNavigation(commit, ready)
       return
     }
     void animateNavigation(commit)
@@ -548,7 +622,7 @@ export function subscribeToNavigation(onChange: () => void) {
     }
     const nextPage = navigationPage(next)
     let historyState: { portfolioProjectBackSteps?: number; portfolioMinimalBackSteps?: number } | null = null
-    if (current === displayedRoute && (nextPage === 'greenway' || nextPage === 'minimalGreenway' || nextPage === 'minimalVyora')) {
+    if (current === displayedRoute && (nextPage === 'greenway' || nextPage === 'vyora' || nextPage === 'minimalGreenway' || nextPage === 'minimalVyora')) {
       if (navigationPage(current) === nextPage) {
         // Skip project anchors on the way back to the page that opened the project.
         if (backSteps) historyState = { portfolioProjectBackSteps: backSteps + 1 }
@@ -569,19 +643,26 @@ export function subscribeToNavigation(onChange: () => void) {
     window.history.pushState(historyState, '', next)
     onLocationChange()
   }
-  const onMotionChange = () => { if (motion.matches) cancelPageNavigation() }
+  const onMotionChange = () => {
+    if (motion.matches) {
+      cancelPageNavigation()
+      stopPreparation()
+    } else if (!isMinimalPage(navigationPage(displayedRoute))) {
+      warmFullExperience()
+    }
+  }
   document.addEventListener('click', onClick)
   window.addEventListener('popstate', onLocationChange)
   window.addEventListener('hashchange', onLocationChange)
   motion.addEventListener('change', onMotionChange)
   return () => {
     disposed = true
-    if (preparation !== undefined) window.cancelIdleCallback(preparation)
+    stopPreparation()
     document.removeEventListener('click', onClick)
     window.removeEventListener('popstate', onLocationChange)
     window.removeEventListener('hashchange', onLocationChange)
     motion.removeEventListener('change', onMotionChange)
-    cancelPageNavigation()
+    cancelPageNavigation(false)
     preparedScene = undefined
     preparingScene = undefined
   }

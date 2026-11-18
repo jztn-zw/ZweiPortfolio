@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './base.css'
 import App from './App.tsx'
 import './minimal-theme.css'
+import './hooks/pageNavigation.css'
 import { initializeEffectsMode } from './lib/devicePerformance'
 
 initializeEffectsMode()

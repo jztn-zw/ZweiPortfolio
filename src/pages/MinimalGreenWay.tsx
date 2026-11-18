@@ -91,7 +91,7 @@ export default function MinimalGreenWay() {
               <div className="min-stack-group" key={layer.id}>
                 <h3>{layer.title}</h3>
                 <ul className="min-tags min-tags-outlined" aria-label={`${layer.title} technologies`}>
-                  {project.technologies.filter(tool => layer.tools.some(item => item === tool)).map(tool => <li key={tool}>{tool}</li>)}
+                  {layer.tools.map(tool => <li key={tool}>{tool}</li>)}
                 </ul>
               </div>
             ))}

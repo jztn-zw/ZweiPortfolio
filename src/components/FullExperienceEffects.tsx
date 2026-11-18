@@ -6,7 +6,6 @@ import '../theme.css'
 import '../theme-light.css'
 import '../interaction-polish.css'
 import '../performance.css'
-import '../hooks/pageNavigation.css'
 
 export default function FullExperienceEffects({ page }: { page: string }) {
   useScrollReveal(page)

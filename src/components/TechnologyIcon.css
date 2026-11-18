@@ -1,0 +1,7 @@
+.technology-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  margin-inline-end: 6px;
+  vertical-align: -.2em;
+  fill: currentColor;
+}

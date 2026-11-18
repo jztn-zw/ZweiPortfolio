@@ -72,7 +72,7 @@ function harness({ reduced = false, supported = true, width = 1280, covered = fa
     enter(...elements) { observers.at(-1).callback(elements.map(target => ({ target, isIntersecting: true, boundingClientRect: target.getBoundingClientRect() }))) },
     focus(target) { listeners.get('focusin')({ target }) },
     child(parent) { return new Element('', 0, parent) },
-    end(target, animationName = 'scroll-enter-panel') { listeners.get('animationend')({ target, animationName }) },
+    end(target, animationName = 'scroll-enter-soft') { listeners.get('animationend')({ target, animationName }) },
   }
 }
 
@@ -119,7 +119,8 @@ test('initial content stays visible and calendar entrance completes even without
 test('child animations cannot finish a group early, while focus reveals every pending ancestor', () => {
   const h = harness()
   h.enter(h.panel, h.graphic)
-  h.end(h.child(h.panel), 'scroll-enter-content')
+  h.end(h.child(h.panel))
+  h.end(h.panel, 'unrelated-hover-animation')
   assert.equal(h.panel.dataset.scrollState, 'entering')
   h.end(h.panel)
   assert.equal(h.panel.dataset.scrollState, 'visible')

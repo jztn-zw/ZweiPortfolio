@@ -38,7 +38,7 @@ export default function useScrollReveal(page: string) {
     if (!('IntersectionObserver' in window)) return
 
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const targets = new Map<HTMLElement, { kind: string; reverse: boolean }>()
+    const targets = new Map<HTMLElement, string>()
     let initialized = false
     let observer: IntersectionObserver | undefined
     const finishTimers = new Map<HTMLElement, ReturnType<typeof setTimeout>>()
@@ -58,7 +58,6 @@ export default function useScrollReveal(page: string) {
       targets.forEach((_, element) => {
         delete element.dataset.scrollReveal
         delete element.dataset.scrollState
-        delete element.dataset.scrollSide
         element.style.removeProperty('--scroll-delay')
       })
     }
@@ -69,7 +68,7 @@ export default function useScrollReveal(page: string) {
 
       if (!targets.size) {
         for (const { selector, kind } of revealGroups) {
-          document.querySelectorAll<HTMLElement>(selector).forEach((element, index) => targets.set(element, { kind, reverse: index % 2 === 1 }))
+          document.querySelectorAll<HTMLElement>(selector).forEach(element => targets.set(element, kind))
         }
       }
 
@@ -78,27 +77,25 @@ export default function useScrollReveal(page: string) {
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left)
         entering.forEach((entry, index) => {
           const element = entry.target as HTMLElement
-          const stagger = window.innerWidth <= 560 ? 65 : 110
-          const delay = Math.min(index * stagger, 220)
+          const delay = Math.min(index * 32, 64)
           element.style.setProperty('--scroll-delay', `${delay}ms`)
           element.dataset.scrollState = 'entering'
           // Keep content and the calendar spider's entrance available even if
           // a component style replaces its scroll animation.
-          finishTimers.set(element, setTimeout(() => finish(element), 1600 + delay))
+          finishTimers.set(element, setTimeout(() => finish(element), 520 + delay))
           observer?.unobserve(element)
         })
-      }, { rootMargin: '0px 0px -6% 0px', threshold: .06 })
+      }, { threshold: 0 })
 
       const viewportHeight = window.innerHeight
-      const measurements: { element: HTMLElement; kind: string; reverse: boolean; inView: boolean }[] = []
-      targets.forEach(({ kind, reverse }, element) => {
+      const measurements: { element: HTMLElement; kind: string; inView: boolean }[] = []
+      targets.forEach((kind, element) => {
         if (!element.getClientRects().length) return
-        measurements.push({ element, kind, reverse, inView: element.getBoundingClientRect().top < viewportHeight })
+        measurements.push({ element, kind, inView: element.getBoundingClientRect().top < viewportHeight })
       })
       // Measure the whole page before changing styles so each section doesn't trigger its own layout.
-      measurements.forEach(({ element, kind, reverse, inView }) => {
+      measurements.forEach(({ element, kind, inView }) => {
         element.dataset.scrollReveal = kind
-        element.dataset.scrollSide = reverse ? 'right' : 'left'
         // Direct links, restored scroll positions, and the first screen stay readable immediately.
         if (inView) {
           finish(element)
@@ -119,7 +116,7 @@ export default function useScrollReveal(page: string) {
     }
 
     function handleAnimationEnd(event: AnimationEvent) {
-      if (event.animationName.startsWith('scroll-enter-') && event.target instanceof HTMLElement && targets.has(event.target)) {
+      if (event.animationName === 'scroll-enter-soft' && event.target instanceof HTMLElement && event.target.dataset.scrollState === 'entering' && targets.has(event.target)) {
         finish(event.target)
       }
     }

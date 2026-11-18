@@ -1,5 +1,5 @@
 import { ArrowUpRight, CodeXml, RefreshCw } from 'lucide-react'
-import { useEffect, useId, useRef, useState } from 'react'
+import { memo, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { getGitHubCalendar, type ContributionCalendar, type ContributionDay } from '../lib/githubCalendar'
 import CalendarSpider from './CalendarSpider'
 import GraphicMark from './GraphicMark'
@@ -9,6 +9,19 @@ import './GitHubCalendar.css'
 const dayMilliseconds = 86400000
 const dateLabel = (date: string) => new Date(`${date}T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
 const describeDay = (day: ContributionDay) => `${day.count.toLocaleString('en-US')} ${day.count === 1 ? 'contribution' : 'contributions'} on ${dateLabel(day.date)}`
+
+const CalendarCell = memo(function CalendarCell({ index, x, y, level, selected }: {
+  index: number
+  x: number
+  y: number
+  level: number
+  selected: boolean
+}) {
+  return <g>
+    <rect data-day-index={index} x={x - 2} y={y - 2} width="16" height="16" className="github-day-hit" />
+    <rect data-level={level} className={selected ? 'github-day is-selected' : 'github-day'} x={x} y={y} width="12" height="12" rx="1" />
+  </g>
+})
 
 export default function GitHubCalendar() {
   const [calendar, setCalendar] = useState<ContributionCalendar | null>(null)
@@ -41,11 +54,18 @@ export default function GitHubCalendar() {
     return () => observer.disconnect()
   }, [calendar])
 
-  const first = calendar ? new Date(`${calendar.days[0].date}T00:00:00Z`) : null
-  const start = first ? first.getTime() - first.getUTCDay() * dayMilliseconds : 0
-  const column = (date: string) => Math.floor((Date.parse(`${date}T00:00:00Z`) - start) / (7 * dayMilliseconds))
-  const weeks = calendar ? column(calendar.days.at(-1)!.date) + 1 : 53
-  const width = 8 + weeks * 16
+  const cells = useMemo(() => {
+    if (!calendar?.days.length) return []
+    const first = new Date(`${calendar.days[0].date}T00:00:00Z`)
+    const start = first.getTime() - first.getUTCDay() * dayMilliseconds
+    return calendar.days.map(day => {
+      const date = new Date(`${day.date}T00:00:00Z`)
+      const column = Math.floor((date.getTime() - start) / (7 * dayMilliseconds))
+      return { x: 6 + column * 16, y: 6 + date.getUTCDay() * 16 }
+    })
+  }, [calendar])
+  const width = (cells.at(-1)?.x ?? 0) + 18
+  const selectedCell = selected === null ? undefined : cells[selected]
 
   function positionTooltip(cell: SVGRectElement) {
     if (!matrix.current || !tooltip.current) return
@@ -119,25 +139,20 @@ export default function GitHubCalendar() {
               cell?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' })
               if (cell) selectDay(next, cell)
             }}>
-            <svg viewBox={`0 0 ${width} 120`} className="github-calendar-graph" aria-hidden="true" onPointerLeave={() => { if (interaction.current === 'pointer') setSelected(null) }} onPointerMove={event => {
+            <svg viewBox={`0 0 ${width} 120`} className="github-calendar-graph" aria-hidden="true" onPointerLeave={() => { if (interaction.current === 'pointer') setSelected(null) }} onPointerOver={event => {
+              if (interaction.current === 'keyboard') return
+              const cell = event.target instanceof Element ? event.target.closest<SVGRectElement>('[data-day-index]') : null
+              if (!cell) return
+              const index = Number(cell.dataset.dayIndex)
+              if (index !== selected) selectDay(index, cell)
+            }} onPointerMove={event => {
               if (interaction.current !== 'keyboard') return
               interaction.current = 'pointer'
               const cell = event.target instanceof Element ? event.target.closest<SVGRectElement>('[data-day-index]') : null
               if (cell) selectDay(Number(cell.dataset.dayIndex), cell)
             }}>
-              {calendar.days.map((day, index) => {
-                const x = 6 + column(day.date) * 16
-                const y = 6 + new Date(`${day.date}T00:00:00Z`).getUTCDay() * 16
-                return <g key={day.date} onPointerEnter={event => {
-                  if (interaction.current === 'keyboard') return
-                  const cell = event.currentTarget.querySelector<SVGRectElement>('[data-day-index]')
-                  if (cell) selectDay(index, cell)
-                }}>
-                  <rect data-day-index={index} x={x - 2} y={y - 2} width="16" height="16" className="github-day-hit" />
-                  <rect data-level={day.level} className={`github-day${selected === index ? ' is-selected' : ''}`} x={x} y={y} width="12" height="12" rx="1" />
-                </g>
-              })}
-              {selected !== null && <g key={calendar.days[selected].date} className="github-day-selection" transform={`translate(${6 + column(calendar.days[selected].date) * 16} ${6 + new Date(`${calendar.days[selected].date}T00:00:00Z`).getUTCDay() * 16})`}>
+              {calendar.days.map((day, index) => <CalendarCell key={day.date} index={index} {...cells[index]} level={day.level} selected={selected === index} />)}
+              {selected !== null && selectedCell && <g key={calendar.days[selected].date} className="github-day-selection" transform={`translate(${selectedCell.x} ${selectedCell.y})`}>
                 <rect data-level={calendar.days[selected].level} className="github-day github-day-pop" width="12" height="12" rx="1.5" />
                 <path className="github-day-brackets" d="M-3 1v-4h4m10 0h4v4M-3 11v4h4m10 0h4v-4" pathLength="1" />
               </g>}

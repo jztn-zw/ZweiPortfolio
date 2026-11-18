@@ -5,9 +5,12 @@ import Footer from '../components/Footer'
 import GraphicMark from '../components/GraphicMark'
 import SurfaceSignal from '../components/SurfaceSignal'
 import GreenWayStackSignal from '../components/GreenWayStackSignal'
+import TechnologyIcon from '../components/TechnologyIcon'
 import { projects } from '../data/portfolio'
 import { greenwayFeatures as features, greenwayStackLayers as stackLayers } from '../data/greenway'
 import './GreenWay.css'
+
+const technologyCount = new Set(stackLayers.flatMap(layer => [...layer.tools])).size
 
 function ShowcaseFilm() {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -80,8 +83,6 @@ export default function GreenWay() {
     return <><SiteHeader isHome={false} /><main className="greenway-case page-width"><h1 id="greenway-title" tabIndex={-1}>Project unavailable.</h1><a className="page-back-button" href="/projects" data-project-back>Back to projects</a></main><Footer /></>
   }
 
-  const additionalTools = project.technologies.filter(tech => !stackLayers.some(layer => layer.tools.some(tool => tool === tech)))
-
   return <div id="/projects/greenway" className="greenway-case-page">
     <a className="skip-link" href="#greenway-content">Skip to content</a>
     <SiteHeader isHome={false} />
@@ -144,13 +145,16 @@ export default function GreenWay() {
       <section className="greenway-case-stack" aria-labelledby="greenway-stack-title">
         <div className="greenway-stack-heading"><div><p className="eyebrow greenway-case-kicker"><span className="greenway-section-index">03 /</span> UNDER THE HOOD</p><h2 id="greenway-stack-title">THE TOOLS<br />THE CONNECTIONS</h2></div><p>From the resident interface to the services behind it, a shared stack connects web, mobile, maps, and media.</p></div>
         <div className="greenway-stack-board" aria-label="GreenWay technology stack">
-          <div className="greenway-stack-board-top eyebrow"><span>THE BUILD / SYSTEM STACK</span><span>{String(project.technologies.length).padStart(2, '0')} TECHNOLOGIES<GraphicMark variant="weave" /></span></div>
-          {stackLayers.map(layer => {
-            const tools = project.technologies.filter(tech => layer.tools.some(tool => tool === tech))
-            if (!tools.length) return null
-            return <section className="greenway-stack-layer" key={layer.id} aria-labelledby={`greenway-stack-${layer.id}`}><div className="greenway-stack-layer-label"><GraphicMark variant={layer.mark} /><h3 id={`greenway-stack-${layer.id}`}>{layer.title}</h3></div><ul aria-label={`${layer.title} technologies`}>{tools.map(tech => <li key={tech}>{tech}</li>)}</ul><GreenWayStackSignal kind={layer.signal} /></section>
-          })}
-          {additionalTools.length > 0 && <section className="greenway-stack-layer" aria-labelledby="greenway-stack-additional"><div className="greenway-stack-layer-label"><GraphicMark variant="chevrons" /><h3 id="greenway-stack-additional">Additional tools</h3></div><ul aria-label="Additional technologies">{additionalTools.map(tech => <li key={tech}>{tech}</li>)}</ul><GreenWayStackSignal kind="additional" /></section>}
+          <div className="greenway-stack-board-top eyebrow"><span>THE BUILD / SYSTEM STACK</span><span>{String(technologyCount).padStart(2, '0')} TECHNOLOGIES<GraphicMark variant="weave" /></span></div>
+          {stackLayers.map(layer => (
+            <section className="greenway-stack-layer" key={layer.id} aria-labelledby={`greenway-stack-${layer.id}`}>
+              <div className="greenway-stack-layer-label"><GraphicMark variant={layer.mark} /><h3 id={`greenway-stack-${layer.id}`}>{layer.title}</h3></div>
+              <ul aria-label={`${layer.title} technologies`}>
+                {layer.tools.map(tool => <li key={tool}><TechnologyIcon technology={tool} />{tool}</li>)}
+              </ul>
+              <GreenWayStackSignal kind={layer.signal} />
+            </section>
+          ))}
         </div>
       </section>
 

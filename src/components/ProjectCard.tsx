@@ -1,4 +1,4 @@
-import { ArrowUpRight, CodeXml, Layers, Leaf, Orbit } from 'lucide-react'
+import { ArrowUpRight, Camera, CodeXml, Layers, Leaf, Orbit } from 'lucide-react'
 import { memo } from 'react'
 import type { Project } from '../data/portfolio'
 import Artwork from './Artwork'
@@ -18,9 +18,24 @@ type ProjectCardProps = {
 const projectIcons = { terrain: CodeXml, orbit: Orbit, structure: Layers, greenway: Leaf }
 const visibleTechnologyCount = 4
 const ProjectArtwork = memo(Artwork)
+const catalogPreviews: Record<string, { src: string; alt: string; width: number; height: number }> = {
+  '002': {
+    src: '/images/greenway-showcase-poster.jpg',
+    alt: 'GreenWay mobile app showing collection schedules, truck tracking, and resident reports',
+    width: 1920,
+    height: 1080,
+  },
+  vyora: {
+    src: '/images/vyora-studio.jpg',
+    alt: 'VYORA Studio photo booth home screen with sample photo strips and frame settings',
+    width: 1920,
+    height: 1032,
+  },
+}
 
 export default function ProjectCard({ project, view, onSelect, ribbonIndex, instance, isClone = false, isCentered = false }: ProjectCardProps) {
-  const Icon = projectIcons[project.artwork]
+  const Icon = project.id === 'vyora' ? Camera : projectIcons[project.artwork]
+  const preview = catalogPreviews[project.id]
   const visibleTechnologies = project.technologies.slice(0, visibleTechnologyCount)
   const additionalTechnologyCount = project.technologies.length - visibleTechnologies.length
   const titleId = `project-title-${project.id}${instance ? `-${instance}` : ''}`
@@ -41,13 +56,10 @@ export default function ProjectCard({ project, view, onSelect, ribbonIndex, inst
         <div className="project-tile-copy">
           <p className="tile-category eyebrow">{project.category}</p>
           <h3 id={titleId}>{project.title}</h3>
-          {view === 'cards' && project.artwork === 'greenway' && (
+          {view === 'cards' && preview && (
             <img
               className="catalog-project-preview"
-              src="/images/greenway-showcase-poster.jpg"
-              alt="GreenWay mobile app showing collection schedules, truck tracking, and resident reports"
-              width="1920"
-              height="1080"
+              {...preview}
               loading="lazy"
               decoding="async"
             />

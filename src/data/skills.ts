@@ -23,6 +23,7 @@ export const technologyIconIds: Record<string, string> = {
   Express: 'express',
   MySQL: 'mysql',
   TiDB: 'tidb',
+  'TiDB (MySQL-compatible)': 'tidb',
   SQLite: 'sqlite',
   'Cloudflare Workers': 'cloudflareworkers',
   'Socket.IO': 'socketio',
