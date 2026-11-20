@@ -219,7 +219,6 @@ export default function Minimal() {
           </div>
           <form method="dialog"><button className="resume-connections-close" type="submit" aria-label="Close email form"><X size={17} aria-hidden="true" /></button></form>
         </div>
-        <div className="resume-email-recipient"><span>To</span><span className="resume-email-avatar">J</span><span><strong>Jaztin Contreras</strong><span>{email?.replace(/^mailto:/, '')}</span></span></div>
           <form className="resume-email-form" onSubmit={sendMessage} onChange={() => { submissionId.current = null; if (!sending.current) setEmailStatus('idle') }} aria-busy={emailStatus === 'sending'}>
             <label htmlFor="contact-email">Your email</label>
             <input id="contact-email" name="email" type="email" autoComplete="email" placeholder="you@example.com" required maxLength={254} disabled={emailStatus === 'sending'} />

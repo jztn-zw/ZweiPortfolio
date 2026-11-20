@@ -84,6 +84,19 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    id: 'everwell',
+    title: 'Everwell Veterinary Clinic',
+    category: 'WORDPRESS & INQUIRY AUTOMATION',
+    collection: 'automation',
+    listed: true,
+    description: 'A WordPress clinic demo with a GoHighLevel contact form and a draft workflow to record inquiries, notify the team, and send confirmation emails.',
+    technologies: ['WordPress', 'GHL'],
+    artwork: 'orbit',
+    status: 'Portfolio demo · Workflow draft',
+    detailsUrl: '/projects/everwell',
+    minimalDetailsUrl: '/minimal/projects/everwell',
+  },
+  {
     id: '002',
     title: 'GreenWay',
     category: 'WEB & MOBILE APPLICATION',

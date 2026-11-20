@@ -1,0 +1,59 @@
+.everwell-case {
+  --everwell-ink: var(--min-text, var(--theme-text, #edece3));
+  --everwell-body: var(--min-body, var(--theme-body, #b9b8ab));
+  --everwell-line: var(--min-line, var(--theme-line, #45453c));
+  --everwell-surface: var(--min-surface, var(--theme-surface, #191918));
+  --everwell-accent: var(--min-accent, var(--interaction-primary, #d1363a));
+  color: var(--everwell-ink);
+}
+.everwell-full { max-width: 1060px; padding-block: 36px 72px; }
+.everwell-intro { padding-block: 32px; border-bottom: 1px solid var(--everwell-line); }
+.everwell-category, .everwell-status { font-family: var(--font-mono, monospace); font-size: 10px; letter-spacing: .08em; }
+.everwell-category { margin: 0 0 12px; color: var(--everwell-accent); }
+.everwell-full h1 { font-size: clamp(36px, 6vw, 76px); line-height: 1.05; margin: 0; }
+.everwell-case p:not(.everwell-category) { max-width: 68ch; color: var(--everwell-body); font-size: 13px; line-height: 1.8; }
+.everwell-status { display: inline-block; margin-top: 8px; color: var(--everwell-body); }
+.everwell-case section { margin-top: 32px; }
+.everwell-case h2 { font-size: 18px; margin: 0 0 16px; }
+.everwell-case h3 { font-size: 14px; margin: 0; }
+.everwell-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: 20px 0; border-bottom: 1px solid var(--everwell-line); margin: 0; }
+.everwell-facts dt { color: var(--everwell-body); font-size: 11px; margin-bottom: 8px; }
+.everwell-facts dd { font-size: 12px; line-height: 1.6; margin: 0; }
+.everwell-case .everwell-story { display: grid; grid-template-columns: 1fr 1.5fr; gap: clamp(24px, 5vw, 48px); margin-top: 32px; }
+.everwell-story h2 { line-height: 1.4; text-wrap: balance; }
+.everwell-story p:first-child { margin-top: 0; }
+.everwell-workflow-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.everwell-workflow-image { margin: 0; min-width: 0; }
+.everwell-workflow-image img { display: block; width: 100%; height: auto; border: 1px solid var(--everwell-line); }
+.everwell-workflow-image figcaption { font-size: 11px; line-height: 1.7; color: var(--everwell-body); margin-top: 10px; }
+.everwell-case .everwell-scope-note { max-width: none; font-size: 11px; margin: 24px 0 0; padding-left: 16px; border-left: 1px solid var(--everwell-line); }
+.everwell-client { border-top: 1px solid var(--everwell-line); padding-top: 32px; padding-bottom: 16px; }
+.everwell-contact { display: inline-flex; align-items: center; gap: 12px; font-size: 13px; color: var(--everwell-ink); text-decoration: none; padding-block: 12px; border-bottom: 1px solid var(--everwell-line); transition: border-color 180ms ease; }
+.everwell-contact:hover { border-color: var(--everwell-ink); }
+.everwell-contact:focus-visible, .everwell-workflow-image a:focus-visible { outline: 2px solid var(--everwell-ink); outline-offset: 4px; }
+.everwell-previews figure { margin: 0 0 24px; min-width: 0; }
+.everwell-previews a { display: block; border: 1px solid var(--everwell-line); border-radius: 2px 12px 2px 2px; overflow: hidden; }
+.everwell-previews a:focus-visible { outline: 2px solid var(--everwell-accent); outline-offset: 4px; }
+.everwell-previews img { display: block; width: 100%; height: auto; }
+.everwell-website-preview { aspect-ratio: 16 / 9; }
+.everwell-website-preview img { height: 100%; object-fit: cover; object-position: top; }
+.everwell-previews figcaption { margin-top: 10px; color: var(--everwell-body); font-size: 11px; line-height: 1.7; }
+.everwell-flow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; padding: 0; margin: 0; list-style: none; border: 1px solid var(--everwell-line); border-radius: 2px 12px 2px 2px; overflow: hidden; background: var(--everwell-surface); }
+.everwell-flow li { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 20px; min-width: 0; }
+.everwell-flow li:nth-child(even) { border-left: 1px solid var(--everwell-line); }
+.everwell-flow li:nth-child(n + 3) { border-top: 1px solid var(--everwell-line); }
+.everwell-step-icon { display: grid; place-items: center; color: var(--everwell-accent); }
+.everwell-flow p { margin: 6px 0 0; }
+.everwell-flow h3 { font-size: 13px; line-height: 1.5; }
+@media (max-width: 760px) { .everwell-case .everwell-story { grid-template-columns: minmax(0, 1fr); gap: 8px; } }
+@media (max-width: 560px) {
+  .everwell-facts { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .everwell-facts > div { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 12px; }
+  .everwell-facts dt { margin: 0; line-height: 1.7; }
+  .everwell-flow { grid-template-columns: minmax(0, 1fr); }
+  .everwell-flow li { flex-direction: row; padding: 16px; gap: 12px; }
+  .everwell-step-icon { flex: 0 0 24px; margin-top: 2px; }
+  .everwell-flow li:nth-child(n) { border-left: 0; }
+  .everwell-flow li + li { border-top: 1px solid var(--everwell-line); }
+}
+@media (prefers-reduced-motion: reduce) { .everwell-contact { transition: none; } }

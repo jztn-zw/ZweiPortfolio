@@ -16,6 +16,8 @@ const MinimalGreenWay = lazy(() => loadPage('minimalGreenway'))
 const MinimalVyora = lazy(() => loadPage('minimalVyora'))
 const GreenWay = lazy(() => loadPage('greenway'))
 const Vyora = lazy(() => loadPage('vyora'))
+const Everwell = lazy(() => loadPage('everwell'))
+const MinimalEverwell = lazy(() => loadPage('minimalEverwell'))
 const Projects = lazy(() => loadPage('projects'))
 const Numbers = lazy(() => loadPage('numbers'))
 const AskAI = lazy(() => loadPage('ai'))
@@ -31,10 +33,12 @@ const pageTitles: Record<Page, string> = {
   minimalToolsProjects: 'Tools & Experiments — Minimal',
   minimalGreenway: 'GreenWay — Minimal',
   minimalVyora: 'VYORA — Minimal',
+  minimalEverwell: 'Everwell Veterinary Clinic — Minimal',
   ai: 'Ask Me Anything',
   numbers: 'By the Numbers',
   greenway: 'GreenWay',
   vyora: 'VYORA',
+  everwell: 'Everwell Veterinary Clinic',
   skills: 'Stack & Skills',
   projects: 'All Projects',
   webMobileProjects: 'Web & Mobile Projects',
@@ -70,6 +74,8 @@ function RenderedPage({ page, route }: { page: Page; route: string }) {
   if (isMinimalProjectCatalogPage(page)) return <MinimalProjects page={page} route={route} />
   if (page === 'minimalVyora') return <MinimalVyora />
   if (page === 'vyora') return <Vyora />
+  if (page === 'everwell') return <Everwell />
+  if (page === 'minimalEverwell') return <MinimalEverwell minimal />
   return page === 'minimal' ? <Minimal /> : page === 'minimalSkills' ? <MinimalSkills /> : page === 'minimalGreenway' ? <MinimalGreenWay /> : page === 'ai' ? <AskAI /> : page === 'numbers' ? <Numbers /> : page === 'greenway' ? <GreenWay /> : page === 'skills' ? <Skills /> : <Home />
 }
 

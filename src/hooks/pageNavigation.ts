@@ -41,7 +41,7 @@ export function getNavigationLocation() { return displayedRoute }
 export function getRestoredProjectScroll() { return restoredProjectScroll }
 
 function destinationTitle() {
-  const titles = { home: 'BACK\nHOME', minimal: 'MINIMAL\nVIEW', minimalSkills: 'STACK &\nSKILLS', minimalProjects: 'ALL\nPROJECTS', minimalWebMobileProjects: 'WEB &\nMOBILE', minimalAutomationProjects: 'AUTOMATION', minimalToolsProjects: 'TOOLS &\nEXPERIMENTS', minimalGreenway: 'GREENWAY', minimalVyora: 'VYORA', numbers: 'BY THE\nNUMBERS', skills: 'STACK &\nSKILLS', projects: 'ALL\nPROJECTS', webMobileProjects: 'WEB &\nMOBILE', automationProjects: 'AUTOMATION', toolsProjects: 'TOOLS &\nEXPERIMENTS', greenway: 'GREENWAY', vyora: 'VYORA', ai: 'ASK\nAI' }
+  const titles = { home: 'BACK\nHOME', minimal: 'MINIMAL\nVIEW', minimalSkills: 'STACK &\nSKILLS', minimalProjects: 'ALL\nPROJECTS', minimalWebMobileProjects: 'WEB &\nMOBILE', minimalAutomationProjects: 'AUTOMATION', minimalToolsProjects: 'TOOLS &\nEXPERIMENTS', minimalGreenway: 'GREENWAY', minimalVyora: 'VYORA', minimalEverwell: 'EVERWELL', numbers: 'BY THE\nNUMBERS', skills: 'STACK &\nSKILLS', projects: 'ALL\nPROJECTS', webMobileProjects: 'WEB &\nMOBILE', automationProjects: 'AUTOMATION', toolsProjects: 'TOOLS &\nEXPERIMENTS', greenway: 'GREENWAY', vyora: 'VYORA', everwell: 'EVERWELL', ai: 'ASK\nAI' }
   return titles[navigationPage(browserRoute())]
 }
 
@@ -622,7 +622,7 @@ export function subscribeToNavigation(onChange: () => void) {
     }
     const nextPage = navigationPage(next)
     let historyState: { portfolioProjectBackSteps?: number; portfolioMinimalBackSteps?: number } | null = null
-    if (current === displayedRoute && (nextPage === 'greenway' || nextPage === 'vyora' || nextPage === 'minimalGreenway' || nextPage === 'minimalVyora')) {
+    if (current === displayedRoute && (nextPage === 'greenway' || nextPage === 'vyora' || nextPage === 'everwell' || nextPage === 'minimalGreenway' || nextPage === 'minimalVyora')) {
       if (navigationPage(current) === nextPage) {
         // Skip project anchors on the way back to the page that opened the project.
         if (backSteps) historyState = { portfolioProjectBackSteps: backSteps + 1 }

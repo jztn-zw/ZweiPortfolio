@@ -16,6 +16,7 @@ export const pagePaths = {
   minimalToolsProjects: '/minimal/projects/tools',
   minimalGreenway: '/minimal/projects/greenway',
   minimalVyora: '/minimal/projects/vyora',
+  minimalEverwell: '/minimal/projects/everwell',
   skills: '/skills',
   projects: '/projects',
   webMobileProjects: projectCollectionPaths['web-mobile'],
@@ -23,6 +24,7 @@ export const pagePaths = {
   toolsProjects: projectCollectionPaths.tools,
   greenway: '/projects/greenway',
   vyora: '/projects/vyora',
+  everwell: '/projects/everwell',
   numbers: '/numbers',
   ai: '/ask-ai',
 } as const
@@ -61,7 +63,7 @@ export function minimalProjectCollectionHref(collection?: ProjectCollection) {
 }
 
 export function isMinimalPage(page: string) {
-  return page === 'minimal' || page === 'minimalSkills' || page === 'minimalProjects' || page === 'minimalGreenway' || page === 'minimalVyora' || Object.hasOwn(minimalProjectCollectionByPage, page)
+  return page === 'minimal' || page === 'minimalSkills' || page === 'minimalProjects' || page === 'minimalGreenway' || page === 'minimalVyora' || page === 'minimalEverwell' || Object.hasOwn(minimalProjectCollectionByPage, page)
 }
 
 export function normalizeRoute(route: string) {
