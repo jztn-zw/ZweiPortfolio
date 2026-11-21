@@ -1,7 +1,7 @@
 import { lazy, Suspense, useDeferredValue, useEffect, useSyncExternalStore } from 'react'
 import PageLoading, { PageLoadBoundary } from './components/PageLoading'
 import { loadPage, preloadRoutePage, preloadLinkPage } from './lib/pageModules'
-import { portfolio } from './data/portfolio'
+import { applySeo } from './lib/seo'
 import { getVisitorCount } from './lib/visitorCount'
 import { finishStartup } from './lib/startupScreen'
 import { getNavigationLocation, getRestoredProjectScroll, subscribeToNavigation } from './hooks/pageNavigation'
@@ -23,36 +23,13 @@ const Numbers = lazy(() => loadPage('numbers'))
 const AskAI = lazy(() => loadPage('ai'))
 const FullExperienceEffects = lazy(() => loadPage('fullExperienceEffects'))
 
-const pageTitles: Record<Page, string> = {
-  home: portfolio.role,
-  minimal: 'Minimal Portfolio',
-  minimalSkills: 'Tech Stack — Minimal',
-  minimalProjects: 'All Projects — Minimal',
-  minimalWebMobileProjects: 'Web & Mobile — Minimal',
-  minimalAutomationProjects: 'Automation — Minimal',
-  minimalToolsProjects: 'Tools & Experiments — Minimal',
-  minimalGreenway: 'GreenWay — Minimal',
-  minimalVyora: 'VYORA — Minimal',
-  minimalEverwell: 'Everwell Veterinary Clinic — Minimal',
-  ai: 'Ask Me Anything',
-  numbers: 'By the Numbers',
-  greenway: 'GreenWay',
-  vyora: 'VYORA',
-  everwell: 'Everwell Veterinary Clinic',
-  skills: 'Stack & Skills',
-  projects: 'All Projects',
-  webMobileProjects: 'Web & Mobile Projects',
-  automationProjects: 'Automation Projects',
-  toolsProjects: 'Tools & Experiments',
-}
-
 // This mounts after a deferred page resolves, so focus and reveals find its content.
 function RenderedPage({ page, route }: { page: Page; route: string }) {
   useEffect(() => {
     document.documentElement.dataset.view = isMinimalPage(page) ? 'minimal' : page
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', document.documentElement.dataset.theme === 'light' ? isMinimalPage(page) ? '#fafafa' : '#f4f3ef' : '#111111')
     finishStartup()
-    document.title = `${portfolio.name} — ${pageTitles[page]}`
+    applySeo(page)
     const restoredScroll = getRestoredProjectScroll()
     if (restoredScroll !== undefined) {
       window.scrollTo({ top: restoredScroll, behavior: 'instant' })

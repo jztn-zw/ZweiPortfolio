@@ -28,7 +28,7 @@ function browserRoute() {
   return normalized
 }
 
-let displayedRoute = browserRoute()
+let displayedRoute = typeof window === 'undefined' ? '/' : browserRoute()
 let restoredProjectScroll: number | undefined
 let active: NavigationRun | undefined
 let activeFade: FadeRun | undefined

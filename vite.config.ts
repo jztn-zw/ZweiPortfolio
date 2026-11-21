@@ -8,6 +8,7 @@ import chat from './api/chat.js';
 import contact from './api/contact.js';
 
 export default defineConfig(({ mode }) => ({
+  build: { manifest: true },
   plugins: [react(), tailwindcss(), {
     name: 'public-github-calendar',
     configureServer(server) {

@@ -479,7 +479,7 @@ test('legacy hash navigation converts to a clean path and still uses the curtain
 test('Vercel rewrites cover app pages without capturing assets or API functions', () => {
   const config = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
   for (const path of ['/numbers', '/skills', '/projects', '/projects/web-mobile', '/projects/automation', '/projects/tools', '/projects/greenway', '/ask-ai', '/minimal', '/minimal/skills', '/minimal/projects', '/minimal/projects/web-mobile', '/minimal/projects/automation', '/minimal/projects/tools', '/minimal/projects/greenway']) {
-    assert.equal(config.rewrites.find(rule => rule.source === path)?.destination, '/index.html')
+    assert.equal(config.rewrites.find(rule => rule.source === path)?.destination, `${path}/index.html`)
   }
   assert.ok(config.rewrites.every(rule => routes.isPagePath(rule.source)))
   assert.equal(config.trailingSlash, false)

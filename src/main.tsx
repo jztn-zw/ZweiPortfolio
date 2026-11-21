@@ -5,11 +5,14 @@ import App from './App.tsx'
 import './minimal-theme.css'
 import './hooks/pageNavigation.css'
 import { initializeEffectsMode } from './lib/devicePerformance'
+import { loadRouteResources } from './lib/pageModules'
+import { isMinimalPage, navigationPage } from './lib/routes'
 
 initializeEffectsMode()
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const root = document.getElementById('root')!
+const mount = () => createRoot(root).render(<StrictMode><App /></StrictMode>)
+// Leave the readable static page painted until its interactive module is ready.
+if (root.hasChildNodes() && isMinimalPage(navigationPage(window.location.href))) {
+  void loadRouteResources(window.location.href).then(mount, mount)
+} else mount()
