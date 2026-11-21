@@ -19,6 +19,12 @@ const projectIcons = { terrain: CodeXml, orbit: Orbit, structure: Layers, greenw
 const visibleTechnologyCount = 4
 const ProjectArtwork = memo(Artwork)
 const catalogPreviews: Record<string, { src: string; alt: string; width: number; height: number }> = {
+  everwell: {
+    src: '/images/everwell/workflow.jpg',
+    alt: 'GoHighLevel draft workflow for recording and responding to Everwell website inquiries',
+    width: 1528,
+    height: 686,
+  },
   '002': {
     src: '/images/greenway-showcase-poster.jpg',
     alt: 'GreenWay mobile app showing collection schedules, truck tracking, and resident reports',
