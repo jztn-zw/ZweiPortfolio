@@ -42,10 +42,10 @@ test('every suggested topic gives confirmed portfolio details and useful destina
   assert.ok(guide.getPortfolioAnswer('Contact Jaztin').links.some(link => link.href === 'mailto:jaztinabramcontreras@gmail.com'))
 })
 
-test('unknown questions and the unavailable resume are described honestly in preview mode', () => {
+test('unknown questions stay grounded and resume requests link to the supplied PDF', () => {
   const guide = load()
   assert.match(guide.getPortfolioAnswer('What is the weather today?').paragraphs[0], /focused on my portfolio/)
-  assert.match(guide.getPortfolioAnswer('Can I see the resume?').paragraphs[0], /coming soon/)
+  assert.ok(guide.getPortfolioAnswer('Can I see the resume?').links.some(link => link.href === '/documents/JaztinAbramContrerasCV.pdf'))
 })
 
 test('all curated answers use Jaztin’s first-person voice', () => {

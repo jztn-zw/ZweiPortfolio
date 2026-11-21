@@ -9,6 +9,7 @@ export type Contact = {
 export const portfolio = {
   name: 'Jaztin Abram Contreras',
   shortName: 'Jaztin',
+  resumeUrl: '/documents/JaztinAbramContrerasCV.pdf',
   nameLines: ['Jaztin Abram', 'Contreras'],
   role: 'Full-Stack Developer',
   location: 'Quezon, Philippines',
@@ -17,7 +18,7 @@ export const portfolio = {
   description: 'Driven by curiosity and logical thinking, I enjoy solving problems, understanding how systems work, and exploring the possibilities of AI.',
   contacts: [
     { id: 'github', label: 'GitHub', url: 'https://github.com/jztn-zw' },
-    { id: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/jaztin-contreras-58508b446/' },
+    { id: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/jaztin-abram-contreras-58508b446/' },
     { id: 'email', label: 'Email', url: 'mailto:jaztinabramcontreras@gmail.com' },
   ] as Contact[],
 }

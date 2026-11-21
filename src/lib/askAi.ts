@@ -37,8 +37,8 @@ export function getPortfolioAnswer(question: string): PortfolioAnswer {
   const text = normalizeChatQuestion(question)
   if (/resume|résumé|cv\b/.test(text)) return {
     topic: 'Resume',
-    paragraphs: ['My résumé is coming soon. In the meantime, you can explore my skills and background, or reach out to me directly.'],
-    links: [{ label: 'Explore skills', href: '/skills' }, { label: 'Get in touch', href: '/experience#contact' }],
+    paragraphs: ['My résumé is available as a PDF with my skills, projects, and education.'],
+    links: [{ label: 'View résumé PDF', href: portfolio.resumeUrl }, { label: 'Get in touch', href: '/experience#contact' }],
   }
   if (/contact|email|reach|hire|opportunit|availab|collaborat|work with|connect/.test(text)) return {
     topic: 'Let’s connect',

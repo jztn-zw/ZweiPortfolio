@@ -95,7 +95,7 @@ test('minimal view renders the profile, capabilities, and published work in both
 test('the résumé links to real contact and project destinations', () => {
   const html = renderMinimal('light')
   assert.match(html, /href="\/experience"[^>]*aria-label="Full experience"[^>]*><svg\b[^>]*>[\s\S]*?<\/svg><\/a>/)
-  for (const href of ['/experience', '/minimal/skills', '/minimal/projects', '/minimal/projects/web-mobile', '/minimal/projects/automation', '/minimal/projects/tools', 'https://github.com/jztn-zw']) {
+  for (const href of ['/experience', '/minimal/skills', '/minimal/projects', '/minimal/projects/web-mobile', '/minimal/projects/automation', '/minimal/projects/tools', 'https://github.com/jztn-zw', '/documents/JaztinAbramContrerasCV.pdf', 'https://www.linkedin.com/in/jaztin-abram-contreras-58508b446/']) {
     assert.ok(html.includes(`href="${href}"`), href)
   }
   assert.doesNotMatch(html, /download=|href="#"/)

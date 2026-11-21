@@ -15,7 +15,7 @@ export function markHeroGuideSeen() {
 export const heroGuideSteps = [
   { target: '#hero-title', question: 'Who am I?', message: `I’m ${portfolio.shortName}, a Computer Science student who enjoys turning ideas into working software.` },
   { target: '[data-guide="contact"]', question: 'Get in Touch', message: 'Have a project or opportunity? This takes you to my contact details.' },
-  { target: '[data-guide="resume"]', question: 'View Resume', message: 'My resume will be available here soon, with my skills and experience.' },
+  { target: '[data-guide="resume"]', question: 'View Resume', message: 'Open my resume PDF in a new tab for my skills, projects, and education.' },
   { target: '[data-guide="home"]', question: 'Home', message: 'This is Home. Your starting point for the portfolio.' },
   { target: '[data-guide="lab"]', question: 'The Lab', message: 'The Lab will hold experiments and side projects. Coming soon.' },
   { target: '[data-guide="ai"]', question: 'Ask me anything', message: 'Curious about my work? Ask me anything about my work and projects here.' },

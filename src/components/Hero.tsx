@@ -49,9 +49,9 @@ export default function Hero() {
           <a href="#contact" data-guide="contact" className="hero-button hero-button-primary">
             <Mail size={16} /> Get in Touch
           </a>
-          <button type="button" data-guide="resume" className="hero-button hero-button-outline" aria-disabled="true" title="Resume coming soon" aria-label="View resume (coming soon)">
+          <a href={portfolio.resumeUrl} target="_blank" rel="noopener noreferrer" data-guide="resume" className="hero-button hero-button-outline" aria-label="View resume PDF (opens in a new tab)">
             <FileText size={16} /> View Resume
-          </button>
+          </a>
         </div>
 
         <div className="hero-signature eyebrow" aria-hidden="true">

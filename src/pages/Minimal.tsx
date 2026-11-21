@@ -89,7 +89,7 @@ export default function Minimal() {
             <div className="resume-location"><span>{portfolio.location}</span><span className="resume-availability">{portfolio.availability}</span></div>
             <nav className="resume-contact-links" aria-label="Contact">
               {email && <button className="min-text-link resume-email-trigger" type="button" aria-haspopup="dialog" onClick={() => emailDialog.current?.showModal()}>Email<ArrowUpRight size={13} aria-hidden="true" /></button>}
-              <span className="resume-header-pending" aria-label="Résumé coming soon">Résumé<span className="resume-contact-soon">Soon</span></span>
+              <a className="min-text-link" href={portfolio.resumeUrl} target="_blank" rel="noopener noreferrer" aria-label="View résumé PDF (opens in a new tab)">Résumé<ArrowUpRight size={13} aria-hidden="true" /></a>
             </nav>
           </div>
         </header>
