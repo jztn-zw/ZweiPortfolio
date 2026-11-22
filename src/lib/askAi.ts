@@ -35,6 +35,15 @@ export function getPortfolioAnswer(question: string): PortfolioAnswer {
   const personalAnswer = getPersonalAnswer(question)
   if (personalAnswer) return { topic: 'Off the keyboard', paragraphs: [personalAnswer], links: [{ label: 'More about me', href: '/experience#about' }] }
   const text = normalizeChatQuestion(question)
+  const namedProject = projects.find(project => project.listed && text.includes(project.title.toLowerCase().split(' ')[0]))
+  if (namedProject && namedProject.artwork !== 'greenway') return {
+    topic: namedProject.title,
+    paragraphs: [namedProject.description, `Status: ${namedProject.status}. Main technologies: ${namedProject.technologies.slice(0, 4).join(', ')}.`],
+    links: [
+      ...(namedProject.detailsUrl ? [{ label: 'View project', href: namedProject.detailsUrl }] : []),
+      ...(namedProject.liveUrl ? [{ label: 'Visit website', href: namedProject.liveUrl }] : []),
+    ],
+  }
   if (/resume|résumé|cv\b/.test(text)) return {
     topic: 'Resume',
     paragraphs: ['My résumé is available as a PDF with my skills, projects, and education.'],
@@ -43,7 +52,7 @@ export function getPortfolioAnswer(question: string): PortfolioAnswer {
   if (/contact|email|reach|hire|opportunit|availab|collaborat|work with|connect/.test(text)) return {
     topic: 'Let’s connect',
     paragraphs: [`I’m ${portfolio.availability.toLowerCase()}. I’m interested in development opportunities, collaboration, and practical projects.`, 'Have something in mind? Send me an email with a little about your idea or opportunity.'],
-    links: portfolio.contacts.filter(contact => contact.url && contact.id !== 'linkedin').map(contact => ({ label: contact.id === 'email' ? 'Send an email' : 'Visit GitHub', href: contact.url! })),
+    links: portfolio.contacts.filter(contact => contact.url).map(contact => ({ label: contact.id === 'email' ? 'Send an email' : contact.id === 'linkedin' ? 'Connect on LinkedIn' : 'Visit GitHub', href: contact.url! })),
   }
   if (/greenway|capstone|waste|project|built/.test(text)) {
     const greenway = projects.find(project => project.artwork === 'greenway')!

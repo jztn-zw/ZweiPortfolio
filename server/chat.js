@@ -2,6 +2,7 @@ import { createHmac } from 'node:crypto'
 import process from 'node:process'
 import { portfolioInstructions } from './portfolioContext.js'
 import { localPortfolioReply } from './chatScope.js'
+import { portfolioFactReply } from './portfolioFacts.js'
 
 const encoder = new TextEncoder()
 const localCounters = new Map()
@@ -147,8 +148,8 @@ async function* generate(provider, messages, signal) {
     body: JSON.stringify(gemini ? {
       systemInstruction: { parts: [{ text: portfolioInstructions }] },
       contents: messages.map(message => ({ role: message.role === 'assistant' ? 'model' : 'user', parts: [{ text: message.content }] })),
-      generationConfig: { maxOutputTokens: 1024, temperature: .4 },
-    } : { model: provider.model, messages: [{ role: 'system', content: portfolioInstructions }, ...messages], max_completion_tokens: 1024, temperature: .4, stream: true }),
+      generationConfig: { maxOutputTokens: 512, temperature: .2 },
+    } : { model: provider.model, messages: [{ role: 'system', content: portfolioInstructions }, ...messages], max_completion_tokens: 512, temperature: .2, stream: true }),
   })
   if (!response.ok) {
     const retry = response.headers.get('retry-after')
@@ -181,7 +182,7 @@ export default {
     if (request.headers.get('origin') !== new URL(request.url).origin) return json({ code: 'invalid_origin' }, 403)
     let messages
     try { messages = await validateChatRequest(request) } catch { return json({ code: 'invalid_request' }, 400) }
-    const local = localPortfolioReply(messages)
+    const local = localPortfolioReply(messages) ?? portfolioFactReply(messages)
     if (local !== null) {
       // Rejections and acknowledgements spend no provider or shared AI quota.
       return new Response(new ReadableStream({ start(controller) {
@@ -192,6 +193,9 @@ export default {
       } }), { headers: { 'Content-Type': 'text/event-stream; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } })
     }
     if (!providers.length) return json({ code: 'not_configured' }, 503)
+    // Bound history even for direct API callers. Keep complete exchanges and the
+    // latest question; full public facts always remain in the system context.
+    messages = messages.slice(-5)
     try { await rateLimit(request) } catch (error) { return json({ code: error.code === 'rate_limit' ? 'rate_limit' : 'unavailable' }, error.code === 'rate_limit' ? 429 : 503) }
 
     const abort = new AbortController()

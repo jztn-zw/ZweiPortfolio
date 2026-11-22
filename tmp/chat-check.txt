@@ -1,0 +1,220 @@
+TAP version 13
+# Subtest: every suggested topic gives confirmed portfolio details and useful destinations
+ok 1 - every suggested topic gives confirmed portfolio details and useful destinations
+  ---
+  duration_ms: 6.4427
+  type: 'test'
+  ...
+# Subtest: unknown questions stay grounded and resume requests link to the supplied PDF
+ok 2 - unknown questions stay grounded and resume requests link to the supplied PDF
+  ---
+  duration_ms: 2.3486
+  type: 'test'
+  ...
+# Subtest: all curated answers use Jaztin’s first-person voice
+ok 3 - all curated answers use Jaztin’s first-person voice
+  ---
+  duration_ms: 2.1175
+  type: 'test'
+  ...
+# Subtest: casual current-focus questions return confirmed focus details instead of a generic redirect
+ok 4 - casual current-focus questions return confirmed focus details instead of a generic redirect
+  ---
+  duration_ms: 0.9106
+  type: 'test'
+  ...
+# Subtest: project inquiries show contact details with a verified email link
+ok 5 - project inquiries show contact details with a verified email link
+  ---
+  duration_ms: 2.683
+  type: 'test'
+  ...
+# Subtest: session history is bounded and rejects malformed or oversized stored values
+ok 6 - session history is bounded and rejects malformed or oversized stored values
+  ---
+  duration_ms: 4.73
+  type: 'test'
+  ...
+# Subtest: chat rejects invalid requests before spending provider quota and health never calls an AI
+ok 7 - chat rejects invalid requests before spending provider quota and health never calls an AI
+  ---
+  duration_ms: 125.352
+  type: 'test'
+  ...
+# Subtest: Gemini success streams real content, keeps keys server-side, and does not call Groq
+ok 8 - Gemini success streams real content, keeps keys server-side, and does not call Groq
+  ---
+  duration_ms: 17.9021
+  type: 'test'
+  ...
+# Subtest: local scope replies make zero external calls and do not consume the five-question AI allowance
+ok 9 - local scope replies make zero external calls and do not consume the five-question AI allowance
+  ---
+  duration_ms: 17.8828
+  type: 'test'
+  ...
+# Subtest: garbled input never calls providers or consumes the AI allowance
+ok 10 - garbled input never calls providers or consumes the AI allowance
+  ---
+  duration_ms: 9.843
+  type: 'test'
+  ...
+# Subtest: uncertain spelling uses one normal provider request with the original message and normal limits
+ok 11 - uncertain spelling uses one normal provider request with the original message and normal limits
+  ---
+  duration_ms: 14.9192
+  type: 'test'
+  ...
+# Subtest: client inquiries return contact details without calling either AI provider
+ok 12 - client inquiries return contact details without calling either AI provider
+  ---
+  duration_ms: 9.0193
+  type: 'test'
+  ...
+# Subtest: private-life questions never spend Gemini or Groq quota
+ok 13 - private-life questions never spend Gemini or Groq quota
+  ---
+  duration_ms: 11.514
+  type: 'test'
+  ...
+# Subtest: scope replies work without keys or production storage and never call Redis or either AI
+ok 14 - scope replies work without keys or production storage and never call Redis or either AI
+  ---
+  duration_ms: 7.7886
+  type: 'test'
+  ...
+# Subtest: Gemini quota exhaustion switches to Groq with identical facts/history and respects cooldown
+ok 15 - Gemini quota exhaustion switches to Groq with identical facts/history and respects cooldown
+  ---
+  duration_ms: 10.0223
+  type: 'test'
+  ...
+# Subtest: temporary upstream failures fallback once, while configuration and safety failures do not
+ok 16 - temporary upstream failures fallback once, while configuration and safety failures do not
+  ---
+  duration_ms: 55.4343
+  type: 'test'
+  ...
+# Subtest: a failed partial answer is never spliced with another provider, and dual exhaustion is explicit
+ok 17 - a failed partial answer is never spliced with another provider, and dual exhaustion is explicit
+  ---
+  duration_ms: 13.0471
+  type: 'test'
+  ...
+# Subtest: local request limits and missing hosted storage stop requests before provider calls
+ok 18 - local request limits and missing hosted storage stop requests before provider calls
+  ---
+  duration_ms: 14.719
+  type: 'test'
+  ...
+# Subtest: stopping a streamed answer aborts the upstream request without triggering fallback
+ok 19 - stopping a streamed answer aborts the upstream request without triggering fallback
+  ---
+  duration_ms: 6.162
+  type: 'test'
+  ...
+# Subtest: hosted chat uses atomic shared quotas, separate cooldown keys, and never stores a raw IP
+ok 20 - hosted chat uses atomic shared quotas, separate cooldown keys, and never stores a raw IP
+  ---
+  duration_ms: 6.2134
+  type: 'test'
+  ...
+# Subtest: a connection timeout falls back, and a shared quota denial never calls either provider
+ok 21 - a connection timeout falls back, and a shared quota denial never calls either provider
+  ---
+  duration_ms: 12.9103
+  type: 'test'
+  ...
+# Subtest: provider SSE parser handles split UTF-8, CRLF boundaries, and final events without blank lines
+ok 22 - provider SSE parser handles split UTF-8, CRLF boundaries, and final events without blank lines
+  ---
+  duration_ms: 4.5477
+  type: 'test'
+  ...
+# Subtest: only complete turns enter bounded provider history, including factual local replies
+ok 23 - only complete turns enter bounded provider history, including factual local replies
+  ---
+  duration_ms: 3.1482
+  type: 'test'
+  ...
+# Subtest: finished session history restores actual answers while invalid or pending entries are excluded
+ok 24 - finished session history restores actual answers while invalid or pending entries are excluded
+  ---
+  duration_ms: 0.8152
+  type: 'test'
+  ...
+# Subtest: streaming delivers real chunks and detects an incomplete connection
+ok 25 - streaming delivers real chunks and detects an incomplete connection
+  ---
+  duration_ms: 27.6883
+  type: 'test'
+  ...
+# Subtest: rate-limit and provider errors remain structured for retry or a labelled portfolio fallback
+ok 26 - rate-limit and provider errors remain structured for retry or a labelled portfolio fallback
+  ---
+  duration_ms: 2.9614
+  type: 'test'
+  ...
+# Subtest: server-local portfolio replies retain their source and context for follow-up questions
+ok 27 - server-local portfolio replies retain their source and context for follow-up questions
+  ---
+  duration_ms: 1.2433
+  type: 'test'
+  ...
+# Subtest: the function package explicitly preserves every raw TypeScript import
+ok 28 - the function package explicitly preserves every raw TypeScript import
+  ---
+  duration_ms: 8.9714
+  type: 'test'
+  ...
+# Subtest: isolated production-like function boots, handles local replies and streams a mocked provider
+ok 29 - isolated production-like function boots, handles local replies and streams a mocked provider
+  ---
+  duration_ms: 284.6924
+  type: 'test'
+  ...
+# Subtest: confirmed portfolio questions in English and Filipino can reach the provider
+ok 30 - confirmed portfolio questions in English and Filipino can reach the provider
+  ---
+  duration_ms: 12.6898
+  type: 'test'
+  ...
+# Subtest: unrelated or mixed general-purpose tasks stay local, including after portfolio questions
+ok 31 - unrelated or mixed general-purpose tasks stay local, including after portfolio questions
+  ---
+  duration_ms: 12.0168
+  type: 'test'
+  ...
+# Subtest: specific follow-ups need portfolio context and do not trust assistant text for relevance
+ok 32 - specific follow-ups need portfolio context and do not trust assistant text for relevance
+  ---
+  duration_ms: 1.2547
+  type: 'test'
+  ...
+# Subtest: greetings and unprovided personal details get first-person local replies without pretending to be live
+ok 33 - greetings and unprovided personal details get first-person local replies without pretending to be live
+  ---
+  duration_ms: 0.5152
+  type: 'test'
+  ...
+# Subtest: current project and contact FAQs work without provider or Redis calls
+ok 34 - current project and contact FAQs work without provider or Redis calls
+  ---
+  duration_ms: 35.732
+  type: 'test'
+  ...
+# Subtest: model context includes live projects and current contact facts
+ok 35 - model context includes live projects and current contact facts
+  ---
+  duration_ms: 1.019
+  type: 'test'
+  ...
+1..35
+# tests 35
+# suites 0
+# pass 35
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 683.5222

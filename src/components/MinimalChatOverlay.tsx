@@ -1,4 +1,4 @@
-import { ArrowRight, MessageCircle } from 'lucide-react'
+import { ArrowRight, MessageCircle, X } from 'lucide-react'
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import './MinimalChatOverlay.css'
@@ -35,7 +35,7 @@ export default function MinimalChatOverlay() {
     {open && createPortal(<div className="minimal-view min-chat-overlay">
       <button className="min-chat-backdrop" type="button" tabIndex={-1} aria-label="Close chat" onClick={() => setOpen(false)} />
       <section id="min-chat-conversation" className="min-chat-conversation" ref={conversation} tabIndex={-1} aria-label="Ask me anything">
-        <button className="sr-only" type="button" onClick={() => setOpen(false)}>Close chat</button>
+        <button className="min-chat-close" type="button" aria-label="Close chat" onClick={() => setOpen(false)}><X size={17} aria-hidden="true" /></button>
         <Suspense fallback={<p className="min-chat-status" role="status">Opening chat…</p>}><AskChat compact /></Suspense>
       </section>
     </div>, document.body)}

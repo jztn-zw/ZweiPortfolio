@@ -23,7 +23,7 @@ export function saveChatHistory(history: ChatExchange[]) {
 export function chatMessages(history: ChatExchange[], question: string): ChatMessage[] {
   const previous: ChatExchange[] = []
   let length = question.length
-  for (const exchange of history.filter(item => item.status === 'complete' && item.provider !== 'portfolio' && item.answer).slice(-4).reverse()) {
+  for (const exchange of history.filter(item => item.status === 'complete' && item.answer).slice(-2).reverse()) {
     length += exchange.question.length + exchange.answer.length
     if (length > 10000) break
     previous.unshift(exchange)

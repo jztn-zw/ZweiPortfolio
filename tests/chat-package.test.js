@@ -33,7 +33,7 @@ test('the function package explicitly preserves every raw TypeScript import', ()
 test('isolated production-like function boots, handles local replies and streams a mocked provider', () => {
   const directory = mkdtempSync(join(tmpdir(), 'portfolio-chat-package-'))
   try {
-    for (const relative of ['package.json', 'api/chat.js', 'server/chat.js', 'server/chatScope.js', 'server/portfolioContext.js', ...included]) {
+    for (const relative of ['package.json', 'api/chat.js', 'server/chat.js', 'server/chatScope.js', 'server/portfolioFacts.js', 'server/portfolioContext.js', ...included]) {
       mkdirSync(dirname(join(directory, relative)), { recursive: true })
       copyFileSync(join(root, relative), join(directory, relative))
     }

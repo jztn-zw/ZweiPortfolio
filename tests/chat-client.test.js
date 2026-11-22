@@ -12,12 +12,13 @@ function load(fetcher = () => { throw new Error('Unexpected network call') }) {
 }
 const entry = (id, status = 'complete', provider = 'gemini') => ({ id, question: 'Who is Jaztin?', answer: 'A developer.', status, provider })
 
-test('only complete AI turns enter provider history; large histories remain within backend limits', () => {
+test('only complete turns enter bounded provider history, including factual local replies', () => {
   const client = load()
   const output = client.chatMessages([entry('1'), entry('2', 'error'), entry('3', 'complete', 'portfolio'), entry('4', 'stopped')], 'What does he build?')
-  assert.deepEqual(JSON.parse(JSON.stringify(output)), [{ role: 'user', content: 'Who is Jaztin?' }, { role: 'assistant', content: 'A developer.' }, { role: 'user', content: 'What does he build?' }])
+  assert.equal(output.length, 5)
+  assert.deepEqual(JSON.parse(JSON.stringify(output.slice(-3))), [{ role: 'user', content: 'Who is Jaztin?' }, { role: 'assistant', content: 'A developer.' }, { role: 'user', content: 'What does he build?' }])
   const large = client.chatMessages(Array.from({ length: 8 }, (_, i) => ({ ...entry(`${i}`), answer: 'x'.repeat(4000) })), 'Next question')
-  assert.ok(large.length <= 9)
+  assert.ok(large.length <= 5)
   assert.ok(large.reduce((sum, message) => sum + message.content.length, 0) <= 10000)
 })
 
@@ -53,13 +54,13 @@ test('rate-limit and provider errors remain structured for retry or a labelled p
   }
 })
 
-test('server-local portfolio replies retain their source and stay out of subsequent model history', async () => {
+test('server-local portfolio replies retain their source and context for follow-up questions', async () => {
   const client = load(async () => new Response('data: {"type":"provider","provider":"portfolio"}\n\ndata: {"type":"delta","text":"I keep this chat focused on my work."}\n\ndata: {"type":"done"}\n\n', { headers: { 'Content-Type': 'text/event-stream' } }))
   const output = []
   await client.streamChat([{ role: 'user', content: 'Weather?' }], event => output.push(event), new AbortController().signal)
   assert.equal(output[0].provider, 'portfolio')
   assert.equal(output.at(-1).type, 'done')
   const messages = client.chatMessages([{ ...entry('local', 'complete', output[0].provider), question: 'Weather?', answer: output[1].text }], 'What is your tech stack?')
-  assert.equal(messages.length, 1)
-  assert.equal(messages[0].content, 'What is your tech stack?')
+  assert.equal(messages.length, 3)
+  assert.equal(messages.at(-1).content, 'What is your tech stack?')
 })

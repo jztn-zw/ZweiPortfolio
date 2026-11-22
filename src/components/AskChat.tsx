@@ -91,7 +91,14 @@ export default function AskChat({ compact = false }: { compact?: boolean }) {
     </header>}
 
     <div className="ask-feed" ref={feedRef} role={compact ? 'status' : 'log'} aria-label={compact ? 'Latest answer' : 'Conversation'} aria-live={busy ? 'off' : 'polite'} aria-relevant="additions text" tabIndex={0} onScroll={event => { const feed = event.currentTarget; followScroll.current = feed.scrollHeight - feed.scrollTop - feed.clientHeight < 100 }}>
-      {!hasConversation ? !compact && <div className="ask-welcome">
+      {!hasConversation ? compact ? <div className="ask-compact-welcome">
+        <p className="ask-compact-kicker">PORTFOLIO / Q&amp;A</p>
+        <h2>What would you like to know?</h2>
+        <p>Ask about my projects, the tools I use, or how we could work together.</p>
+        <div className="ask-compact-topics" aria-label="Suggested questions">
+          {askAiTopics.slice(0, 3).map(topic => <button type="button" key={topic.id} onClick={() => { void send(topic.question) }}>{topic.label}<ChevronRight size={13} aria-hidden="true" /></button>)}
+        </div>
+      </div> : <div className="ask-welcome">
         <div className="ask-welcome-label"><span className="eyebrow">LET’S START WITH YOU</span><GraphicMark variant="modules" /></div>
         <h2>WHAT ARE YOU<br />CURIOUS ABOUT<span>?</span></h2>
         <p>Pick a starting point, or ask your own question.</p>

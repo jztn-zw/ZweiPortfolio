@@ -60,6 +60,7 @@
   line-height: .98;
   letter-spacing: -.065em;
 }
+.minimal-view .min-masthead h1:focus { outline: none; }
 .min-card-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; gap: 20px; }
 .min-card {
   position: relative;
