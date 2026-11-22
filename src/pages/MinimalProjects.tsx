@@ -5,7 +5,7 @@ import { projectCollections } from '../data/projectCollections'
 import { minimalProjectCollectionByPage, minimalProjectCollectionHref, projectCollectionHref, type MinimalProjectCatalogPage } from '../lib/routes'
 import './MinimalDetails.css'
 
-export default function MinimalProjects({ page = 'minimalProjects', route = '/minimal/projects' }: { page?: MinimalProjectCatalogPage; route?: string }) {
+export default function MinimalProjects({ page = 'minimalProjects', route = '/projects' }: { page?: MinimalProjectCatalogPage; route?: string }) {
   const collectionId = page === 'minimalProjects' ? undefined : minimalProjectCollectionByPage[page]
   const collection = projectCollections.find(item => item.id === collectionId)
   const filterId = new URL(route, 'https://portfolio.local/').searchParams.get('filter')

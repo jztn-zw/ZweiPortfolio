@@ -12,7 +12,7 @@ export default function MinimalVyora() {
   if (!project) {
     return <MinimalLayout contentId="minimalVyora-content">
       <h1 id="minimalVyora-title" tabIndex={-1}>Project unavailable</h1>
-      <a className="min-text-link" href="/minimal/projects/tools">Browse projects<ArrowRight size={14} aria-hidden="true" /></a>
+      <a className="min-text-link" href="/projects/tools">Browse projects<ArrowRight size={14} aria-hidden="true" /></a>
     </MinimalLayout>
   }
 
@@ -80,7 +80,7 @@ export default function MinimalVyora() {
           <div className="min-case-tools-intro">
             <h2 id="min-vyora-stack">Built with</h2>
             <p>The main tools behind the Windows app, website, and installer.</p>
-            <a className="min-text-link" href="/minimal/skills">Explore my stack<ArrowRight size={14} aria-hidden="true" /></a>
+            <a className="min-text-link" href="/skills">Explore my stack<ArrowRight size={14} aria-hidden="true" /></a>
           </div>
           <div className="min-stack-groups">
             {vyoraStackLayers.map(layer => <div className="min-stack-group" key={layer.id}>

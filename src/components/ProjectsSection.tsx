@@ -24,7 +24,7 @@ export default function ProjectsSection() {
 
       <div className="projects-toolbar">
         <span className="eyebrow projects-count"><span className="projects-count-value">{String(projectCollections.length).padStart(2, '0')}</span> COLLECTIONS</span>
-        <a className="page-back-button more-projects-button" href="/projects">View all projects <ArrowUpRight size={16} aria-hidden="true" /></a>
+        <a className="page-back-button more-projects-button" href="/experience/projects">View all projects <ArrowUpRight size={16} aria-hidden="true" /></a>
       </div>
 
       <div className="project-ribbon-frame">

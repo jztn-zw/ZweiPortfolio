@@ -1,31 +1,99 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/minimal",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/minimal/:path*",
+      "destination": "/:path*",
+      "permanent": true
+    }
+  ],
   "functions": {
     "api/chat.js": {
       "includeFiles": "src/{data/portfolio,lib/chatLanguage,lib/personalChat,lib/workInquiry}.ts"
     }
   },
   "rewrites": [
-    { "source": "/projects/everwell", "destination": "/projects/everwell/index.html" },
-    { "source": "/minimal/projects/everwell", "destination": "/minimal/projects/everwell/index.html" },
-    { "source": "/experience", "destination": "/experience/index.html" },
-    { "source": "/minimal", "destination": "/minimal/index.html" },
-    { "source": "/minimal/skills", "destination": "/minimal/skills/index.html" },
-    { "source": "/minimal/projects", "destination": "/minimal/projects/index.html" },
-    { "source": "/minimal/projects/web-mobile", "destination": "/minimal/projects/web-mobile/index.html" },
-    { "source": "/minimal/projects/automation", "destination": "/minimal/projects/automation/index.html" },
-    { "source": "/minimal/projects/tools", "destination": "/minimal/projects/tools/index.html" },
-    { "source": "/minimal/projects/greenway", "destination": "/minimal/projects/greenway/index.html" },
-    { "source": "/minimal/projects/vyora", "destination": "/minimal/projects/vyora/index.html" },
-    { "source": "/ask-ai", "destination": "/ask-ai/index.html" },
-    { "source": "/numbers", "destination": "/numbers/index.html" },
-    { "source": "/skills", "destination": "/skills/index.html" },
-    { "source": "/projects", "destination": "/projects/index.html" },
-    { "source": "/projects/web-mobile", "destination": "/projects/web-mobile/index.html" },
-    { "source": "/projects/automation", "destination": "/projects/automation/index.html" },
-    { "source": "/projects/tools", "destination": "/projects/tools/index.html" },
-    { "source": "/projects/greenway", "destination": "/projects/greenway/index.html" },
-    { "source": "/projects/vyora", "destination": "/projects/vyora/index.html" }
+    {
+      "source": "/experience/projects/everwell",
+      "destination": "/experience/projects/everwell/index.html"
+    },
+    {
+      "source": "/projects/everwell",
+      "destination": "/projects/everwell/index.html"
+    },
+    {
+      "source": "/experience",
+      "destination": "/experience/index.html"
+    },
+    {
+      "source": "/skills",
+      "destination": "/skills/index.html"
+    },
+    {
+      "source": "/projects",
+      "destination": "/projects/index.html"
+    },
+    {
+      "source": "/projects/web-mobile",
+      "destination": "/projects/web-mobile/index.html"
+    },
+    {
+      "source": "/projects/automation",
+      "destination": "/projects/automation/index.html"
+    },
+    {
+      "source": "/projects/tools",
+      "destination": "/projects/tools/index.html"
+    },
+    {
+      "source": "/projects/greenway",
+      "destination": "/projects/greenway/index.html"
+    },
+    {
+      "source": "/projects/vyora",
+      "destination": "/projects/vyora/index.html"
+    },
+    {
+      "source": "/experience/ask-ai",
+      "destination": "/experience/ask-ai/index.html"
+    },
+    {
+      "source": "/experience/numbers",
+      "destination": "/experience/numbers/index.html"
+    },
+    {
+      "source": "/experience/skills",
+      "destination": "/experience/skills/index.html"
+    },
+    {
+      "source": "/experience/projects",
+      "destination": "/experience/projects/index.html"
+    },
+    {
+      "source": "/experience/projects/web-mobile",
+      "destination": "/experience/projects/web-mobile/index.html"
+    },
+    {
+      "source": "/experience/projects/automation",
+      "destination": "/experience/projects/automation/index.html"
+    },
+    {
+      "source": "/experience/projects/tools",
+      "destination": "/experience/projects/tools/index.html"
+    },
+    {
+      "source": "/experience/projects/greenway",
+      "destination": "/experience/projects/greenway/index.html"
+    },
+    {
+      "source": "/experience/projects/vyora",
+      "destination": "/experience/projects/vyora/index.html"
+    }
   ]
 }

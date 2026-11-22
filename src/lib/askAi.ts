@@ -30,7 +30,7 @@ export function getPortfolioAnswer(question: string): PortfolioAnswer {
   if (hasCurrentFocusTopic(question)) return {
     topic: 'My current focus',
     paragraphs: [`I’m focused on ${aboutMe.focus}. I’m building my skills through hands-on projects and exploring new technologies.`],
-    links: [{ label: 'Explore my skills', href: '/skills' }, { label: 'More about me', href: '/experience#about' }],
+    links: [{ label: 'Explore my skills', href: '/experience/skills' }, { label: 'More about me', href: '/experience#about' }],
   }
   const personalAnswer = getPersonalAnswer(question)
   if (personalAnswer) return { topic: 'Off the keyboard', paragraphs: [personalAnswer], links: [{ label: 'More about me', href: '/experience#about' }] }
@@ -65,7 +65,7 @@ export function getPortfolioAnswer(question: string): PortfolioAnswer {
   if (/skill|tech|tool|stack|frontend|backend|mobile|automat|network|react|codex|antigravity|n8n|develop|build|code/.test(text)) return {
     topic: 'The toolkit',
     paragraphs: ['I focus on full-stack development, automation, and networking.', capabilities.map(capability => `For ${capability.title.toLowerCase()}, I use ${capability.technologies.join(', ')}.`).join(' ')],
-    links: [{ label: 'View stack & skills', href: '/skills' }],
+    links: [{ label: 'View stack & skills', href: '/experience/skills' }],
   }
   if (/who|about|background|student|education|study|studying|college|university|yourself|jaztin|hello|\bhi\b/.test(text)) return {
     topic: 'Meet Jaztin',

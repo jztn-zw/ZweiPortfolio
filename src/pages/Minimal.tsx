@@ -98,14 +98,14 @@ export default function Minimal() {
           <div className="min-column">
             <section className="min-card resume-about" aria-labelledby="min-about-title">
               <ResumeHeading id="min-about-title" icon={UserRound}>About</ResumeHeading>
-              <p className="resume-profile">I’m a fourth-year Computer Science student building web and mobile applications. My focus is on <strong>{aboutMe.focus}</strong>, and I learn best by trying things myself.</p>
+              <p className="resume-profile">I’m a fourth-year Computer Science student focused on <strong>{aboutMe.focus}</strong>. I enjoy experimenting, understanding the logic behind systems, and solving problems. I learn through hands-on experience, using what I discover to improve each idea. My goal is to build thoughtful websites and reliable applications through careful testing, attention to detail, and continuous refinement.</p>
               <blockquote>“{aboutMe.quote}”</blockquote>
             </section>
 
             <section className="min-card" aria-labelledby="min-stack-title">
               <div className="min-card-heading">
                 <ResumeHeading id="min-stack-title" icon={CodeXml}>Tech stack</ResumeHeading>
-                <a className="min-text-link" href="/minimal/skills" aria-label="View all technologies">View all<ArrowRight size={14} aria-hidden="true" /></a>
+                <a className="min-text-link" href="/skills" aria-label="View all technologies">View all<ArrowRight size={14} aria-hidden="true" /></a>
               </div>
               <dl className="resume-skill-list">
                 {capabilities.map(group => {
@@ -120,7 +120,7 @@ export default function Minimal() {
                             <svg className="min-tool-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href={`/tech-icons.svg#${technologyIconIds[technology]}`} /></svg>
                             {technology}
                           </li>)}
-                          {remaining > 0 && <li className="resume-skill-more"><a href="/minimal/skills" aria-label={`View ${remaining} more ${group.title} technologies`}>+{remaining} more</a></li>}
+                          {remaining > 0 && <li className="resume-skill-more"><a href="/skills" aria-label={`View ${remaining} more ${group.title} technologies`}>+{remaining} more</a></li>}
                         </ul>
                       </dd>
                     </div>
@@ -132,7 +132,7 @@ export default function Minimal() {
             <section className="min-card resume-work" aria-labelledby="min-projects-title">
               <div className="min-card-heading">
                 <ResumeHeading id="min-projects-title" icon={FolderOpen}>Projects</ResumeHeading>
-                <a className="min-text-link" href="/minimal/projects">View all<ArrowRight size={14} aria-hidden="true" /></a>
+                <a className="min-text-link" href="/projects">View all<ArrowRight size={14} aria-hidden="true" /></a>
               </div>
               <div className="min-project-summaries">
                 {projectCollections.map(collection => (
@@ -167,7 +167,7 @@ export default function Minimal() {
             {education && (
               <section className="min-card resume-education" aria-labelledby="min-education-title">
                 <ResumeHeading id="min-education-title" icon={GraduationCap}>Education</ResumeHeading>
-                <p className="resume-date">Currently studying</p>
+                <p className="resume-date">2023 — Present</p>
                 <h3>BS Computer Science</h3>
                 <p className="resume-context">{education.context}</p>
                 <p>{education.description}</p>

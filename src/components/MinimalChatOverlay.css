@@ -15,7 +15,7 @@ html:has(.min-chat-overlay) { overflow: hidden; }
   --ask-accent: var(--min-text);
   --ask-soft: transparent;
 }
-.min-chat-backdrop { position: absolute; inset: 0; border: 0; padding: 0; background: color-mix(in srgb, var(--theme-canvas, #111) 42%, transparent); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); cursor: default; }
+.min-chat-backdrop { position: absolute; inset: 0; border: 0; padding: 0; background: color-mix(in srgb, var(--theme-canvas, #111) 42%, transparent); backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px); cursor: default; }
 .min-chat-conversation { position: relative; display: flex; flex-direction: column; align-self: flex-start; width: min(100%, 560px); min-height: 0; max-height: calc(100dvh - 48px); margin-block: auto; padding-inline: clamp(24px, 7vw, 96px) clamp(18px, 3vw, 40px); }
 .min-chat-conversation:focus { outline: none; }
 .min-chat-status { margin: 0; color: var(--min-text); font-size: 13px; }

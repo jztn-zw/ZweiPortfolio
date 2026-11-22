@@ -32,7 +32,7 @@ try {
       `<meta name="description" content="${escape(seo.description)}" />`,
       '<meta name="robots" content="index, follow, max-image-preview:large" />',
       `<link rel="canonical" href="${seo.url}" />`,
-      ...Object.entries({ title: seo.title, description: seo.description, url: seo.url, image: seo.image, type: 'website', site_name: 'Jaztin Abram Contreras Portfolio' }).map(([key, value]) => `<meta property="og:${key}" content="${escape(value)}" />`),
+      ...Object.entries({ title: seo.title, description: seo.description, url: seo.url, image: seo.image, type: 'website', site_name: seo.siteName }).map(([key, value]) => `<meta property="og:${key}" content="${escape(value)}" />`),
       ...Object.entries({ card: 'summary_large_image', title: seo.title, description: seo.description, image: seo.image }).map(([key, value]) => `<meta name="twitter:${key}" content="${escape(value)}" />`),
       `<script type="application/ld+json" id="portfolio-schema">${JSON.stringify(seo.structuredData).replace(/</g, '\\u003c')}</script>`,
     ].join('\n')

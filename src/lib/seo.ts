@@ -1,7 +1,9 @@
-import { portfolio, projects } from '../data/portfolio'
+import { listedProjects, portfolio, projects } from '../data/portfolio'
+import { projectCollections } from '../data/projectCollections'
 import { pagePaths, type Page } from './routes'
 
 export const siteUrl = 'https://jaztincontreras.vercel.app'
+const siteName = 'Jaztin Abram Contreras'
 const homeDescription = 'Jaztin Abram Contreras is a full-stack developer in Quezon, Philippines, building React websites, mobile apps, Windows software, and workflow automation.'
 const canonicalPages: Partial<Record<Page, Page>> = {
   home: 'minimal', skills: 'minimalSkills', projects: 'minimalProjects',
@@ -18,33 +20,57 @@ const details: Record<string, [string, string]> = {
   ai: ['Ask Jaztin About His Work | Jaztin Abram Contreras', 'Ask about Jaztin’s development projects, technical skills, background, and opportunities to work together.'],
   numbers: ['Interactive Experiments | Jaztin Abram Contreras', 'Explore interactive number experiments in Jaztin Abram Contreras’s developer portfolio.'],
 }
+const projectSearchTitles: Record<string, string> = {
+  everwell: 'Everwell: WordPress & GoHighLevel Automation',
+  '002': 'GreenWay: Web & Mobile Waste Management App',
+  vyora: 'VYORA: Windows Photo Booth Software',
+}
+const collectionPages = {
+  minimalWebMobileProjects: 'web-mobile',
+  minimalAutomationProjects: 'automation',
+  minimalToolsProjects: 'tools',
+} as const
 
 export function getSeo(page: Page) {
   const canonicalPage = canonicalPages[page] ?? page
   const project = projects.find(item => item.minimalDetailsUrl === pagePaths[canonicalPage])
   const [title, description] = project
-    ? [`${project.title} | ${portfolio.name}`, project.description]
+    ? [`${projectSearchTitles[project.id] ?? project.title} | ${portfolio.name}`, project.description]
     : details[canonicalPage] ?? details.minimal
   const path = canonicalPage === 'minimal' ? '/' : pagePaths[canonicalPage]
   const url = siteUrl + path
   const personId = `${siteUrl}/#person`
+  const collectionId = collectionPages[canonicalPage as keyof typeof collectionPages]
+  const collection = projectCollections.find(item => item.id === collectionId)
+  const catalog = canonicalPage === 'minimalProjects' || Boolean(collection)
+  const catalogProjects = listedProjects.filter(item => item.minimalDetailsUrl && (!collectionId || item.collection === collectionId))
+  const crumbs = [{ name: portfolio.name, url: `${siteUrl}/` }]
+  if (canonicalPage !== 'minimal') {
+    if (project || collection) crumbs.push({ name: 'Projects', url: `${siteUrl}/projects` })
+    crumbs.push({ name: project?.title ?? collection?.title ?? (canonicalPage === 'minimalSkills' ? 'Skills & Tech Stack' : title.split(' | ')[0]), url })
+  }
   const person = {
     '@type': 'Person', '@id': personId, name: portfolio.name,
     alternateName: ['Jaztin Contreras', 'Jaztin Abram A. Contreras'],
     url: `${siteUrl}/`, jobTitle: portfolio.role,
+    description: homeDescription,
+    image: `${siteUrl}/images/jaztin-portrait.webp`,
+    mainEntityOfPage: { '@id': `${siteUrl}/#page` },
     address: { '@type': 'PostalAddress', addressRegion: 'Quezon', addressCountry: 'PH' },
     sameAs: portfolio.contacts.filter(contact => contact.id !== 'email' && contact.url).map(contact => contact.url),
     knowsAbout: ['React', 'TypeScript', 'Node.js', 'Web Development', 'React Native', 'Electron', 'WordPress', 'Workflow Automation'],
   }
   return {
-    title, description, url, canonicalPage, image: `${siteUrl}/images/jaztin-portrait.webp`,
+    title, description, url, canonicalPage, siteName, image: `${siteUrl}/images/jaztin-portrait.webp`,
     structuredData: {
       '@context': 'https://schema.org',
       '@graph': [person,
-        { '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: `${siteUrl}/`, name: `${portfolio.name} — Developer Portfolio`, publisher: { '@id': personId } },
-        { '@type': canonicalPage === 'minimal' ? 'ProfilePage' : 'WebPage', '@id': `${url}#page`, url, name: title, description,
-          isPartOf: { '@id': `${siteUrl}/#website` }, mainEntity: { '@id': project ? `${url}#project` : personId } },
+        { '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: `${siteUrl}/`, name: siteName, alternateName: ['Jaztin Contreras', 'Jaztin Abram Contreras Portfolio'], description: homeDescription, publisher: { '@id': personId }, inLanguage: 'en' },
+        { '@type': canonicalPage === 'minimal' ? 'ProfilePage' : catalog ? 'CollectionPage' : 'WebPage', '@id': `${url}#page`, url, name: title, description,
+          isPartOf: { '@id': `${siteUrl}/#website` }, author: { '@id': personId }, about: { '@id': personId }, mainEntity: { '@id': project ? `${url}#project` : catalog ? `${url}#projects` : personId } },
         ...(project ? [{ '@type': 'CreativeWork', '@id': `${url}#project`, name: project.title, description: project.description, creator: { '@id': personId }, keywords: project.technologies.join(', '), url }] : []),
+        ...(catalog ? [{ '@type': 'ItemList', '@id': `${url}#projects`, numberOfItems: catalogProjects.length, itemListElement: catalogProjects.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.title, url: siteUrl + item.minimalDetailsUrl })) }] : []),
+        ...(crumbs.length > 1 ? [{ '@type': 'BreadcrumbList', '@id': `${url}#breadcrumbs`, itemListElement: crumbs.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, item: item.url })) }] : []),
       ],
     },
   }
@@ -61,7 +87,7 @@ export function applySeo(page: Page) {
   }
   setMeta('description', seo.description)
   setMeta('robots', 'index, follow, max-image-preview:large')
-  for (const [key, value] of Object.entries({ title: seo.title, description: seo.description, url: seo.url, image: seo.image, type: 'website', site_name: `${portfolio.name} Portfolio` })) setMeta(`og:${key}`, value, true)
+  for (const [key, value] of Object.entries({ title: seo.title, description: seo.description, url: seo.url, image: seo.image, type: 'website', site_name: seo.siteName })) setMeta(`og:${key}`, value, true)
   for (const [key, value] of Object.entries({ card: 'summary_large_image', title: seo.title, description: seo.description, image: seo.image })) setMeta(`twitter:${key}`, value)
   let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')
   if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical) }

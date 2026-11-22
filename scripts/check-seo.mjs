@@ -21,17 +21,30 @@ for (const route of [{ source: '/', destination: '/index.html' }, ...routes]) {
   assert.ok(html.includes('property="og:title"') && html.includes('name="twitter:card"'))
   const graph = JSON.parse(html.match(/id="portfolio-schema">([\s\S]*?)<\/script>/)[1])
   assert.equal(graph['@context'], 'https://schema.org')
+  const website = graph['@graph'].find(item => item['@type'] === 'WebSite')
+  assert.equal(website.name, 'Jaztin Abram Contreras')
+  assert.equal(website.url, `${origin}/`)
+  for (const list of graph['@graph'].filter(item => ['ItemList', 'BreadcrumbList'].includes(item['@type']))) {
+    for (const [index, item] of list.itemListElement.entries()) {
+      assert.equal(item.position, index + 1)
+      const url = item.url ?? item.item
+      assert.ok(url.startsWith(origin) && !url.includes('undefined'))
+      await access(url === `${origin}/` ? 'dist/index.html' : `dist${new URL(url).pathname}/index.html`)
+    }
+  }
   for (const asset of html.matchAll(/<link rel="stylesheet"[^>]*href="(\/assets\/[^"]+)"/g)) await access(`dist${asset[1]}`)
-  if (route.source.startsWith('/minimal') || route.source === '/') {
+  if (!route.source.startsWith('/experience')) {
     assert.match(html, /<h1\b/)
     assert.ok(!html.includes('id="startup-screen"'))
-    assert.ok(html.includes('MinimalLayout-') || route.source === '/minimal/projects/everwell', 'Page styles must be included')
+    assert.ok(html.includes('MinimalLayout-') || route.source === '/projects/everwell', 'Page styles must be included')
   }
 }
 for (const project of ['greenway', 'vyora', 'everwell']) {
-  const html = await readFile(`dist/minimal/projects/${project}/index.html`, 'utf8')
+  const html = await readFile(`dist/projects/${project}/index.html`, 'utf8')
   assert.match(html, new RegExp(project, 'i'))
-  assert.ok(html.includes(`${origin}/minimal/projects/${project}`))
+  assert.ok(html.includes(`${origin}/projects/${project}`))
+  const graph = JSON.parse(html.match(/id="portfolio-schema">([\s\S]*?)<\/script>/)[1])
+  assert.ok(graph['@graph'].some(item => item['@type'] === 'BreadcrumbList'))
 }
 const sitemap = await readFile('dist/sitemap.xml', 'utf8')
 const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1])

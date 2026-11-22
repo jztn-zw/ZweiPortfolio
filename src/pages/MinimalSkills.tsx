@@ -9,7 +9,7 @@ const icons = { web: CodeXml, fullstack: Database, automation: Workflow }
 export default function MinimalSkills() {
   const tools = new Set(capabilities.flatMap(group => [...group.technologies]))
   const email = portfolio.contacts.find(contact => contact.id === 'email')?.url
-  return <MinimalLayout contentId="minimalSkills-content" fullHref="/skills">
+  return <MinimalLayout contentId="minimalSkills-content" fullHref="/experience/skills">
     <header className="min-masthead min-stack-intro">
       <h1 id="minimalSkills-title" tabIndex={-1}>Tech stack</h1>
       <p>The tools I use to build web, mobile, and desktop applications, connect systems, and automate workflows.</p>
@@ -37,7 +37,7 @@ export default function MinimalSkills() {
           <p>See how I use these tools in my projects.</p>
         </div>
         <div className="min-stack-work-actions">
-          <a className="min-button min-button-secondary" href="/minimal#min-projects-title">Projects<ArrowRight size={14} aria-hidden="true" /></a>
+          <a className="min-button min-button-secondary" href="/#min-projects-title">Projects<ArrowRight size={14} aria-hidden="true" /></a>
           {email && <a className="min-text-link" href={email}>Let’s connect<ArrowUpRight size={13} aria-hidden="true" /></a>}
         </div>
       </section>

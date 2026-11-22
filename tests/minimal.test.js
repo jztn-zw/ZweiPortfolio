@@ -71,7 +71,7 @@ test('minimal view renders the profile, capabilities, and published work in both
     assert.match(html, /Jaztin Abram Contreras/)
     assert.match(html, /Quezon, Philippines/)
     assert.match(html, /Manuel S. Enverga University/)
-    assert.match(html, /href="\/minimal\/projects\/web-mobile"/)
+    assert.match(html, /href="\/projects\/web-mobile"/)
     assert.doesNotMatch(html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1], /<img\b|<video\b/)
     assert.ok(html.includes(`src="${theme === 'light' ? '/brand-mark-light.svg' : '/brand-mark.svg'}"`))
     assert.match(html, /Tools &amp; Experiments/)
@@ -80,7 +80,7 @@ test('minimal view renders the profile, capabilities, and published work in both
     assert.doesNotMatch(html, /\[PROJECT NAME\]|\[TECH STACK\]/)
     const stackPreview = html.match(/<section\b[^>]*aria-labelledby="min-stack-title"[^>]*>([\s\S]*?)<\/section>/)[1]
     assert.match(stackPreview, /Tech stack<\/h2>/)
-    assert.match(stackPreview, /href="\/minimal\/skills"[^>]*>View all/)
+    assert.match(stackPreview, /href="\/skills"[^>]*>View all/)
     const previewBadges = [...stackPreview.matchAll(/<li><svg\b[\s\S]*?<\/svg>([^<]*)<\/li>/g)].map(match => match[1])
     for (const technology of ['Electron', 'Next.js', 'Tailwind CSS', 'Expo', 'MySQL', 'MongoDB', 'Vercel']) assert.ok(previewBadges.includes(technology), technology)
     for (const [index, featuredCount] of [[0, 8], [1, 8]]) {
@@ -95,7 +95,7 @@ test('minimal view renders the profile, capabilities, and published work in both
 test('the résumé links to real contact and project destinations', () => {
   const html = renderMinimal('light')
   assert.match(html, /href="\/experience"[^>]*aria-label="Full experience"[^>]*><svg\b[^>]*>[\s\S]*?<\/svg><\/a>/)
-  for (const href of ['/experience', '/minimal/skills', '/minimal/projects', '/minimal/projects/web-mobile', '/minimal/projects/automation', '/minimal/projects/tools', 'https://github.com/jztn-zw', '/documents/JaztinAbramContrerasCV.pdf', 'https://www.linkedin.com/in/jaztin-abram-contreras-58508b446/']) {
+  for (const href of ['/experience', '/skills', '/projects', '/projects/web-mobile', '/projects/automation', '/projects/tools', 'https://github.com/jztn-zw', '/documents/JaztinAbramContrerasCV.pdf', 'https://www.linkedin.com/in/jaztin-abram-contreras-58508b446/']) {
     assert.ok(html.includes(`href="${href}"`), href)
   }
   assert.doesNotMatch(html, /download=|href="#"/)
@@ -123,19 +123,19 @@ test('selected work links to three collections while View all shows every listed
     const selected = renderMinimal(theme, 'Minimal', profile)
     assert.equal((selected.match(/class="min-project-summary"/g) ?? []).length, 3)
     assert.equal((selected.match(/aria-labelledby="min-projects-title"/g) ?? []).length, 1)
-    assert.match(selected, /href="\/minimal\/projects"/)
+    assert.match(selected, /href="\/projects"/)
     assert.doesNotMatch(selected, /Additional project 3/)
     const gallery = renderMinimal(theme, 'MinimalProjects', profile)
     assert.equal((gallery.match(/class="min-card min-project-card"/g) ?? []).length, profile.listedProjects.length)
     assert.match(gallery, /Additional project 3/)
     assert.match(gallery, /VYORA/)
-    assert.match(gallery, /href="\/minimal\/projects\/vyora"/)
+    assert.match(gallery, /href="\/projects\/vyora"/)
     assert.match(gallery, /Live · In development/)
     assert.match(gallery, /Completed/)
     assert.match(gallery, /href="https:\/\/vyorabooth\.vyora\.workers\.dev\/"/)
     assert.match(gallery, /href="https:\/\/greenway-candelaria\.vercel\.app\/"/)
     assert.match(gallery, /id="minimalProjects-title" tabindex="-1"/)
-    assert.match(gallery, /href="\/minimal"/)
+    assert.match(gallery, /href="\/"/)
     assert.match(gallery, /class="min-project-filters"/)
     assert.doesNotMatch(gallery, /data-hover-surface|page-navigation-curtain/)
   }
@@ -153,7 +153,7 @@ test('individual minimal collection pages show matching projects without the fil
         assert.equal(html.includes(`<h3>${project.title}</h3>`), project.collection === collection)
       }
       assert.equal(html.includes('Projects coming soon'), expected.length === 0)
-      assert.match(html, /href="\/minimal"/)
+      assert.match(html, /href="\/"/)
     }
   }
 })
@@ -161,16 +161,16 @@ test('individual minimal collection pages show matching projects without the fil
 test('View all keeps its collection filters while changing the visible projects', () => {
   for (const theme of ['light', 'dark']) {
     for (const collection of collections.projectCollections) {
-      const route = `/minimal/projects?filter=${collection.id}#min-project-filters`
+      const route = `/projects?filter=${collection.id}#min-project-filters`
       const html = renderMinimal(theme, 'MinimalProjects', data, { page: 'minimalProjects', route })
       assert.match(html, /class="min-project-filters"/)
       assert.ok(html.includes(`href="${route}" aria-current="page"`))
-      assert.match(html, /href="\/minimal\/projects#min-project-filters"/)
+      assert.match(html, /href="\/projects#min-project-filters"/)
       for (const project of data.listedProjects) {
         assert.equal(html.includes(`<h3>${project.title}</h3>`), project.collection === collection.id)
       }
     }
-    const all = renderMinimal(theme, 'MinimalProjects', data, { route: '/minimal/projects#min-project-filters' })
+    const all = renderMinimal(theme, 'MinimalProjects', data, { route: '/projects#min-project-filters' })
     for (const project of data.listedProjects) assert.ok(all.includes(`<h3>${project.title}</h3>`))
   }
 })
@@ -178,11 +178,11 @@ test('View all keeps its collection filters while changing the visible projects'
 test('first paint preloads the hero only on home and skips full artwork on minimal pages', () => {
   const bootstrap = readFileSync(new URL('../index.html', import.meta.url), 'utf8').match(/<script>([\s\S]*?)<\/script>/)[1]
   for (const [pathname, hash, hero] of [
-    ['/minimal', '', false], ['/minimal/', '', false], ['/minimal/skills', '', false],
-    ['/minimal/projects/greenway', '', false], ['/minimal/projects/vyora', '', false], ['/minimal/projects', '', false], ['/', '', false], ['/experience', '', true], ['/', '#projects', true],
-    ['/minimal/projects/web-mobile', '', false], ['/minimal/projects/automation', '', false], ['/minimal/projects/tools', '', false],
-    ['/', '#/skills', false], ['/projects/web-mobile', '', false], ['/numbers', '', false],
-    ['/projects/greenway', '#home', true],
+    ['/', '', false], ['/', '', false], ['/skills', '', false],
+    ['/projects/greenway', '', false], ['/projects/vyora', '', false], ['/projects', '', false], ['/', '', false], ['/experience', '', true], ['/', '#projects', true],
+    ['/projects/web-mobile', '', false], ['/projects/automation', '', false], ['/projects/tools', '', false],
+    ['/', '#/skills', false], ['/experience/projects/web-mobile', '', false], ['/experience/numbers', '', false],
+    ['/experience/projects/greenway', '#home', true],
   ]) {
     const links = [], dataset = {}
     vm.runInNewContext(bootstrap, {
@@ -190,9 +190,9 @@ test('first paint preloads the hero only on home and skips full artwork on minim
       document: { documentElement: { dataset }, querySelector: () => ({}), createElement: () => ({}), head: { appendChild: link => links.push(link) } },
     })
     assert.equal(dataset.theme, 'light')
-    assert.equal(links.length, pathname.startsWith('/minimal') || (pathname === '/' && !hash) ? 0 : hero ? 3 : 2)
+    assert.equal(links.length, pathname.startsWith('/minimal') || pathname === '/skills' || pathname.startsWith('/projects') || (pathname === '/' && !hash) ? 0 : hero ? 3 : 2)
     assert.equal(links.some(link => link.href === '/images/jaztin-portrait.webp'), hero)
-    assert.equal(dataset.view === 'minimal', pathname.startsWith('/minimal') || (pathname === '/' && !hash))
+    assert.equal(dataset.view === 'minimal', pathname.startsWith('/minimal') || pathname === '/skills' || pathname.startsWith('/projects') || (pathname === '/' && !hash))
   }
 })
 
@@ -200,13 +200,13 @@ test('minimal detail pages share navigation and preserve confirmed content in bo
   for (const theme of ['light', 'dark']) {
     const stack = renderMinimal(theme, 'MinimalSkills')
     for (const group of data.capabilities) for (const tool of group.technologies) assert.ok(stack.includes(tool), tool)
-    assert.match(stack, /href="\/minimal#min-projects-title"/)
+    assert.match(stack, /href="\/#min-projects-title"/)
     assert.doesNotMatch(stack, /Back to portfolio/)
     assert.match(stack, /id="minimalSkills-title" tabindex="-1"/)
-    assert.match(stack, /href="\/skills"[^>]*aria-label="Full experience"/)
+    assert.match(stack, /href="\/experience\/skills"[^>]*aria-label="Full experience"/)
     const project = renderMinimal(theme, 'MinimalGreenWay')
     for (const tool of data.projects.find(project => project.artwork === 'greenway').technologies) assert.ok(project.includes(tool), tool)
-    assert.match(project, /href="\/minimal\/skills"/)
+    assert.match(project, /href="\/skills"/)
     assert.doesNotMatch(project, /Back to projects/)
     assert.match(project, /id="minimalGreenway-title" tabindex="-1"/)
     assert.match(project, /href="https:\/\/greenway-candelaria.vercel.app\/"/)
@@ -223,9 +223,9 @@ test('minimal detail pages share navigation and preserve confirmed content in bo
     for (const html of [stack, project, vyora, renderMinimal(theme, 'MinimalProjects')]) {
       assert.ok(html.includes(`src="${theme === 'light' ? '/brand-mark-light.svg' : '/brand-mark.svg'}"`))
       assert.match(html, /Philippians 4:13/)
-      assert.match(html, /href="\/minimal"/)
+      assert.match(html, /href="\/"/)
       assert.match(html, /Switch to (dark|light) mode/)
-      assert.match(html, /<main[^>]*><nav class="min-back-nav" aria-label="Page navigation"><a class="min-text-link min-page-back" href="\/minimal" data-minimal-back="true">[\s\S]*?Back<\/a><\/nav>/)
+      assert.match(html, /<main[^>]*><nav class="min-back-nav" aria-label="Page navigation"><a class="min-text-link min-page-back" href="\/" data-minimal-back="true">[\s\S]*?Back<\/a><\/nav>/)
       assert.doesNotMatch(html, /data-hover-surface|page-navigation-curtain/)
     }
   }

@@ -64,7 +64,7 @@ export default function Numbers() {
   ]
 
   return (
-    <div id="/numbers" className="numbers-page">
+    <div id="/experience/numbers" className="numbers-page">
       <a className="skip-link" href="#numbers-content">Skip to content</a>
       <SiteHeader isHome={false} isNumbers />
       <main id="numbers-content" className="numbers-content" tabIndex={-1}>
@@ -98,7 +98,7 @@ export default function Numbers() {
           <GitHubCalendar />
         </div>
       </main>
-      <Footer topHref="/numbers" />
+      <Footer topHref="/experience/numbers" />
     </div>
   )
 }

@@ -3,7 +3,7 @@ import type { Project } from '../data/portfolio'
 import '../pages/MinimalProjects.css'
 
 export default function MinimalProjectCard({ project }: { project: Project }) {
-  const detailsHref = project.minimalDetailsUrl ?? (project.artwork === 'greenway' ? '/minimal/projects/greenway' : project.detailsUrl)
+  const detailsHref = project.minimalDetailsUrl ?? (project.artwork === 'greenway' ? '/projects/greenway' : project.detailsUrl)
 
   return (
     <article className="min-card min-project-card">

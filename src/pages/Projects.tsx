@@ -19,7 +19,7 @@ const filters = [
 ]
 
 function filterHref(collection?: ProjectCollection) {
-  return collection ? `/projects?filter=${collection}` : '/projects'
+  return collection ? `/experience/projects?filter=${collection}` : '/experience/projects'
 }
 
 export default function Projects({ page, route }: { page: ProjectCatalogPage; route: string }) {

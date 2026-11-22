@@ -18,7 +18,7 @@ export default function MinimalLayout({ children, contentId = 'minimal-content',
     <a className="min-skip" href={`#${contentId}`}>Skip to content</a>
     <div className={resume ? 'min-shell min-shell-resume' : 'min-shell'}>
       <header className="min-topbar">
-        <a href="/minimal" className="min-wordmark" aria-label="Jaztin — Minimal portfolio">
+        <a href="/" className="min-wordmark" aria-label="Jaztin — Minimal portfolio">
           <img src={theme === 'light' ? '/brand-mark-light.svg' : '/brand-mark.svg'} width="24" height="24" alt="" />
           <span>Jaztin</span>
         </a>
@@ -33,7 +33,7 @@ export default function MinimalLayout({ children, contentId = 'minimal-content',
         </nav>
       </header>
       <main id={contentId} tabIndex={-1}>
-        {!resume && <nav className="min-back-nav" aria-label="Page navigation"><a className="min-text-link min-page-back" href="/minimal" data-minimal-back><ArrowLeft size={14} aria-hidden="true" />Back</a></nav>}
+        {!resume && <nav className="min-back-nav" aria-label="Page navigation"><a className="min-text-link min-page-back" href="/" data-minimal-back><ArrowLeft size={14} aria-hidden="true" />Back</a></nav>}
         {children}
       </main>
       <footer className="min-footer">

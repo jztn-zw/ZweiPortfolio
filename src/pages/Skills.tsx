@@ -66,7 +66,7 @@ export default function Skills() {
   const technologyCount = new Set(capabilities.flatMap(capability => [...capability.technologies])).size
 
   return (
-    <div id="/skills" className="skills-page">
+    <div id="/experience/skills" className="skills-page">
       <a className="skip-link" href="#skills-content">Skip to content</a>
       <SiteHeader isHome={false} />
 
@@ -103,7 +103,7 @@ export default function Skills() {
 
         </div>
       </main>
-      <Footer topHref="/skills" />
+      <Footer topHref="/experience/skills" />
     </div>
   )
 }

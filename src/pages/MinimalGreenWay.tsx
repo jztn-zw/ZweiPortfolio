@@ -12,13 +12,13 @@ export default function MinimalGreenWay() {
     return (
       <MinimalLayout contentId="minimalGreenway-content">
         <h1 id="minimalGreenway-title" tabIndex={-1}>Project unavailable</h1>
-        <a className="min-text-link" href="/minimal#min-projects-title" data-project-back>Back to projects</a>
+        <a className="min-text-link" href="/#min-projects-title" data-project-back>Back to projects</a>
       </MinimalLayout>
     )
   }
 
   return (
-    <MinimalLayout contentId="minimalGreenway-content" fullHref="/projects/greenway">
+    <MinimalLayout contentId="minimalGreenway-content" fullHref="/experience/projects/greenway">
       <article className="min-case">
         <header className="min-case-intro">
           <div>
@@ -84,7 +84,7 @@ export default function MinimalGreenWay() {
           <div className="min-case-tools-intro">
             <h2 id="min-case-tools">Built with</h2>
             <p>The main tools behind the website, mobile apps, API, and deployment.</p>
-            <a className="min-text-link" href="/minimal/skills">Explore my stack<ArrowRight size={14} aria-hidden="true" /></a>
+            <a className="min-text-link" href="/skills">Explore my stack<ArrowRight size={14} aria-hidden="true" /></a>
           </div>
           <div className="min-stack-groups">
             {greenwayStackLayers.map(layer => (

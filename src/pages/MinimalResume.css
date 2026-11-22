@@ -29,6 +29,8 @@
   line-height: 1.75;
   text-wrap: pretty;
 }
+.resume-sheet .resume-profile { max-width: none; }
+.resume-sheet .resume-education p:not(.resume-date) { max-width: none; }
 .resume-profile strong { color: var(--min-text); font-weight: 600; }
 .resume-about blockquote { margin: 16px 0 0; padding-left: 11px; border-left: 1px solid var(--min-muted); color: var(--min-muted); font-size: 12px; }
 .resume-sheet h3 { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.45; }

@@ -1,0 +1,926 @@
+
+> portfolio@0.0.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: offscreen animation timelines pause, resume when visible and clean up on navigation
+ok 1 - offscreen animation timelines pause, resume when visible and clean up on navigation
+  ---
+  duration_ms: 2.5597
+  type: 'test'
+  ...
+# Subtest: every suggested topic gives confirmed portfolio details and useful destinations
+ok 2 - every suggested topic gives confirmed portfolio details and useful destinations
+  ---
+  duration_ms: 15.9738
+  type: 'test'
+  ...
+# Subtest: unknown questions stay grounded and resume requests link to the supplied PDF
+ok 3 - unknown questions stay grounded and resume requests link to the supplied PDF
+  ---
+  duration_ms: 1.8965
+  type: 'test'
+  ...
+# Subtest: all curated answers use Jaztin’s first-person voice
+ok 4 - all curated answers use Jaztin’s first-person voice
+  ---
+  duration_ms: 19.433
+  type: 'test'
+  ...
+# Subtest: casual current-focus questions return confirmed focus details instead of a generic redirect
+ok 5 - casual current-focus questions return confirmed focus details instead of a generic redirect
+  ---
+  duration_ms: 2.5093
+  type: 'test'
+  ...
+# Subtest: project inquiries show contact details with a verified email link
+ok 6 - project inquiries show contact details with a verified email link
+  ---
+  duration_ms: 5.7097
+  type: 'test'
+  ...
+# Subtest: session history is bounded and rejects malformed or oversized stored values
+ok 7 - session history is bounded and rejects malformed or oversized stored values
+  ---
+  duration_ms: 7.0606
+  type: 'test'
+  ...
+# Subtest: chat rejects invalid requests before spending provider quota and health never calls an AI
+ok 8 - chat rejects invalid requests before spending provider quota and health never calls an AI
+  ---
+  duration_ms: 170.7946
+  type: 'test'
+  ...
+# Subtest: Gemini success streams real content, keeps keys server-side, and does not call Groq
+ok 9 - Gemini success streams real content, keeps keys server-side, and does not call Groq
+  ---
+  duration_ms: 19.4485
+  type: 'test'
+  ...
+# Subtest: local scope replies make zero external calls and do not consume the five-question AI allowance
+ok 10 - local scope replies make zero external calls and do not consume the five-question AI allowance
+  ---
+  duration_ms: 31.8455
+  type: 'test'
+  ...
+# Subtest: garbled input never calls providers or consumes the AI allowance
+ok 11 - garbled input never calls providers or consumes the AI allowance
+  ---
+  duration_ms: 15.7417
+  type: 'test'
+  ...
+# Subtest: uncertain spelling uses one normal provider request with the original message and normal limits
+ok 12 - uncertain spelling uses one normal provider request with the original message and normal limits
+  ---
+  duration_ms: 22.8668
+  type: 'test'
+  ...
+# Subtest: client inquiries return contact details without calling either AI provider
+ok 13 - client inquiries return contact details without calling either AI provider
+  ---
+  duration_ms: 25.9941
+  type: 'test'
+  ...
+# Subtest: private-life questions never spend Gemini or Groq quota
+ok 14 - private-life questions never spend Gemini or Groq quota
+  ---
+  duration_ms: 19.8588
+  type: 'test'
+  ...
+# Subtest: scope replies work without keys or production storage and never call Redis or either AI
+ok 15 - scope replies work without keys or production storage and never call Redis or either AI
+  ---
+  duration_ms: 9.0563
+  type: 'test'
+  ...
+# Subtest: Gemini quota exhaustion switches to Groq with identical facts/history and respects cooldown
+ok 16 - Gemini quota exhaustion switches to Groq with identical facts/history and respects cooldown
+  ---
+  duration_ms: 32.105
+  type: 'test'
+  ...
+# Subtest: temporary upstream failures fallback once, while configuration and safety failures do not
+ok 17 - temporary upstream failures fallback once, while configuration and safety failures do not
+  ---
+  duration_ms: 106.7965
+  type: 'test'
+  ...
+# Subtest: a failed partial answer is never spliced with another provider, and dual exhaustion is explicit
+ok 18 - a failed partial answer is never spliced with another provider, and dual exhaustion is explicit
+  ---
+  duration_ms: 36.9774
+  type: 'test'
+  ...
+# Subtest: local request limits and missing hosted storage stop requests before provider calls
+ok 19 - local request limits and missing hosted storage stop requests before provider calls
+  ---
+  duration_ms: 46.9038
+  type: 'test'
+  ...
+# Subtest: stopping a streamed answer aborts the upstream request without triggering fallback
+ok 20 - stopping a streamed answer aborts the upstream request without triggering fallback
+  ---
+  duration_ms: 10.9834
+  type: 'test'
+  ...
+# Subtest: hosted chat uses atomic shared quotas, separate cooldown keys, and never stores a raw IP
+ok 21 - hosted chat uses atomic shared quotas, separate cooldown keys, and never stores a raw IP
+  ---
+  duration_ms: 8.2948
+  type: 'test'
+  ...
+# Subtest: a connection timeout falls back, and a shared quota denial never calls either provider
+ok 22 - a connection timeout falls back, and a shared quota denial never calls either provider
+  ---
+  duration_ms: 22.9784
+  type: 'test'
+  ...
+# Subtest: provider SSE parser handles split UTF-8, CRLF boundaries, and final events without blank lines
+ok 23 - provider SSE parser handles split UTF-8, CRLF boundaries, and final events without blank lines
+  ---
+  duration_ms: 8.6878
+  type: 'test'
+  ...
+# Subtest: only complete turns enter bounded provider history, including factual local replies
+ok 24 - only complete turns enter bounded provider history, including factual local replies
+  ---
+  duration_ms: 5.466
+  type: 'test'
+  ...
+# Subtest: finished session history restores actual answers while invalid or pending entries are excluded
+ok 25 - finished session history restores actual answers while invalid or pending entries are excluded
+  ---
+  duration_ms: 1.2933
+  type: 'test'
+  ...
+# Subtest: streaming delivers real chunks and detects an incomplete connection
+ok 26 - streaming delivers real chunks and detects an incomplete connection
+  ---
+  duration_ms: 42.063
+  type: 'test'
+  ...
+# Subtest: rate-limit and provider errors remain structured for retry or a labelled portfolio fallback
+ok 27 - rate-limit and provider errors remain structured for retry or a labelled portfolio fallback
+  ---
+  duration_ms: 7.2472
+  type: 'test'
+  ...
+# Subtest: server-local portfolio replies retain their source and context for follow-up questions
+ok 28 - server-local portfolio replies retain their source and context for follow-up questions
+  ---
+  duration_ms: 1.8504
+  type: 'test'
+  ...
+# Subtest: uncertain personal questions can use the model without sending keyboard noise
+ok 29 - uncertain personal questions can use the model without sending keyboard noise
+  ---
+  duration_ms: 15.7382
+  type: 'test'
+  ...
+# Subtest: minor profile spelling mistakes work across topics without guessing random words
+ok 30 - minor profile spelling mistakes work across topics without guessing random words
+  ---
+  duration_ms: 9.1198
+  type: 'test'
+  ...
+# Subtest: natural portfolio questions and casual English/Tagalog variants are not wrongly blocked
+ok 31 - natural portfolio questions and casual English/Tagalog variants are not wrongly blocked
+  ---
+  duration_ms: 5.7285
+  type: 'test'
+  ...
+# Subtest: garbled input gets a local clarification even with portfolio keywords or valid history
+ok 32 - garbled input gets a local clarification even with portfolio keywords or valid history
+  ---
+  duration_ms: 3.0625
+  type: 'test'
+  ...
+# Subtest: short references work after a portfolio question without accepting unrelated follow-ups
+ok 33 - short references work after a portfolio question without accepting unrelated follow-ups
+  ---
+  duration_ms: 6.1927
+  type: 'test'
+  ...
+# Subtest: the function package explicitly preserves every raw TypeScript import
+ok 34 - the function package explicitly preserves every raw TypeScript import
+  ---
+  duration_ms: 5.469
+  type: 'test'
+  ...
+# Subtest: isolated production-like function boots, handles local replies and streams a mocked provider
+ok 35 - isolated production-like function boots, handles local replies and streams a mocked provider
+  ---
+  duration_ms: 811.7808
+  type: 'test'
+  ...
+# Subtest: confirmed portfolio questions in English and Filipino can reach the provider
+ok 36 - confirmed portfolio questions in English and Filipino can reach the provider
+  ---
+  duration_ms: 15.2515
+  type: 'test'
+  ...
+# Subtest: unrelated or mixed general-purpose tasks stay local, including after portfolio questions
+ok 37 - unrelated or mixed general-purpose tasks stay local, including after portfolio questions
+  ---
+  duration_ms: 20.6841
+  type: 'test'
+  ...
+# Subtest: specific follow-ups need portfolio context and do not trust assistant text for relevance
+ok 38 - specific follow-ups need portfolio context and do not trust assistant text for relevance
+  ---
+  duration_ms: 2.0444
+  type: 'test'
+  ...
+# Subtest: greetings and unprovided personal details get first-person local replies without pretending to be live
+ok 39 - greetings and unprovided personal details get first-person local replies without pretending to be live
+  ---
+  duration_ms: 1.2087
+  type: 'test'
+  ...
+# Subtest: contact validates requests and configuration before making external calls
+ok 40 - contact validates requests and configuration before making external calls
+  ---
+  duration_ms: 70.769
+  type: 'test'
+  ...
+# Subtest: contact sends only to the configured inbox with reply-to and a stable retry key
+ok 41 - contact sends only to the configured inbox with reply-to and a stable retry key
+  ---
+  duration_ms: 11.9206
+  type: 'test'
+  ...
+# Subtest: quota and provider failures do not claim success or expose provider details
+ok 42 - quota and provider failures do not claim success or expose provider details
+  ---
+  duration_ms: 5.7468
+  type: 'test'
+  ...
+# Subtest: constrained hardware, data saving, compact touch and reduced motion select conservative scheduling
+ok 43 - constrained hardware, data saving, compact touch and reduced motion select conservative scheduling
+  ---
+  duration_ms: 8.294
+  type: 'test'
+  ...
+# Subtest: initialization sets quality before mounting and supports browsers without memory or connection APIs
+ok 44 - initialization sets quality before mounting and supports browsers without memory or connection APIs
+  ---
+  duration_ms: 1.1925
+  type: 'test'
+  ...
+# Subtest: desktop hover and keyboard focus reveal the verse, with Escape and blur dismissing it
+ok 45 - desktop hover and keyboard focus reveal the verse, with Escape and blur dismissing it
+  ---
+  duration_ms: 5.1227
+  type: 'test'
+  ...
+# Subtest: touch opens on tap rather than pointer entry and supports repeat and outside taps
+ok 46 - touch opens on tap rather than pointer entry and supports repeat and outside taps
+  ---
+  duration_ms: 1.9905
+  type: 'test'
+  ...
+# Subtest: bursts of scroll and resize events run layout measurement once per frame
+ok 47 - bursts of scroll and resize events run layout measurement once per frame
+  ---
+  duration_ms: 129.1669
+  type: 'test'
+  ...
+# Subtest: cancellation prevents late layout reads and permits a later scheduled measurement
+ok 48 - cancellation prevents late layout reads and permits a later scheduled measurement
+  ---
+  duration_ms: 12.9863
+  type: 'test'
+  ...
+# Subtest: 60fps scheduling preserves cadence across different display refresh rates and long pauses
+ok 49 - 60fps scheduling preserves cadence across different display refresh rates and long pauses
+  ---
+  duration_ms: 8.2409
+  type: 'test'
+  ...
+# Subtest: calendar parser joins tooltip counts by cell ID, sorts dates, and keeps GitHub intensity levels
+ok 50 - calendar parser joins tooltip counts by cell ID, sorts dates, and keeps GitHub intensity levels
+  ---
+  duration_ms: 33.2595
+  type: 'test'
+  ...
+# Subtest: empty profiles are valid, while missing tooltips, invalid dates, gaps, and duplicate dates fail safely
+ok 51 - empty profiles are valid, while missing tooltips, invalid dates, gaps, and duplicate dates fail safely
+  ---
+  duration_ms: 1.9843
+  type: 'test'
+  ...
+# Subtest: the endpoint rejects writes, handles upstream changes safely, and caches successful reads
+ok 52 - the endpoint rejects writes, handles upstream changes safely, and caches successful reads
+  ---
+  duration_ms: 91.414
+  type: 'test'
+  ...
+# Subtest: a walkthrough marked on entry stays suppressed across reloads within its tab session
+ok 53 - a walkthrough marked on entry stays suppressed across reloads within its tab session
+  ---
+  duration_ms: 3.6687
+  type: 'test'
+  ...
+# Subtest: storage restrictions keep an in-memory guard without breaking the page
+ok 54 - storage restrictions keep an in-memory guard without breaking the page
+  ---
+  duration_ms: 0.904
+  type: 'test'
+  ...
+# Subtest: page navigation dismisses an active or pending walkthrough and releases its observer
+ok 55 - page navigation dismisses an active or pending walkthrough and releases its observer
+  ---
+  duration_ms: 122.9732
+  type: 'test'
+  ...
+# Subtest: the message and pointer stay inside narrow, short and desktop viewports
+ok 56 - the message and pointer stay inside narrow, short and desktop viewports
+  ---
+  duration_ms: 1.7306
+  type: 'test'
+  ...
+# Subtest: the portrait pointer aims into the rendered illustration after accounting for letterboxing
+ok 57 - the portrait pointer aims into the rendered illustration after accounting for letterboxing
+  ---
+  duration_ms: 1.4053
+  type: 'test'
+  ...
+# Subtest: each hero action has its own explanation and a cursor inside its bottom-right corner
+ok 58 - each hero action has its own explanation and a cursor inside its bottom-right corner
+  ---
+  duration_ms: 1.1375
+  type: 'test'
+  ...
+# Subtest: a compact chat bubble stays attached to each top-bar cursor, including near the right edge
+ok 59 - a compact chat bubble stays attached to each top-bar cursor, including near the right edge
+  ---
+  duration_ms: 1.4698
+  type: 'test'
+  ...
+# Subtest: minimal view renders the profile, capabilities, and published work in both themes
+ok 60 - minimal view renders the profile, capabilities, and published work in both themes
+  ---
+  duration_ms: 536.9359
+  type: 'test'
+  ...
+# Subtest: the résumé links to real contact and project destinations
+ok 61 - the résumé links to real contact and project destinations
+  ---
+  duration_ms: 186.0514
+  type: 'test'
+  ...
+# Subtest: selected work links to three collections while View all shows every listed project
+ok 62 - selected work links to three collections while View all shows every listed project
+  ---
+  duration_ms: 315.825
+  type: 'test'
+  ...
+# Subtest: individual minimal collection pages show matching projects without the filter badges
+ok 63 - individual minimal collection pages show matching projects without the filter badges
+  ---
+  duration_ms: 254.6138
+  type: 'test'
+  ...
+# Subtest: View all keeps its collection filters while changing the visible projects
+ok 64 - View all keeps its collection filters while changing the visible projects
+  ---
+  duration_ms: 273.1522
+  type: 'test'
+  ...
+# Subtest: first paint preloads the hero only on home and skips full artwork on minimal pages
+ok 65 - first paint preloads the hero only on home and skips full artwork on minimal pages
+  ---
+  duration_ms: 12.1709
+  type: 'test'
+  ...
+# Subtest: minimal detail pages share navigation and preserve confirmed content in both themes
+ok 66 - minimal detail pages share navigation and preserve confirmed content in both themes
+  ---
+  duration_ms: 394.1792
+  type: 'test'
+  ...
+# Subtest: every skill badge references an available local technology brand symbol
+ok 67 - every skill badge references an available local technology brand symbol
+  ---
+  duration_ms: 98.9097
+  type: 'test'
+  ...
+# Subtest: leaving or clicking a coming-soon item restores the current page marker despite retained focus
+ok 68 - leaving or clicking a coming-soon item restores the current page marker despite retained focus
+  ---
+  duration_ms: 10.7896
+  type: 'test'
+  ...
+# Subtest: keyboard navigation still previews available pages and returns to the active page after focus leaves
+ok 69 - keyboard navigation still previews available pages and returns to the active page after focus leaves
+  ---
+  duration_ms: 1.2295
+  type: 'test'
+  ...
+# Subtest: Minimal defers full-page downloads until activation while retaining Minimal link preloads
+ok 70 - Minimal defers full-page downloads until activation while retaining Minimal link preloads
+  ---
+  duration_ms: 61.4511
+  type: 'test'
+  ...
+# Subtest: the root opens Minimal and only prepares full artwork when the visitor opts in
+ok 71 - the root opens Minimal and only prepares full artwork when the visitor opts in
+  ---
+  duration_ms: 13.8322
+  type: 'test'
+  ...
+# Subtest: same-page anchors, reduced motion, and missing animation support update immediately
+ok 72 - same-page anchors, reduced motion, and missing animation support update immediately
+  ---
+  duration_ms: 4.4654
+  type: 'test'
+  ...
+# Subtest: route changes stay hidden until covered and rapid clicks use the latest destination
+ok 73 - route changes stay hidden until covered and rapid clicks use the latest destination
+  ---
+  duration_ms: 4.3655
+  type: 'test'
+  ...
+# Subtest: navigation after a commit reuses the curtain, even before the reveal animation starts
+ok 74 - navigation after a commit reuses the curtain, even before the reveal animation starts
+  ---
+  duration_ms: 10.6682
+  type: 'test'
+  ...
+# Subtest: small screens and constrained devices retain every illustration and the original cut-in motion
+ok 75 - small screens and constrained devices retain every illustration and the original cut-in motion
+  ---
+  duration_ms: 42.7267
+  type: 'test'
+  ...
+# Subtest: transition styles never conceal illustrations or strip their styling based on hardware
+ok 76 - transition styles never conceal illustrations or strip their styling based on hardware
+  ---
+  duration_ms: 1.0084
+  type: 'test'
+  ...
+# Subtest: subsequent transitions reuse the scene, reset its transforms, and reassess device constraints
+ok 77 - subsequent transitions reuse the scene, reset its transforms, and reassess device constraints
+  ---
+  duration_ms: 5.5564
+  type: 'test'
+  ...
+# Subtest: constrained devices prepare in small idle stages and a click reuses partial work
+ok 78 - constrained devices prepare in small idle stages and a click reuses partial work
+  ---
+  duration_ms: 8.8043
+  type: 'test'
+  ...
+# Subtest: idle preparation moves scene construction off the click path and cancels on unsubscribe
+ok 79 - idle preparation moves scene construction off the click path and cancels on unsubscribe
+  ---
+  duration_ms: 16.2613
+  type: 'test'
+  ...
+# Subtest: the new portrait and title finish their cut-in before the route swaps
+ok 80 - the new portrait and title finish their cut-in before the route swaps
+  ---
+  duration_ms: 4.1
+  type: 'test'
+  ...
+# Subtest: a stalled route handoff skips the whole-page motion and keeps the illustrated reveal
+ok 81 - a stalled route handoff skips the whole-page motion and keeps the illustrated reveal
+  ---
+  duration_ms: 10.8564
+  type: 'test'
+  ...
+# Subtest: theme cancellation and a reduced-motion change commit pending navigation safely
+ok 82 - theme cancellation and a reduced-motion change commit pending navigation safely
+  ---
+  duration_ms: 6.2924
+  type: 'test'
+  ...
+# Subtest: logic props include a standalone cube and puzzle, with only the poker ace framed as a card
+ok 83 - logic props include a standalone cube and puzzle, with only the poker ace framed as a card
+  ---
+  duration_ms: 4.5605
+  type: 'test'
+  ...
+# Subtest: navigation during a theme reveal bypasses the curtain
+ok 84 - navigation during a theme reveal bypasses the curtain
+  ---
+  duration_ms: 1.4165
+  type: 'test'
+  ...
+# Subtest: clean direct links and old hash bookmarks initialize without another history entry
+ok 85 - clean direct links and old hash bookmarks initialize without another history entry
+  ---
+  duration_ms: 18.1461
+  type: 'test'
+  ...
+# Subtest: Back and Forward preserve clean URLs and wait for the page transition
+ok 86 - Back and Forward preserve clean URLs and wait for the page transition
+  ---
+  duration_ms: 8.9547
+  type: 'test'
+  ...
+# Subtest: section links scroll and focus without a page curtain or duplicate history entries
+ok 87 - section links scroll and focus without a page curtain or duplicate history entries
+  ---
+  duration_ms: 1.688
+  type: 'test'
+  ...
+# Subtest: modified clicks, external links, downloads, assets, and APIs retain native browser behavior
+ok 88 - modified clicks, external links, downloads, assets, and APIs retain native browser behavior
+  ---
+  duration_ms: 1.8049
+  type: 'test'
+  ...
+# Subtest: legacy hash navigation converts to a clean path and still uses the curtain
+ok 89 - legacy hash navigation converts to a clean path and still uses the curtain
+  ---
+  duration_ms: 4.2568
+  type: 'test'
+  ...
+# Subtest: Vercel rewrites cover app pages without capturing assets or API functions
+ok 90 - Vercel rewrites cover app pages without capturing assets or API functions
+  ---
+  duration_ms: 6.623
+  type: 'test'
+  ...
+# Subtest: project collections have distinct routes and preserve browser history
+ok 91 - project collections have distinct routes and preserve browser history
+  ---
+  duration_ms: 4.1787
+  type: 'test'
+  ...
+# Subtest: old collection bookmarks resolve to the new page without losing unrelated URL parameters
+ok 92 - old collection bookmarks resolve to the new page without losing unrelated URL parameters
+  ---
+  duration_ms: 1.7633
+  type: 'test'
+  ...
+# Subtest: GreenWay back links return to the originating collection and restore its scroll position
+ok 93 - GreenWay back links return to the originating collection and restore its scroll position
+  ---
+  duration_ms: 7.8165
+  type: 'test'
+  ...
+# Subtest: minimal GreenWay returns to its source while direct project visits use the link fallback
+ok 94 - minimal GreenWay returns to its source while direct project visits use the link fallback
+  ---
+  duration_ms: 2.7427
+  type: 'test'
+  ...
+# Subtest: minimal project gallery returns from GreenWay to its saved position
+ok 95 - minimal project gallery returns from GreenWay to its saved position
+  ---
+  duration_ms: 1.6238
+  type: 'test'
+  ...
+# Subtest: shared Minimal Back returns through the actual page chain and restores scroll positions
+ok 96 - shared Minimal Back returns through the actual page chain and restores scroll positions
+  ---
+  duration_ms: 3.4539
+  type: 'test'
+  ...
+# Subtest: Minimal Back skips same-page filters and anchors, but honors the page that opened it
+ok 97 - Minimal Back skips same-page filters and anchors, but honors the page that opened it
+  ---
+  duration_ms: 1.9863
+  type: 'test'
+  ...
+# Subtest: direct Minimal subpage Back has a safe home fallback and keeps native modified clicks
+ok 98 - direct Minimal subpage Back has a safe home fallback and keeps native modified clicks
+  ---
+  duration_ms: 6.2308
+  type: 'test'
+  ...
+# Subtest: mode switch waits for full resources under an illustrated curtain and returns with one fade
+ok 99 - mode switch waits for full resources under an illustrated curtain and returns with one fade
+  ---
+  duration_ms: 3.8767
+  type: 'test'
+  ...
+# Subtest: reduced motion keeps mode switches immediate and preserves browser history
+ok 100 - reduced motion keeps mode switches immediate and preserves browser history
+  ---
+  duration_ms: 1.6456
+  type: 'test'
+  ...
+# Subtest: direct minimal visits avoid scene preparation and can cancel an unfinished full-page transition
+ok 101 - direct minimal visits avoid scene preparation and can cancel an unfinished full-page transition
+  ---
+  duration_ms: 16.6847
+  type: 'test'
+  ...
+# Subtest: minimal detail routes support direct visits, trailing slashes and history without cinematic artwork
+ok 102 - minimal detail routes support direct visits, trailing slashes and history without cinematic artwork
+  ---
+  duration_ms: 16.6913
+  type: 'test'
+  ...
+# Subtest: covered-page rendering pauses once and resumes only when all overlays have finished
+ok 103 - covered-page rendering pauses once and resumes only when all overlays have finished
+  ---
+  duration_ms: 9.8605
+  type: 'test'
+  ...
+# Subtest: hidden tabs pause work; newly mounted content starts paused under an existing transition
+ok 104 - hidden tabs pause work; newly mounted content starts paused under an existing transition
+  ---
+  duration_ms: 1.1488
+  type: 'test'
+  ...
+# Subtest: cleanup disconnects observation and blocks late callbacks from restarting an unmounted renderer
+ok 105 - cleanup disconnects observation and blocks late callbacks from restarting an unmounted renderer
+  ---
+  duration_ms: 1.2845
+  type: 'test'
+  ...
+# Subtest: a browser without mutation observation never leaves the renderer permanently paused
+ok 106 - a browser without mutation observation never leaves the renderer permanently paused
+  ---
+  duration_ms: 1.106
+  type: 'test'
+  ...
+# Subtest: shared interests reach the chat while general sports and gaming requests stay local
+ok 107 - shared interests reach the chat while general sports and gaming requests stay local
+  ---
+  duration_ms: 27.6217
+  type: 'test'
+  ...
+# Subtest: private-life questions are refused before providers, even alongside public topics
+ok 108 - private-life questions are refused before providers, even alongside public topics
+  ---
+  duration_ms: 2.296
+  type: 'test'
+  ...
+# Subtest: saved personal answers match the supplied details without inventing a position or genre
+ok 109 - saved personal answers match the supplied details without inventing a position or genre
+  ---
+  duration_ms: 1.9013
+  type: 'test'
+  ...
+# Subtest: current project and contact FAQs work without provider or Redis calls
+ok 110 - current project and contact FAQs work without provider or Redis calls
+  ---
+  duration_ms: 63.6289
+  type: 'test'
+  ...
+# Subtest: model context includes live projects and current contact facts
+ok 111 - model context includes live projects and current contact facts
+  ---
+  duration_ms: 1.2016
+  type: 'test'
+  ...
+# Subtest: constrained hardware retains the same full portrait reveal, fragments and photo
+ok 112 - constrained hardware retains the same full portrait reveal, fragments and photo
+  ---
+  duration_ms: 66.364
+  type: 'test'
+  ...
+# Subtest: mask batching preserves every cell coordinate, edge size and opacity timing
+ok 113 - mask batching preserves every cell coordinate, edge size and opacity timing
+  ---
+  duration_ms: 1.9371
+  type: 'test'
+  ...
+# Subtest: the full effect is ready to mount while the alternate image waits for the hero image
+ok 114 - the full effect is ready to mount while the alternate image waits for the hero image
+  ---
+  duration_ms: 31.6083
+  type: 'test'
+  ...
+# Subtest: an explicit reduced-motion preference still uses the accessible crossfade
+ok 115 - an explicit reduced-motion preference still uses the accessible crossfade
+  ---
+  duration_ms: 6.0668
+  type: 'test'
+  ...
+# Subtest: a fast native swipe never rebases or auto-centers during momentum
+ok 116 - a fast native swipe never rebases or auto-centers during momentum
+  ---
+  duration_ms: 4.1717
+  type: 'test'
+  ...
+# Subtest: a fresh touch interrupts centering and height-only resize leaves a swipe alone
+ok 117 - a fresh touch interrupts centering and height-only resize leaves a swipe alone
+  ---
+  duration_ms: 2.1767
+  type: 'test'
+  ...
+# Subtest: fallback waits for quiet scrolling, and centering never competes with mouse coasting
+ok 118 - fallback waits for quiet scrolling, and centering never competes with mouse coasting
+  ---
+  duration_ms: 2.6083
+  type: 'test'
+  ...
+# Subtest: desktop remains fixed and reduced motion centers immediately
+ok 119 - desktop remains fixed and reduced motion centers immediately
+  ---
+  duration_ms: 1.9141
+  type: 'test'
+  ...
+# Subtest: scroll reveals wait for the page shutter without hiding the incoming content
+ok 120 - scroll reveals wait for the page shutter without hiding the incoming content
+  ---
+  duration_ms: 8.6214
+  type: 'test'
+  ...
+# Subtest: footer identity and details remain visible without intersection events on desktop and mobile
+ok 121 - footer identity and details remain visible without intersection events on desktop and mobile
+  ---
+  duration_ms: 5.4116
+  type: 'test'
+  ...
+# Subtest: initial content stays visible and calendar entrance completes even without an animationend event
+ok 122 - initial content stays visible and calendar entrance completes even without an animationend event
+  ---
+  duration_ms: 2.9412
+  type: 'test'
+  ...
+# Subtest: child animations cannot finish a group early, while focus reveals every pending ancestor
+ok 123 - child animations cannot finish a group early, while focus reveals every pending ancestor
+  ---
+  duration_ms: 1.4603
+  type: 'test'
+  ...
+# Subtest: reduced motion and missing observers keep content available; cleanup cancels pending timers
+ok 124 - reduced motion and missing observers keep content available; cleanup cancels pending timers
+  ---
+  duration_ms: 4.1743
+  type: 'test'
+  ...
+# Subtest: minimal startup waits for real readiness and removes the loader without the cinematic exit
+ok 125 - minimal startup waits for real readiness and removes the loader without the cinematic exit
+  ---
+  duration_ms: 4.2367
+  type: 'test'
+  ...
+# Subtest: a ready page reveals without a minimum countdown and duplicate mounts do not restart it
+ok 126 - a ready page reveals without a minimum countdown and duplicate mounts do not restart it
+  ---
+  duration_ms: 2.1202
+  type: 'test'
+  ...
+# Subtest: progress only advances when actual assets settle and pending images cannot be skipped by a timer
+ok 127 - progress only advances when actual assets settle and pending images cannot be skipped by a timer
+  ---
+  duration_ms: 2.0086
+  type: 'test'
+  ...
+# Subtest: failed images and reduced motion reveal the page without animation
+ok 128 - failed images and reduced motion reveal the page without animation
+  ---
+  duration_ms: 1.541
+  type: 'test'
+  ...
+# Subtest: a direct page with no eager images still waits for real font readiness
+ok 129 - a direct page with no eager images still waits for real font readiness
+  ---
+  duration_ms: 3.3609
+  type: 'test'
+  ...
+# Subtest: only Minimal View skips decorative pointer tracking
+ok 130 - only Minimal View skips decorative pointer tracking
+  ---
+  duration_ms: 2.8448
+  type: 'test'
+  ...
+# Subtest: constrained devices keep full hover feedback without rewriting unchanged coordinates
+ok 131 - constrained devices keep full hover feedback without rewriting unchanged coordinates
+  ---
+  duration_ms: 3.0679
+  type: 'test'
+  ...
+# Subtest: delegated hover coalesces updates and schedules no idle frames
+ok 132 - delegated hover coalesces updates and schedules no idle frames
+  ---
+  duration_ms: 1.4242
+  type: 'test'
+  ...
+# Subtest: switching surfaces clears the previous one, and bounds stay finite
+ok 133 - switching surfaces clears the previous one, and bounds stay finite
+  ---
+  duration_ms: 1.0734
+  type: 'test'
+  ...
+# Subtest: touch leaves vertical scrolling native and stops on release or cancellation
+ok 134 - touch leaves vertical scrolling native and stops on release or cancellation
+  ---
+  duration_ms: 1.338
+  type: 'test'
+  ...
+# Subtest: reduced motion, hidden tabs, scrolling and unmount stop all work
+ok 135 - reduced motion, hidden tabs, scrolling and unmount stop all work
+  ---
+  duration_ms: 1.9073
+  type: 'test'
+  ...
+# Subtest: minimal themes reveal the entire viewport with one circle and clean up after completion
+ok 136 - minimal themes reveal the entire viewport with one circle and clean up after completion
+  ---
+  duration_ms: 3.9279
+  type: 'test'
+  ...
+# Subtest: rapid minimal theme toggles cancel the old animation and preserve the latest transition
+ok 137 - rapid minimal theme toggles cancel the old animation and preserve the latest transition
+  ---
+  duration_ms: 1.4099
+  type: 'test'
+  ...
+# Subtest: minimal view uses the simple circular theme reveal even on powerful devices
+ok 138 - minimal view uses the simple circular theme reveal even on powerful devices
+  ---
+  duration_ms: 1.1089
+  type: 'test'
+  ...
+# Subtest: full experience retains its pixel reveal on devices using lighter rendering elsewhere
+ok 139 - full experience retains its pixel reveal on devices using lighter rendering elsewhere
+  ---
+  duration_ms: 1.3108
+  type: 'test'
+  ...
+# Subtest: full devices keep the pixel reveal; reduced motion and unsupported browsers remain functional
+ok 140 - full devices keep the pixel reveal; reduced motion and unsupported browsers remain functional
+  ---
+  duration_ms: 2.7644
+  type: 'test'
+  ...
+# Subtest: visitor avatars grow with the real count, stop at three, and never cap the displayed total
+ok 141 - visitor avatars grow with the real count, stop at three, and never cap the displayed total
+  ---
+  duration_ms: 54.851
+  type: 'test'
+  ...
+# Subtest: loading and unavailable counts do not fabricate visitors or avatars
+ok 142 - loading and unavailable counts do not fabricate visitors or avatars
+  ---
+  duration_ms: 3.1779
+  type: 'test'
+  ...
+# Subtest: development and production never display sample visitors when no real count is available
+ok 143 - development and production never display sample visitors when no real count is available
+  ---
+  duration_ms: 2.6901
+  type: 'test'
+  ...
+# Subtest: first visit counts once; reloads and concurrent requests with the same cookie do not inflate it
+ok 144 - first visit counts once; reloads and concurrent requests with the same cookie do not inflate it
+  ---
+  duration_ms: 58.4453
+  type: 'test'
+  ...
+# Subtest: GET reads the total without counting the reader or setting a cookie
+ok 145 - GET reads the total without counting the reader or setting a cookie
+  ---
+  duration_ms: 23.3462
+  type: 'test'
+  ...
+# Subtest: a tampered cookie cannot reuse another browser identity
+ok 146 - a tampered cookie cannot reuse another browser identity
+  ---
+  duration_ms: 2.2948
+  type: 'test'
+  ...
+# Subtest: cross-origin and originless writes are rejected before accessing storage
+ok 147 - cross-origin and originless writes are rejected before accessing storage
+  ---
+  duration_ms: 1.3273
+  type: 'test'
+  ...
+# Subtest: preview deployments and missing configuration never increment production data
+ok 148 - preview deployments and missing configuration never increment production data
+  ---
+  duration_ms: 0.9041
+  type: 'test'
+  ...
+# Subtest: storage failures do not return a fabricated count, visitor cookie, or upstream secrets
+ok 149 - storage failures do not return a fabricated count, visitor cookie, or upstream secrets
+  ---
+  duration_ms: 1.2835
+  type: 'test'
+  ...
+# Subtest: unsupported methods do not access storage
+ok 150 - unsupported methods do not access storage
+  ---
+  duration_ms: 0.7165
+  type: 'test'
+  ...
+# Subtest: different client inquiry wordings receive contact details without promising delivery or pricing
+ok 151 - different client inquiry wordings receive contact details without promising delivery or pricing
+  ---
+  duration_ms: 26.8803
+  type: 'test'
+  ...
+# Subtest: portfolio questions and unrelated generation tasks do not become client inquiries
+ok 152 - portfolio questions and unrelated generation tasks do not become client inquiries
+  ---
+  duration_ms: 0.6815
+  type: 'test'
+  ...
+1..152
+# tests 152
+# suites 0
+# pass 152
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3973.1737

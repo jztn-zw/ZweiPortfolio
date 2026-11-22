@@ -94,8 +94,8 @@ export const projects: Project[] = [
     technologies: ['WordPress', 'GHL'],
     artwork: 'orbit',
     status: 'Portfolio demo · Workflow draft',
-    detailsUrl: '/projects/everwell',
-    minimalDetailsUrl: '/minimal/projects/everwell',
+    detailsUrl: '/experience/projects/everwell',
+    minimalDetailsUrl: '/projects/everwell',
   },
   {
     id: '002',
@@ -116,7 +116,7 @@ export const projects: Project[] = [
     artwork: 'greenway',
     status: 'Completed',
     liveUrl: 'https://greenway-candelaria.vercel.app/',
-    detailsUrl: '/projects/greenway',
+    detailsUrl: '/experience/projects/greenway',
   },
   {
     id: 'vyora',
@@ -132,8 +132,8 @@ export const projects: Project[] = [
     artwork: 'structure',
     status: 'Live · In development',
     liveUrl: 'https://vyorabooth.vyora.workers.dev/',
-    detailsUrl: '/projects/vyora',
-    minimalDetailsUrl: '/minimal/projects/vyora',
+    detailsUrl: '/experience/projects/vyora',
+    minimalDetailsUrl: '/projects/vyora',
   },
 ]
 

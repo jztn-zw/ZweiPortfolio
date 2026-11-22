@@ -15,7 +15,7 @@ export default function Vyora() {
       <SiteHeader isHome={false} />
       <main className="vyora-case page-width" id="vyora-content" tabIndex={-1}>
         <nav className="vyora-case-nav" aria-label="Project navigation">
-          <a className="page-back-button" href="/projects/tools" data-project-back><ArrowLeft size={16} aria-hidden="true" />Back to projects</a>
+          <a className="page-back-button" href="/experience/projects/tools" data-project-back><ArrowLeft size={16} aria-hidden="true" />Back to projects</a>
           {project?.minimalDetailsUrl && <a className="vyora-case-link" href={project.minimalDetailsUrl}>View this project in Minimal</a>}
         </nav>
         {project ? <>
@@ -81,7 +81,7 @@ export default function Vyora() {
           </section>
         </> : <h1 id="vyora-title" tabIndex={-1}>Project unavailable</h1>}
       </main>
-      <Footer topHref="/projects/vyora" />
+      <Footer topHref="/experience/projects/vyora" />
     </>
   )
 }

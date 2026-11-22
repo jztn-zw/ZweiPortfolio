@@ -1,32 +1,32 @@
 import type { ProjectCollection } from '../data/portfolio'
 
 const projectCollectionPaths = {
-  'web-mobile': '/projects/web-mobile',
-  automation: '/projects/automation',
-  tools: '/projects/tools',
+  'web-mobile': '/experience/projects/web-mobile',
+  automation: '/experience/projects/automation',
+  tools: '/experience/projects/tools',
 } as const satisfies Record<ProjectCollection, string>
 
 export const pagePaths = {
   home: '/experience',
-  minimal: '/minimal',
-  minimalSkills: '/minimal/skills',
-  minimalProjects: '/minimal/projects',
-  minimalWebMobileProjects: '/minimal/projects/web-mobile',
-  minimalAutomationProjects: '/minimal/projects/automation',
-  minimalToolsProjects: '/minimal/projects/tools',
-  minimalGreenway: '/minimal/projects/greenway',
-  minimalVyora: '/minimal/projects/vyora',
-  minimalEverwell: '/minimal/projects/everwell',
-  skills: '/skills',
-  projects: '/projects',
+  minimal: '/',
+  minimalSkills: '/skills',
+  minimalProjects: '/projects',
+  minimalWebMobileProjects: '/projects/web-mobile',
+  minimalAutomationProjects: '/projects/automation',
+  minimalToolsProjects: '/projects/tools',
+  minimalGreenway: '/projects/greenway',
+  minimalVyora: '/projects/vyora',
+  minimalEverwell: '/projects/everwell',
+  skills: '/experience/skills',
+  projects: '/experience/projects',
   webMobileProjects: projectCollectionPaths['web-mobile'],
   automationProjects: projectCollectionPaths.automation,
   toolsProjects: projectCollectionPaths.tools,
-  greenway: '/projects/greenway',
-  vyora: '/projects/vyora',
-  everwell: '/projects/everwell',
-  numbers: '/numbers',
-  ai: '/ask-ai',
+  greenway: '/experience/projects/greenway',
+  vyora: '/experience/projects/vyora',
+  everwell: '/experience/projects/everwell',
+  numbers: '/experience/numbers',
+  ai: '/experience/ask-ai',
 } as const
 export type Page = keyof typeof pagePaths
 
@@ -59,7 +59,7 @@ export function isMinimalProjectCatalogPage(page: Page): page is MinimalProjectC
 }
 
 export function minimalProjectCollectionHref(collection?: ProjectCollection) {
-  return collection ? `/minimal${projectCollectionPaths[collection]}` : pagePaths.minimalProjects
+  return collection ? projectCollectionPaths[collection].replace('/experience', '') : pagePaths.minimalProjects
 }
 
 export function isMinimalPage(page: string) {
@@ -70,7 +70,7 @@ export function normalizeRoute(route: string) {
   const url = new URL(route, 'https://portfolio.local/')
   const legacy = url.hash.match(/^#\/(skills|numbers|projects\/greenway|ask-ai)(\/content)?$/)
   if (legacy) {
-    url.pathname = `/${legacy[1]}`
+    url.pathname = `/experience/${legacy[1]}`
     const page = legacy[1] === 'projects/greenway' ? 'greenway' : legacy[1] === 'ask-ai' ? 'ai' : legacy[1]
     url.hash = legacy[2] ? `#${page}-content` : ''
   } else if (url.hash === '#home') {
@@ -78,7 +78,9 @@ export function normalizeRoute(route: string) {
     url.hash = ''
   }
   if (url.pathname === '/' && /^#(?:projects|about|capabilities|journey|contact|activity)$/.test(url.hash)) url.pathname = '/experience'
-  const path = url.pathname.replace(/\/+$/, '') || '/'
+  let path = url.pathname.replace(/\/+$/, '') || '/'
+  if (path === '/minimal') { url.pathname = '/'; path = '/' }
+  else if (path.startsWith('/minimal/')) { path = path.slice(8); url.pathname = path }
   if (Object.values(pagePaths).some(value => value === path)) url.pathname = path
   if (path === pagePaths.projects) {
     const category = url.searchParams.get('category')
@@ -99,5 +101,5 @@ export function navigationPage(route: string): Page {
 
 export function isPagePath(path: string) {
   const normalized = path.replace(/\/+$/, '') || '/'
-  return normalized === '/' || Object.values(pagePaths).some(value => value === normalized)
+  return normalized === '/minimal' || Object.values(pagePaths).some(value => value === normalizeRoute(normalized))
 }

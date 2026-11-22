@@ -48,6 +48,6 @@ export default function AskAI() {
 
       <div className="ask-bottom-line"><span><ArrowDown size={12} aria-hidden="true" /> MORE THAN A CONVERSATION</span><a href="/experience#projects">Explore the work<ArrowUpRight size={13} aria-hidden="true" /></a><GraphicMark variant="chevrons" /></div>
     </main>
-    <Footer topHref="/ask-ai" />
+    <Footer topHref="/experience/ask-ai" />
   </div>
 }

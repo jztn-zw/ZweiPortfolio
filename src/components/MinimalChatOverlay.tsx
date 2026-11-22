@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom'
 import './MinimalChatOverlay.css'
 
 const AskChat = lazy(() => import('./AskChat').catch(() => ({
-  default: () => <p className="min-chat-status" role="status">The chat couldn’t load. <a href="/ask-ai">Open the chat page</a></p>,
+  default: () => <p className="min-chat-status" role="status">The chat couldn’t load. <a href="/experience/ask-ai">Open the chat page</a></p>,
 })))
 
 export default function MinimalChatOverlay() {

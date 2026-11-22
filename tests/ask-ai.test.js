@@ -64,7 +64,7 @@ test('casual current-focus questions return confirmed focus details instead of a
     const answer = guide.getPortfolioAnswer(question)
     assert.match(answer.paragraphs.join(' '), /full-stack development, automation, and networking/)
     assert.equal(answer.topic, 'My current focus')
-    assert.ok(answer.links.some(link => link.href === '/skills'))
+    assert.ok(answer.links.some(link => link.href === '/experience/skills'))
   }
 })
 

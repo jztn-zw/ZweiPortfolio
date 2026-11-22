@@ -1,0 +1,86 @@
+
+> portfolio@0.0.0 build
+> tsc -b && vite build && node scripts/build-seo.mjs
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 2084 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                  10.20 kB │ gzip:  3.49 kB
+dist/.vite/manifest.json                         16.24 kB │ gzip:  2.17 kB
+dist/assets/TechnologyIcon-CXlaKq0C.css           0.11 kB │ gzip:  0.11 kB
+dist/assets/MinimalVyora--3yjrsfz.css             0.78 kB │ gzip:  0.39 kB
+dist/assets/GraphicMark-CT1N0pcr.css              1.11 kB │ gzip:  0.43 kB
+dist/assets/MinimalDetails-ByXfTb4g.css           1.96 kB │ gzip:  0.69 kB
+dist/assets/FooterVerse-C1GKGUjD.css              2.09 kB │ gzip:  0.77 kB
+dist/assets/Vyora-r9BbBF7t.css                    2.55 kB │ gzip:  0.89 kB
+dist/assets/MinimalProjects-BQOA7clc.css          2.76 kB │ gzip:  0.88 kB
+dist/assets/GraphicDetails-BNIfBYGx.css           3.50 kB │ gzip:  1.18 kB
+dist/assets/Everwell-By0vLMlV.css                 4.42 kB │ gzip:  1.22 kB
+dist/assets/MinimalGreenWay--qjLFuqe.css          5.01 kB │ gzip:  1.35 kB
+dist/assets/Footer-DHUme34Y.css                   5.72 kB │ gzip:  1.70 kB
+dist/assets/AskAI-DJjceRur.css                    6.15 kB │ gzip:  1.94 kB
+dist/assets/SiteHeader-BRHjaFnX.css               7.46 kB │ gzip:  1.84 kB
+dist/assets/MinimalLayout--7J_CdvH.css            7.90 kB │ gzip:  2.19 kB
+dist/assets/SurfaceSignal-DAO3KfT0.css            8.51 kB │ gzip:  1.97 kB
+dist/assets/Projects-BMxuoSiE.css                10.88 kB │ gzip:  3.06 kB
+dist/assets/Skills-DnaT4vCd.css                  12.27 kB │ gzip:  3.22 kB
+dist/assets/ProjectsSection-CIXdX7hB.css         12.49 kB │ gzip:  2.91 kB
+dist/assets/AskChat-r50xvZW5.css                 15.21 kB │ gzip:  3.63 kB
+dist/assets/Minimal-0frk8474.css                 15.89 kB │ gzip:  3.55 kB
+dist/assets/GreenWay-CSNd7FFo.css                19.33 kB │ gzip:  4.40 kB
+dist/assets/Numbers-CnBcmqzl.css                 25.30 kB │ gzip:  5.87 kB
+dist/assets/index-CKP_36-v.css                   27.94 kB │ gzip:  6.98 kB
+dist/assets/FullExperienceEffects-CIUjuLcz.css   51.05 kB │ gzip: 10.14 kB
+dist/assets/Home-zLQVHLqY.css                    84.15 kB │ gzip: 16.42 kB
+dist/assets/chevron-right-CJpFp_-2.js             0.16 kB │ gzip:  0.16 kB
+dist/assets/x-e7yZrWXY.js                         0.18 kB │ gzip:  0.17 kB
+dist/assets/arrow-down-BBKtd59U.js                0.20 kB │ gzip:  0.18 kB
+dist/assets/arrow-left-D2Lmpkhc.js                0.20 kB │ gzip:  0.18 kB
+dist/assets/arrow-right-UjqluLPc.js               0.20 kB │ gzip:  0.18 kB
+dist/assets/arrow-up-right-CbjPVg4U.js            0.20 kB │ gzip:  0.18 kB
+dist/assets/rotate-ccw-Ct7PQL5G.js                0.23 kB │ gzip:  0.21 kB
+dist/assets/code-xml-Citr9qYP.js                  0.26 kB │ gzip:  0.20 kB
+dist/assets/database-BT-yu-6V.js                  0.27 kB │ gzip:  0.22 kB
+dist/assets/panels-top-left-tqIUPUt3.js           0.28 kB │ gzip:  0.23 kB
+dist/assets/workflow-lRnDo9TA.js                  0.30 kB │ gzip:  0.23 kB
+dist/assets/folder-open-DczSbYxa.js               0.32 kB │ gzip:  0.24 kB
+dist/assets/TechnologyIcon-BfOEGNfx.js            0.34 kB │ gzip:  0.27 kB
+dist/assets/camera-CGH5YS47.js                    0.37 kB │ gzip:  0.27 kB
+dist/assets/layers-C3nzN_a1.js                    0.47 kB │ gzip:  0.27 kB
+dist/assets/ProjectsSection-CExDk7AW.js           0.50 kB │ gzip:  0.26 kB
+dist/assets/projectCollections-GWagjjjb.js        0.51 kB │ gzip:  0.31 kB
+dist/assets/pageVisibility-djNKvwzk.js            0.52 kB │ gzip:  0.29 kB
+dist/assets/mail-jPHL4cqM.js                      0.55 kB │ gzip:  0.36 kB
+dist/assets/githubCalendar-7F6dVt_2.js            0.58 kB │ gzip:  0.37 kB
+dist/assets/greenway-BfETOi0t.js                  2.44 kB │ gzip:  1.21 kB
+dist/assets/vyora-BjlmUPOS.js                     2.47 kB │ gzip:  1.26 kB
+dist/assets/MinimalSkills-ytx1ujmt.js             2.64 kB │ gzip:  1.04 kB
+dist/assets/useTheme-Cn6d-SF6.js                  2.80 kB │ gzip:  1.19 kB
+dist/assets/Footer-DFw06oRr.js                    2.94 kB │ gzip:  1.23 kB
+dist/assets/skills-CC-xYLbP.js                    2.99 kB │ gzip:  1.27 kB
+dist/assets/MinimalProjects-BsyGA4f5.js           3.06 kB │ gzip:  1.18 kB
+dist/assets/MinimalLayout-bMf0W65s.js             3.39 kB │ gzip:  1.41 kB
+dist/assets/AskAI-CROvfe7k.js                     3.69 kB │ gzip:  1.40 kB
+dist/assets/SurfaceSignal-_A3GEIaJ.js             3.73 kB │ gzip:  1.25 kB
+dist/assets/Vyora-uOdYfiP0.js                     4.18 kB │ gzip:  1.32 kB
+dist/assets/NavbarGlyph-jTYQv_xP.js               4.36 kB │ gzip:  1.23 kB
+dist/assets/FooterVerse-BjOTO8_p.js               4.38 kB │ gzip:  2.05 kB
+dist/assets/GraphicMark-Cdu17h_3.js               4.76 kB │ gzip:  1.40 kB
+dist/assets/MinimalGreenWay-DMVHs4lf.js           5.44 kB │ gzip:  1.76 kB
+dist/assets/SiteHeader-D0ikEj_t.js                5.83 kB │ gzip:  1.97 kB
+dist/assets/MinimalVyora-8VCUQd4Y.js              5.87 kB │ gzip:  1.84 kB
+dist/assets/Everwell-D772jMKB.js                  6.60 kB │ gzip:  2.37 kB
+dist/assets/FullExperienceEffects-XOun9ywP.js     7.08 kB │ gzip:  2.38 kB
+dist/assets/Skills-B-uz-jFa.js                   11.33 kB │ gzip:  3.35 kB
+dist/assets/Projects-qONMx0eP.js                 13.23 kB │ gzip:  4.38 kB
+dist/assets/GreenWay-BSykQQ07.js                 15.02 kB │ gzip:  4.45 kB
+dist/assets/Minimal-DRkpuA31.js                  18.07 kB │ gzip:  5.58 kB
+dist/assets/AskChat-DRxofpyi.js                  25.72 kB │ gzip: 10.12 kB
+dist/assets/Numbers-376CFrLY.js                  43.41 kB │ gzip: 15.16 kB
+dist/assets/Home-CANR4my5.js                     75.27 kB │ gzip: 20.36 kB
+dist/assets/index-C0Re45Ni.js                   267.84 kB │ gzip: 85.54 kB
+
+✓ built in 1.40s
+SEO: generated 20 page documents and 9 canonical sitemap URLs.

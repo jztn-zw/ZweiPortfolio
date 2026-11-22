@@ -76,9 +76,9 @@ export default function FloatingNavbar({ isHome = true, isNumbers = false, isAI 
       {items.map(({ label, icon }) => (
         <button type="button" key={label} data-guide={icon} className="side-nav-item" aria-label={`${label} — Coming soon`} aria-disabled="true"><NavbarGlyph name={icon} /><span className="side-nav-tooltip">{label}<span>Coming soon</span></span></button>
       ))}
-      <a href="/ask-ai" data-guide="ai" aria-label="Ask me anything" aria-current={isAI ? 'page' : undefined} className={`side-nav-item${isAI ? ' is-active' : ''}`}><NavbarGlyph name="ai" /><span className="side-nav-tooltip">Ask me anything</span></a>
-      <a href="/numbers" data-guide="numbers" aria-label="By the Numbers" aria-current={isNumbers ? 'page' : undefined} className={`side-nav-item${isNumbers ? ' is-active' : ''}`}><NavbarGlyph name="numbers" /><span className="side-nav-tooltip">By the Numbers</span></a>
-      <a href="/minimal" data-guide="minimal" className="side-nav-item view-mode-button" aria-label="Minimal view" aria-describedby="minimal-view-tooltip">
+      <a href="/experience/ask-ai" data-guide="ai" aria-label="Ask me anything" aria-current={isAI ? 'page' : undefined} className={`side-nav-item${isAI ? ' is-active' : ''}`}><NavbarGlyph name="ai" /><span className="side-nav-tooltip">Ask me anything</span></a>
+      <a href="/experience/numbers" data-guide="numbers" aria-label="By the Numbers" aria-current={isNumbers ? 'page' : undefined} className={`side-nav-item${isNumbers ? ' is-active' : ''}`}><NavbarGlyph name="numbers" /><span className="side-nav-tooltip">By the Numbers</span></a>
+      <a href="/" data-guide="minimal" className="side-nav-item view-mode-button" aria-label="Minimal view" aria-describedby="minimal-view-tooltip">
         <NavbarGlyph name="minimal" />
         <span className="side-nav-tooltip" id="minimal-view-tooltip" role="tooltip">Minimal view</span>
       </a>

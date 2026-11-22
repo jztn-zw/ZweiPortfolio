@@ -81,14 +81,14 @@ export default function Everwell({ minimal = false }: { minimal?: boolean }) {
     </section>
   </article>
 
-  if (minimal) return <MinimalLayout contentId="minimalEverwell-content" fullHref="/projects/everwell">{content}</MinimalLayout>
+  if (minimal) return <MinimalLayout contentId="minimalEverwell-content" fullHref="/experience/projects/everwell">{content}</MinimalLayout>
   return <>
     <a className="skip-link" href="#everwell-content">Skip to content</a>
     <SiteHeader isHome={false} />
     <main className="page-width everwell-full" id="everwell-content" tabIndex={-1}>
-      <a className="page-back-button" href="/projects/automation" data-project-back><ArrowLeft size={16} aria-hidden="true" />Back to projects</a>
+      <a className="page-back-button" href="/experience/projects/automation" data-project-back><ArrowLeft size={16} aria-hidden="true" />Back to projects</a>
       {content}
     </main>
-    <Footer topHref="/projects/everwell" />
+    <Footer topHref="/experience/projects/everwell" />
   </>
 }
