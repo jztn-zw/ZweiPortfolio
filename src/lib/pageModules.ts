@@ -45,6 +45,9 @@ export function preloadLinkPage(target: EventTarget | null, activated = false) {
   const url = new URL(link.href, window.location.href)
   if (url.origin !== window.location.origin || !isPagePath(url.pathname)) return
   const targetRoute = url.pathname + url.search + url.hash
+  // Pointer travel across navigation shouldn't download and parse several full
+  // pages at once on a slow device. Click activation still preloads immediately.
+  if (!activated && !isMinimalPage(navigationPage(targetRoute)) && typeof document !== 'undefined' && document.documentElement.dataset.effects === 'lite') return
   if (!activated && isMinimalPage(navigationPage(window.location.href)) && !isMinimalPage(navigationPage(targetRoute))) return
   preloadRoutePage(targetRoute)
 }

@@ -45,6 +45,19 @@ for (const project of ['greenway', 'vyora', 'everwell']) {
   assert.ok(html.includes(`${origin}/projects/${project}`))
   const graph = JSON.parse(html.match(/id="portfolio-schema">([\s\S]*?)<\/script>/)[1])
   assert.ok(graph['@graph'].some(item => item['@type'] === 'BreadcrumbList'))
+  const work = graph['@graph'].find(item => item['@type'] === 'CreativeWork')
+  assert.ok(work, `${project}: missing project identity`)
+  assert.equal(work.url, `${origin}/projects/${project}`)
+  assert.equal(work.creator['@id'], `${origin}/#person`)
+  assert.ok(!html.includes('<title>Jaztin Abram Contreras |'), `${project}: generic homepage title`)
+  await access(`dist${new URL(work.image).pathname}`)
+}
+const catalog = await readFile('dist/projects/index.html', 'utf8')
+const catalogGraph = JSON.parse(catalog.match(/id="portfolio-schema">([\s\S]*?)<\/script>/)[1])
+const catalogItems = catalogGraph['@graph'].find(item => item['@type'] === 'ItemList').itemListElement
+for (const project of ['greenway', 'vyora', 'everwell']) {
+  assert.ok(catalogItems.some(item => item.url === `${origin}/projects/${project}`), `${project}: absent from project catalog`)
+  assert.ok(home.includes(`href="/projects/${project}"`), `${project}: missing direct homepage link`)
 }
 const sitemap = await readFile('dist/sitemap.xml', 'utf8')
 const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1])

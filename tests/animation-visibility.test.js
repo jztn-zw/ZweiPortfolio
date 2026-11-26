@@ -29,6 +29,7 @@ test('offscreen animation timelines pause, resume when visible and clean up on n
     require: name => name === 'react' ? { useEffect: callback => { cleanup = callback() } } : {},
   })
   exports.default('home')
+  assert.equal(flags.has('data-animation-paused'), true, 'wait for visibility before starting timelines')
   notify([{ target: artwork, isIntersecting: false }])
   assert.equal(flags.has('data-animation-paused'), true)
   notify([{ target: artwork, isIntersecting: true }])

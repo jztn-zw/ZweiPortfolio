@@ -18,7 +18,7 @@ const compiled = compile('../src/lib/askAi.ts')
 function load(initial = '[]', blocked = false) {
   const exports = {}, stored = new Map([['jac-ask-ai-preview-v1', initial]])
   vm.runInNewContext(compiled, {
-    exports,
+    exports, URL,
     require: path => path.includes('personalChat') ? personalChat : path.includes('chatLanguage') ? chatLanguage : path.includes('workInquiry') ? workInquiry : portfolio,
     sessionStorage: {
       getItem: key => { if (blocked) throw new Error('Blocked'); return stored.get(key) },
@@ -46,6 +46,19 @@ test('unknown questions stay grounded and resume requests link to the supplied P
   const guide = load()
   assert.match(guide.getPortfolioAnswer('What is the weather today?').paragraphs[0], /focused on my portfolio/)
   assert.ok(guide.getPortfolioAnswer('Can I see the resume?').links.some(link => link.href === '/documents/JaztinAbramContrerasCV.pdf'))
+})
+
+test('info links stay in the selected mode, including home sections and project pages', () => {
+  const guide = load()
+  for (const question of ['Tell me about yourself', 'Tell me about GreenWay', 'VYORA', 'Everwell', 'What technologies do you use?', 'Resume', 'What are you focusing on?']) {
+    const minimal = guide.getPortfolioAnswer(question, true)
+    const full = guide.getPortfolioAnswer(question)
+    for (const link of minimal.links) assert.ok(!link.href.startsWith('/experience'), question)
+    for (const link of full.links.filter(item => item.href.startsWith('/') && !item.href.startsWith('/documents/'))) assert.ok(link.href.startsWith('/experience'), question)
+  }
+  assert.ok(guide.getPortfolioAnswer('Tell me about yourself', true).links.some(link => link.href === '/#min-about-title'))
+  assert.ok(guide.getPortfolioAnswer('VYORA', true).links.some(link => link.href === '/projects/vyora'))
+  assert.ok(guide.getPortfolioAnswer('Resume', true).links.some(link => link.href === '/documents/JaztinAbramContrerasCV.pdf'))
 })
 
 test('all curated answers use Jaztin’s first-person voice', () => {

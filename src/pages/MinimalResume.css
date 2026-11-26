@@ -32,6 +32,8 @@
 .resume-sheet .resume-profile { max-width: none; }
 .resume-sheet .resume-education p:not(.resume-date) { max-width: none; }
 .resume-profile strong { color: var(--min-text); font-weight: 600; }
+.resume-profile a { color: var(--min-text); text-decoration: underline; text-decoration-color: var(--min-line); text-underline-offset: 3px; }
+.resume-profile a:hover { text-decoration-color: currentColor; }
 .resume-about blockquote { margin: 16px 0 0; padding-left: 11px; border-left: 1px solid var(--min-muted); color: var(--min-muted); font-size: 12px; }
 .resume-sheet h3 { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.45; }
 .resume-sheet .resume-context { margin: 4px 0 7px; color: var(--min-muted); font-size: 11px; }

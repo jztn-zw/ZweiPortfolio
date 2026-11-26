@@ -1,5 +1,12 @@
-/* Minimal View alone uses this simpler circle. Full Experience keeps its artwork,
-   shadows, blur, hovers, and pixel-fragment transitions on every device. */
+/* Budget expensive compositing on constrained devices without hiding artwork. */
+:root[data-effects='lite']:not([data-view='minimal']) .site-header {
+  background: var(--theme-canvas, #111111);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+:root[data-effects='lite'] [data-scroll-reveal] { --scroll-distance: 6px; --scroll-x: 0px; --scroll-duration: 280ms; }
+
+/* Minimal View uses this simpler theme handoff. */
 :root[data-theme-transition='circle']::view-transition-old(root),
 :root[data-theme-transition='circle']::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 :root[data-theme-transition='circle']::view-transition-old(root) { z-index: 1; }

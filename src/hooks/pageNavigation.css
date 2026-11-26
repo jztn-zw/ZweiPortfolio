@@ -24,9 +24,9 @@
 @media (prefers-reduced-motion: reduce) { .page-minimal-fade { display: none; } }
 :root[data-page-transition='covered'] #root main { opacity: 0; }
 /* Keep the outgoing/incoming page's decorative CSS animations idle while covered. */
-:root[data-page-transition] #root main *,
-:root[data-page-transition] #root main *::before,
-:root[data-page-transition] #root main *::after {
+:root[data-page-transition] #root *,
+:root[data-page-transition] #root *::before,
+:root[data-page-transition] #root *::after {
   animation-play-state: paused !important;
 }
 .page-shutter-panel {

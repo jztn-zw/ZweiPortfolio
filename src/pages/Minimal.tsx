@@ -98,7 +98,7 @@ export default function Minimal() {
           <div className="min-column">
             <section className="min-card resume-about" aria-labelledby="min-about-title">
               <ResumeHeading id="min-about-title" icon={UserRound}>About</ResumeHeading>
-              <p className="resume-profile">I’m a fourth-year Computer Science student focused on <strong>{aboutMe.focus}</strong>. I enjoy experimenting, understanding the logic behind systems, and solving problems. I learn through hands-on experience, using what I discover to improve each idea. My goal is to build thoughtful websites and reliable applications through careful testing, attention to detail, and continuous refinement.</p>
+              <p className="resume-profile">{aboutMe.introduction} <strong>{aboutMe.focus}</strong>. {aboutMe.exploration} {aboutMe.learning} {aboutMe.goal}</p>
               <blockquote>“{aboutMe.quote}”</blockquote>
             </section>
 

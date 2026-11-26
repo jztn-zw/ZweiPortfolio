@@ -61,9 +61,9 @@ export default function AboutSection() {
           <div className="about-me-copy">
             <blockquote className="about-me-quote"><p>“{aboutMe.quote}”</p></blockquote>
             <div className="about-me-biography">
-              <p>{aboutMe.introduction}</p>
-              <p>My focus is on <strong>{aboutMe.focus}</strong>. {aboutMe.exploration}</p>
-              <p>{aboutMe.learning}</p>
+              <p>{aboutMe.introduction} <strong>{aboutMe.focus}</strong>.</p>
+              <p>{aboutMe.exploration} {aboutMe.learning}</p>
+              <p>{aboutMe.goal}</p>
             </div>
             <div className="about-me-copy-signoff" aria-hidden="true"><GraphicMark variant="contour" /><span className="eyebrow">CURIOUS ABOUT THE WHY.<br />FOCUSED ON THE HOW.</span></div>
           </div>

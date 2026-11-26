@@ -22,7 +22,7 @@ export type PortfolioAnswer = {
 }
 
 // Curated, local fallback answers. Kept separate from generated responses.
-export function getPortfolioAnswer(question: string): PortfolioAnswer {
+function curatedPortfolioAnswer(question: string): PortfolioAnswer {
   const privateReply = getPrivateReply(question)
   if (privateReply) return { topic: 'A little privacy', paragraphs: [privateReply], links: [] }
   const inquiry = getWorkInquiryReply(question)
@@ -77,6 +77,23 @@ export function getPortfolioAnswer(question: string): PortfolioAnswer {
     paragraphs: ['I’m keeping this chat focused on my portfolio. I can tell you about my background, GreenWay, the tools I use, or how we can work together.', 'Pick one of the topics below to explore.'],
     links: [],
   }
+}
+
+// Keep verified info links in the view where the conversation started.
+export function getPortfolioAnswer(question: string, minimal = false): PortfolioAnswer {
+  const answer = curatedPortfolioAnswer(question)
+  if (!minimal) return answer
+  const sections: Record<string, string> = {
+    about: 'min-about-title', journey: 'min-experience-title', contact: 'minimal-contact',
+    projects: 'min-projects-title', capabilities: 'min-stack-title',
+  }
+  return { ...answer, links: answer.links.map(link => {
+    if (!link.href.startsWith('/experience')) return link
+    const url = new URL(link.href, 'https://portfolio.local')
+    url.pathname = url.pathname.replace(/^\/experience(?=\/|$)/, '') || '/'
+    if (url.pathname === '/' && url.hash) url.hash = sections[url.hash.slice(1)] ?? 'minimal-title'
+    return { ...link, href: url.pathname + url.search + url.hash }
+  }) }
 }
 
 export function readAskAiHistory(): string[] {

@@ -1,0 +1,24 @@
+✔ every suggested topic gives confirmed portfolio details and useful destinations (5.4078ms)
+✔ unknown questions stay grounded and resume requests link to the supplied PDF (0.9303ms)
+✔ all curated answers use Jaztin’s first-person voice (1.8322ms)
+✔ casual current-focus questions return confirmed focus details instead of a generic redirect (0.7019ms)
+✔ project inquiries show contact details with a verified email link (2.1575ms)
+✔ session history is bounded and rejects malformed or oversized stored values (3.0647ms)
+✔ minimal view renders the profile, capabilities, and published work in both themes (138.3577ms)
+✔ the résumé links to real contact and project destinations (51.7667ms)
+✔ selected work links to three collections while View all shows every listed project (162.2512ms)
+✔ individual minimal collection pages show matching projects without the filter badges (175.5933ms)
+✔ View all keeps its collection filters while changing the visible projects (231.1356ms)
+✔ first paint preloads the hero only on home and skips full artwork on minimal pages (6.4729ms)
+✔ minimal detail pages share navigation and preserve confirmed content in both themes (242.7785ms)
+✔ every skill badge references an available local technology brand symbol (71.8419ms)
+✔ current project and contact FAQs work without provider or Redis calls (31.9664ms)
+✔ model context includes live projects and current contact facts (0.327ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1610.4476

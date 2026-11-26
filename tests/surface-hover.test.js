@@ -9,12 +9,12 @@ const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.Modu
 
 function harness({ reduced = false, lite = false, page = 'home' } = {}) {
   const events = new Map(), globalEvents = new Map(), documentEvents = new Map(), frames = new Map()
-  let cleanup, nextFrame = 0, preferenceChanged, propertyWrites = 0
+  let cleanup, nextFrame = 0, preferenceChanged, propertyWrites = 0, boundsReads = 0, resized
   const motion = { matches: reduced, addEventListener: (_, callback) => { preferenceChanged = callback }, removeEventListener: () => { preferenceChanged = undefined } }
   class Element {
     constructor(surface = null) { this.surface = surface; this.dataset = {}; this.properties = new Map(); this.style = { setProperty: (name, value) => { propertyWrites++; this.properties.set(name, value) }, removeProperty: name => this.properties.delete(name) }; this.width = 500 }
     closest() { return this.surface }
-    getBoundingClientRect() { return { left: 100, top: 200, width: this.width, height: 200 } }
+    getBoundingClientRect() { boundsReads++; return { left: 100, top: 200, width: this.width, height: 200 } }
   }
   const first = new Element(), second = new Element()
   first.surface = first; second.surface = second
@@ -28,6 +28,7 @@ function harness({ reduced = false, lite = false, page = 'home' } = {}) {
   const exported = {}
   vm.runInNewContext(compiled, {
     exports: exported, Element, document,
+    ResizeObserver: class { constructor(callback) { resized = callback } observe() {} unobserve() {} disconnect() {} },
     window: { matchMedia: () => motion, addEventListener: (name, callback) => globalEvents.set(name, callback), removeEventListener: name => globalEvents.delete(name) },
     requestAnimationFrame: callback => { frames.set(++nextFrame, callback); return nextFrame }, cancelAnimationFrame: id => frames.delete(id),
     require: () => ({ useEffect: effect => { cleanup = effect() } }),
@@ -36,6 +37,8 @@ function harness({ reduced = false, lite = false, page = 'home' } = {}) {
   return {
     first, second, child, events, globalEvents, documentEvents, frames, document,
     get propertyWrites() { return propertyWrites },
+    get boundsReads() { return boundsReads },
+    resize() { resized() },
     event(name, overrides = {}) { events.get(name)({ target: first, relatedTarget: null, clientX: 350, clientY: 300, button: 0, pointerType: 'mouse', isPrimary: true, ...overrides }) },
     paint() { const pending = [...frames.values()]; frames.clear(); pending.forEach(callback => callback()) },
     cleanup: () => cleanup?.(),
@@ -61,6 +64,7 @@ test('constrained devices keep full hover feedback without rewriting unchanged c
   assert.equal(h.propertyWrites, 6, 'unchanged coordinates should not invalidate styles again')
   h.event('pointermove', { clientX: 420 }); h.paint()
   assert.ok(h.propertyWrites > 6)
+  assert.equal(h.boundsReads, 1, 'pointer movement reuses geometry rather than forcing repeated layout')
   assert.equal(h.frames.size, 0)
   h.cleanup()
 })
@@ -92,6 +96,7 @@ test('switching surfaces clears the previous one, and bounds stay finite', () =>
   assert.equal(h.second.properties.get('--surface-x'), '500.0px')
   assert.equal(h.second.properties.get('--surface-y'), '0.0px')
   h.second.width = 0
+  h.resize()
   h.event('pointermove', { target: h.second }); h.paint()
   assert.equal(h.second.dataset.hoverActive, undefined)
   h.cleanup()

@@ -22,7 +22,7 @@ ${JSON.stringify({
   name: portfolio.name, role: portfolio.role, location: portfolio.location,
   availability: portfolio.availability, introduction: portfolio.introduction,
   description: portfolio.description, education: journey.entries.find(entry => entry.id === 'education'),
-  about: { quote: aboutMe.quote, focus: aboutMe.focus, exploration: aboutMe.exploration },
+  about: { quote: aboutMe.quote, focus: aboutMe.focus, exploration: aboutMe.exploration, learning: aboutMe.learning, goal: aboutMe.goal },
   personalProfile,
   capabilities: capabilities.map(({ title, technologies }) => ({ title, technologies })),
   journey: journey.entries,

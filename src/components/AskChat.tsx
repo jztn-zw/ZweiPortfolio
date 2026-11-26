@@ -80,7 +80,7 @@ export default function AskChat({ compact = false }: { compact?: boolean }) {
 
   const showNote = (id: string, question: string) => {
     setAnimatedAnswerId(id)
-    const answer = getPortfolioAnswer(question).paragraphs.join('\n\n')
+    const answer = getPortfolioAnswer(question, compact).paragraphs.join('\n\n')
     setExchanges(current => current.map(exchange => exchange.id === id ? { ...exchange, answer, provider: 'portfolio', status: 'complete', code: undefined } : exchange))
   }
 
@@ -105,7 +105,7 @@ export default function AskChat({ compact = false }: { compact?: boolean }) {
       </div> : <div className="ask-exchanges">
         {exchanges.map(exchange => {
           const { question } = exchange
-          const answer = getPortfolioAnswer(question)
+          const answer = getPortfolioAnswer(question, compact)
           const fresh = animatedAnswerId === exchange.id
           const pending = exchange.status === 'pending'
           return <div className={`ask-exchange${fresh ? ' ask-exchange--new' : ''}`} key={exchange.id}>

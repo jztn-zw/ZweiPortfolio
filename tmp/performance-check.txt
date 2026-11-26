@@ -1,0 +1,41 @@
+✔ offscreen animation timelines pause, resume when visible and clean up on navigation (1.7749ms)
+✔ Minimal defers full-page downloads until activation while retaining Minimal link preloads (23.1562ms)
+✔ only Minimal View skips decorative pointer tracking (1.5102ms)
+✔ constrained devices keep full hover feedback without rewriting unchanged coordinates (1.13ms)
+✔ delegated hover coalesces updates and schedules no idle frames (0.7229ms)
+✖ switching surfaces clears the previous one, and bounds stay finite (1.6561ms)
+✔ touch leaves vertical scrolling native and stops on release or cancellation (0.88ms)
+✔ reduced motion, hidden tabs, scrolling and unmount stop all work (0.9867ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 448.5729
+
+✖ failing tests:
+
+test at tests\surface-hover.test.js:86:1
+✖ switching surfaces clears the previous one, and bounds stay finite (1.6561ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'true'
+  - undefined
+  
+      at TestContext.<anonymous> (file:///C:/Users/Jaztin/Programming%20Projects/Portfolio1.0/tests/surface-hover.test.js:96:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'true',
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

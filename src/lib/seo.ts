@@ -40,6 +40,9 @@ export function getSeo(page: Page) {
   const path = canonicalPage === 'minimal' ? '/' : pagePaths[canonicalPage]
   const url = siteUrl + path
   const personId = `${siteUrl}/#person`
+  const projectImages: Record<string, string> = { '002': '/images/greenway-web.webp', vyora: '/images/vyora-website.jpg', everwell: '/images/everwell/website.jpg' }
+  const image = siteUrl + (project && projectImages[project.id] ? projectImages[project.id] : '/images/jaztin-portrait.webp')
+  const workSamples = (canonicalPage === 'minimal' ? listedProjects : project ? [project] : []).filter(item => item.minimalDetailsUrl)
   const collectionId = collectionPages[canonicalPage as keyof typeof collectionPages]
   const collection = projectCollections.find(item => item.id === collectionId)
   const catalog = canonicalPage === 'minimalProjects' || Boolean(collection)
@@ -58,17 +61,19 @@ export function getSeo(page: Page) {
     mainEntityOfPage: { '@id': `${siteUrl}/#page` },
     address: { '@type': 'PostalAddress', addressRegion: 'Quezon', addressCountry: 'PH' },
     sameAs: portfolio.contacts.filter(contact => contact.id !== 'email' && contact.url).map(contact => contact.url),
+    affiliation: { '@type': 'EducationalOrganization', name: 'Manuel S. Enverga University Foundation – Candelaria, Inc.' },
     knowsAbout: ['React', 'TypeScript', 'Node.js', 'Web Development', 'React Native', 'Electron', 'WordPress', 'Workflow Automation'],
   }
   return {
-    title, description, url, canonicalPage, siteName, image: `${siteUrl}/images/jaztin-portrait.webp`,
+    title, description, url, canonicalPage, siteName, image,
     structuredData: {
       '@context': 'https://schema.org',
       '@graph': [person,
         { '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: `${siteUrl}/`, name: siteName, alternateName: ['Jaztin Contreras', 'Jaztin Abram Contreras Portfolio'], description: homeDescription, publisher: { '@id': personId }, inLanguage: 'en' },
         { '@type': canonicalPage === 'minimal' ? 'ProfilePage' : catalog ? 'CollectionPage' : 'WebPage', '@id': `${url}#page`, url, name: title, description,
-          isPartOf: { '@id': `${siteUrl}/#website` }, author: { '@id': personId }, about: { '@id': personId }, mainEntity: { '@id': project ? `${url}#project` : catalog ? `${url}#projects` : personId } },
-        ...(project ? [{ '@type': 'CreativeWork', '@id': `${url}#project`, name: project.title, description: project.description, creator: { '@id': personId }, keywords: project.technologies.join(', '), url }] : []),
+          isPartOf: { '@id': `${siteUrl}/#website` }, author: { '@id': personId }, about: { '@id': personId }, mainEntity: { '@id': project ? `${url}#project` : catalog ? `${url}#projects` : personId },
+          ...(canonicalPage === 'minimal' ? { mentions: workSamples.map(item => ({ '@id': `${siteUrl}${item.minimalDetailsUrl}#project` })) } : {}) },
+        ...workSamples.map(item => ({ '@type': 'CreativeWork', '@id': `${siteUrl}${item.minimalDetailsUrl}#project`, name: item.title, description: item.description, creator: { '@id': personId }, keywords: item.technologies.join(', '), url: siteUrl + item.minimalDetailsUrl, ...(item.liveUrl ? { sameAs: item.liveUrl } : {}), ...(projectImages[item.id] ? { image: siteUrl + projectImages[item.id] } : {}) })),
         ...(catalog ? [{ '@type': 'ItemList', '@id': `${url}#projects`, numberOfItems: catalogProjects.length, itemListElement: catalogProjects.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.title, url: siteUrl + item.minimalDetailsUrl })) }] : []),
         ...(crumbs.length > 1 ? [{ '@type': 'BreadcrumbList', '@id': `${url}#breadcrumbs`, itemListElement: crumbs.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, item: item.url })) }] : []),
       ],

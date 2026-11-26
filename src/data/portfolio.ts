@@ -54,10 +54,11 @@ export const personalProfile = {
 
 export const aboutMe = {
   quote: 'Everything has a logic behind it. I just enjoy figuring out how it works.',
-  introduction: "I'm a 4th-year Bachelor of Science in Computer Science student with an interest in understanding how things work and turning ideas into functional solutions.",
+  introduction: 'I’m a fourth-year Computer Science student focused on',
   focus: 'full-stack development, automation, and networking',
-  exploration: 'I enjoy exploring technologies, solving problems, and finding smarter ways to build and improve systems.',
-  learning: "I'm continuously learning, experimenting, and developing my skills through hands-on projects and new challenges.",
+  exploration: 'I enjoy experimenting, understanding the logic behind systems, and solving problems.',
+  learning: 'I learn through hands-on experience, using what I discover to improve each idea.',
+  goal: 'My goal is to build thoughtful websites and reliable applications through careful testing, attention to detail, and continuous refinement.',
   details: [
     { id: 'location', label: 'Location', value: portfolio.location },
     { id: 'currently', label: 'Currently', value: '4th-Year BS Computer Science Student' },
@@ -117,6 +118,7 @@ export const projects: Project[] = [
     status: 'Completed',
     liveUrl: 'https://greenway-candelaria.vercel.app/',
     detailsUrl: '/experience/projects/greenway',
+    minimalDetailsUrl: '/projects/greenway',
   },
   {
     id: 'vyora',

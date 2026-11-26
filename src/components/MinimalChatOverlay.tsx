@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom'
 import './MinimalChatOverlay.css'
 
 const AskChat = lazy(() => import('./AskChat').catch(() => ({
-  default: () => <p className="min-chat-status" role="status">The chat couldn’t load. <a href="/experience/ask-ai">Open the chat page</a></p>,
+  default: () => <p className="min-chat-status" role="status">The chat couldn’t load. Please close it and try again.</p>,
 })))
 
 export default function MinimalChatOverlay() {
@@ -34,7 +34,9 @@ export default function MinimalChatOverlay() {
     <button className="resume-chat-trigger" ref={trigger} type="button" aria-expanded={open} aria-controls="min-chat-conversation" onClick={() => setOpen(true)}><MessageCircle size={15} aria-hidden="true" /><span>Ask me anything</span><ArrowRight size={14} aria-hidden="true" /></button>
     {open && createPortal(<div className="minimal-view min-chat-overlay">
       <button className="min-chat-backdrop" type="button" tabIndex={-1} aria-label="Close chat" onClick={() => setOpen(false)} />
-      <section id="min-chat-conversation" className="min-chat-conversation" ref={conversation} tabIndex={-1} aria-label="Ask me anything">
+      <section id="min-chat-conversation" className="min-chat-conversation" ref={conversation} tabIndex={-1} aria-label="Ask me anything" onClick={event => {
+        if (event.target instanceof Element && event.target.closest('a[href]')) setOpen(false)
+      }}>
         <button className="sr-only" type="button" onClick={() => setOpen(false)}>Close chat</button>
         <Suspense fallback={<p className="min-chat-status" role="status">Opening chat…</p>}><AskChat compact /></Suspense>
       </section>

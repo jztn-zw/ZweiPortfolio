@@ -14,16 +14,19 @@ export default function useSurfaceHover(page: string) {
     let active: HTMLElement | null = null
     let frame: number | undefined
     let clientX = 0, clientY = 0
+    let bounds: DOMRect | undefined
     let touchStart: { x: number; y: number } | undefined
 
     const stop = () => {
       if (frame !== undefined) cancelAnimationFrame(frame)
       frame = undefined
       if (active) {
+        resizeObserver?.unobserve(active)
         delete active.dataset.hoverActive
         for (const name of ['--surface-dx', '--surface-dy', '--surface-rx', '--surface-ry']) active.style.removeProperty(name)
       }
       active = null
+      bounds = undefined
       touchStart = undefined
       paintedValues.clear()
     }
@@ -35,7 +38,7 @@ export default function useSurfaceHover(page: string) {
         active.dataset.hoverActive = 'true'
         return
       }
-      const bounds = active.getBoundingClientRect()
+      bounds ??= active.getBoundingClientRect()
       if (!bounds.width || !bounds.height) { stop(); return }
       const x = Math.max(0, Math.min(bounds.width, clientX - bounds.left))
       const y = Math.max(0, Math.min(bounds.height, clientY - bounds.top))
@@ -59,7 +62,7 @@ export default function useSurfaceHover(page: string) {
       if (!next || !root.contains(next)) { stop(); return }
       // Entry-only motifs do not need pointer coordinates after activation.
       if (next === active && entryOnlySurfaces.has(next.dataset.hoverSurface ?? '')) return
-      if (next !== active) { stop(); active = next; touched.add(next) }
+      if (next !== active) { stop(); active = next; touched.add(next); resizeObserver?.observe(next) }
       clientX = event.clientX; clientY = event.clientY
       if (frame === undefined) frame = requestAnimationFrame(paint)
     }
@@ -89,11 +92,14 @@ export default function useSurfaceHover(page: string) {
     root.addEventListener('pointercancel', stop, { passive: true })
     window.addEventListener('scroll', stop, { passive: true, capture: true })
     window.addEventListener('resize', stop, { passive: true })
+    const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(() => { bounds = undefined }) : undefined
+    resizeObserver?.observe(root)
     window.addEventListener('blur', stop)
     document.addEventListener('visibilitychange', onVisibility)
     motion.addEventListener('change', onPreference)
     return () => {
       stop()
+      resizeObserver?.disconnect()
       root.removeEventListener('pointerover', over)
       root.removeEventListener('pointermove', move)
       root.removeEventListener('pointerout', out)
